@@ -1,277 +1,231 @@
 <template>
   <basic-container>
-    <avue-crud :option="option"
-               :table-loading="loading"
-               :data="data"
-               :page.sync="page"
-               @row-del="rowDel"
-               v-model="form"
-               ref="crud"
-               :permission="permissionList"
-               @row-update="rowUpdate"
-               @row-save="rowSave"
-               :before-open="beforeOpen"
-               @search-change="searchChange"
-               @search-reset="searchReset"
-               @selection-change="selectionChange"
-               @current-change="currentChange"
-               @size-change="sizeChange"
-               @refresh-change="refreshChange"
-               @on-load="onLoad">
-      <template slot="menuLeft">
-      </template>
-    </avue-crud>
+    <div>
+      <div style="display: flex; justify-content: space-between;">
+        <tag-select :data="tagData" :active="activeTag" @click="handlerSwitchTag"/>
+        <div style="display: flex; flex-flow: column; justify-content: center; margin-left: 20px;">
+          <div style="display: flex; justify-content: flex-end;">
+            <el-input size="small" style="max-width: 250px" v-model="query.searchKey" placeholder="请输入标题/不良内容/供应商名称"/>
+            <el-select size="small" style="width: 130px; margin-left: 15px;" v-model="query.type" placeholder="不良分类">
+              <el-option
+                v-for="item in typeDict"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+            <el-select style="width: 130px; margin-left: 15px;" size="small" v-model="query.apparatusType" placeholder="机型">
+              <el-option
+                v-for="item in apparatusTypeDict"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+            <el-select  style="width: 130px; margin-left: 15px;"size="small" v-model="query.triggerAddress" placeholder="发生地点">
+              <el-option
+                v-for="item in triggerAddressDict"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+            <div style="display: flex; margin-left: 20px;">
+              <el-button type="primary" size="small" @click="onLoad">查询</el-button>
+              <el-button size="small" @click="handlerQueryReset">重置</el-button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <el-divider></el-divider>
+      <el-table
+        :header-cell-style="{background: '#fafafa', 'textAlign': 'center', fontWeight: 700, color: 'rgba(0,0,0,.85)',fontSize: '12px'}"
+        :cell-style="{'textAlign': 'center'}"
+        :data="data"
+        border
+        :height="tableHeight"
+        style="width: 100%">
+        <el-table-column
+          label="序号"
+          width="80">
+          <template slot-scope="scope">
+            {{scope.$index + 1}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="code"
+          label="不良编号"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="type"
+          label="不良分类">
+          <template slot-scope="scope">
+            {{typeMap[scope.row.type]}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="designation"
+          label="品番号">
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="品名">
+        </el-table-column>
+        <el-table-column
+          label="发生地点">
+          <template slot-scope="scope">
+            {{triggerAddressMap[scope.row.triggerAddress]}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="发生工序">
+          <template slot-scope="scope">
+            {{triggerProcessMap[scope.row.triggerProcess]}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="findQuantity"
+          label="发现数量">
+        </el-table-column>
+        <el-table-column
+          prop="level"
+          label="不良等级">
+          <template slot-scope="scope">
+            {{levelMap[scope.row.level]}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="content"
+          label="不良内容">
+        </el-table-column>
+        <el-table-column
+          prop="dutyDept"
+          min-width="200"
+          label="责任部门/厂家">
+        </el-table-column>
+        <el-table-column
+          prop="bpmStatus"
+          label="状态">
+          <template slot-scope="scope">
+            {{approveMap[scope.row.bpmStatus]}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="bpmNode"
+          min-width="200"
+          label="当前业务环节">
+        </el-table-column>
+        <el-table-column
+          prop="createUserName"
+          label="提交人">
+        </el-table-column>
+        <el-table-column
+          prop="createTime"
+          min-width="200"
+          label="提交时间">
+        </el-table-column>
+        <el-table-column
+          width = "140"
+          label="操作">
+          <template slot-scope="scope">
+            <div style="display: flex; justify-content: space-around;">
+                <el-link :underline="false" v-if="scope.row.bpmStatus === 0"  type="primary" @click="handlerSelfBack(scope.row)">撤回</el-link>
+                <el-link :underline="false"  type="primary">详情</el-link>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
   </basic-container>
 </template>
 
 <script>
-  import {mapGetters} from "vuex";
-
+  import TagSelect from "./component/tag_select";
+  import {processLowPage, processLowSelfBack} from "../../../api/business/process_low/process_low";
   export default {
-    name: "lowList",
+    name: "low_list",
+    components: {TagSelect},
     data() {
       return {
-        form: {},
+        windowHeight: 0,
+        activeTag: -1,
+        tagData: [
+          {label: "全部", value: -1},
+          {label: "自撤回", value: 0, count: 100},
+          {label: "已驳回", value: 1, count: 100},
+          {label: "进行中", value: 2, count: 100},
+          {label: "已办结", value: 3, count: 100},
+        ],
         query: {},
-        loading: true,
+        typeDict: [
+          {label: "外购件", value: 0},
+          {label: "内购件", value: 1},
+          {label: "其他", value: 2},
+        ],
+        triggerAddressDict: [
+          {value: 0, label: "TNGA#1"},
+          {value: 1, label: "TNGA#2"},
+          {value: 2, label: "TNGA#3"},
+          {value: 3, label: "TNGA#4"},
+          {value: 4, label: "TNGA#5"},
+          {value: 5, label: "TNGA#6"},
+        ],
+        apparatusTypeDict: [
+          {value: 0, label: "TNGA2.0"},
+        ],
+        data: [],
         page: {
-          pageSize: 10,
-          currentPage: 1,
-          total: 0
+          current: 1,
+          size: 10,
+          total: 0,
         },
-        selectionList: [],
-        option: {
-          height: 'auto',
-          calcHeight: 30,
-          tip: false,
-          searchShow: true,
-          searchMenuSpan: 6,
-          border: true,
-          index: true,
-          viewBtn: true,
-          selection: true,
-          dialogClickModal: false,
-          column: [
-            {
-              label: "应用id",
-              prop: "clientId",
-              search: true,
-              rules: [{
-                required: true,
-                message: "请输入客户端id",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "应用密钥",
-              prop: "clientSecret",
-              search: true,
-              rules: [{
-                required: true,
-                message: "请输入客户端密钥",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "授权类型",
-              prop: "authorizedGrantTypes",
-              type: "checkbox",
-              value: "refresh_token,password,authorization_code",
-              dicData: [
-                {
-                  label: "refresh_token",
-                  value: "refresh_token"
-                },
-                {
-                  label: "password",
-                  value: "password"
-                },
-                {
-                  label: "authorization_code",
-                  value: "authorization_code"
-                },
-                {
-                  label: "captcha",
-                  value: "captcha"
-                },
-                {
-                  label: "social",
-                  value: "social"
-                }
-              ],
-              rules: [{
-                required: true,
-                message: "请输入授权类型",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "授权范围",
-              prop: "scope",
-              value: "all",
-              rules: [{
-                required: true,
-                message: "请输入授权范围",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "令牌秒数",
-              prop: "accessTokenValidity",
-              type: "number",
-              value: 3600,
-              rules: [{
-                required: true,
-                message: "请输入令牌过期秒数",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "刷新秒数",
-              prop: "refreshTokenValidity",
-              type: "number",
-              value: 604800,
-              hide: true,
-              rules: [{
-                required: true,
-                message: "请输入刷新令牌过期秒数",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "回调地址",
-              prop: "webServerRedirectUri",
-              hide: true,
-              rules: [{
-                required: true,
-                message: "请输入回调地址",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "资源集合",
-              prop: "resourceIds",
-              hide: true,
-              rules: [{
-                message: "请输入资源集合",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "权限",
-              prop: "authorities",
-              hide: true,
-              rules: [{
-                message: "请输入权限",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "自动授权",
-              prop: "autoapprove",
-              hide: true,
-              rules: [{
-                message: "请输入自动授权",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "附加说明",
-              hide: true,
-              prop: "additionalInformation",
-              span: 24,
-              rules: [{
-                message: "请输入附加说明",
-                trigger: "blur"
-              }]
-            },
-          ]
-        },
-        data: []
+        typeMap: {0: "外购件", 1: "内购价", 2: "其他"},
+        triggerAddressMap: {0: "TNGA#1", 1: "TNGA#2", 2: "TNGA#3", 3: "TNGA#4", 4: "TNGA#5", 5: "TNGA#6"},
+        triggerProcessMap: {0: "铸造钢体", 1: "铸造缸盖", 2: "缸盖加工", 3: "缸体加工", 4: "曲轴加工", 5: "连杆加工", 6: "凸轮轴加工"},
+        levelMap: {0: "R", 1: "S", 2: "A", 3: "B", 4: "C", 5: "批量", 6: "停线"},
+        approveMap: {0: "待审批", 1: "审批中", 2: "已结案", 3: "退回", 4: "自撤回"},
+      }
+    },
+    mounted() {
+      this.windowHeight = document.body.clientHeight;
+    },
+    methods: {
+      onLoad() {
+        processLowPage(this.page.current, this.page.size, this.query).then(res => {
+          let data = res.data.data;
+          this.data.splice(0, this.data.length);
+          this.data = data.records;
+          this.page.total = data.total;
+        })
+      },
+      handlerQueryReset() {
+        this.query = {};
+        this.activeTag = -1;
+        this.$forceUpdate();
+        this.onLoad();
+      },
+      handlerSwitchTag(tag) {
+        this.activeTag = tag.value;
+        this.query.bpmStatusFilter = tag.value;
+        this.onLoad();
+      },
+      handlerSelfBack(row) {
+        this.$confirm("是否确定撤回?", "提示", {confirmButtonText: "确定", cancelButtonText: "取消", type: "warning"}).then(() => {
+          processLowSelfBack(row.id).then(() => {
+            this.$message({type: "success", message: "撤回成功"});
+            this.onLoad();
+          })
+        });
       }
     },
     computed: {
-      ...mapGetters(["permission"]),
-      permissionList() {
-        return {
-
-        };
-      },
-      ids() {
-        let ids = [];
-        this.selectionList.forEach(ele => {
-          ids.push(ele.id);
-        });
-        return ids.join(",");
+      tableHeight() {
+        return (this.windowHeight - 230) + "px";
       }
     },
-    methods: {
-      searchReset() {
-        this.query = {};
-        this.onLoad(this.page);
-      },
-      searchChange(params, done) {
-        this.query = params;
-        this.page.currentPage = 1;
-        this.onLoad(this.page, params);
-        done();
-      },
-      selectionChange(list) {
-        this.selectionList = list;
-      },
-      selectionClear() {
-        this.selectionList = [];
-        this.$refs.crud.toggleSelection();
-      },
-      handleDelete() {
-        if (this.selectionList.length === 0) {
-          this.$message.warning("请选择至少一条数据");
-          return;
-        }
-        this.$confirm("确定将选择数据删除?", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
-            return remove(this.ids);
-          })
-          .then(() => {
-            this.onLoad(this.page);
-            this.$message({
-              type: "success",
-              message: "操作成功!"
-            });
-            this.$refs.crud.toggleSelection();
-          });
-      },
-      beforeOpen(done, type) {
-        if (["edit", "view"].includes(type)) {
-          getDetail(this.form.id).then(res => {
-            this.form = res.data.data;
-          });
-        }
-        done();
-      },
-      currentChange(currentPage) {
-        this.page.currentPage = currentPage;
-      },
-      sizeChange(pageSize) {
-        this.page.pageSize = pageSize;
-      },
-      refreshChange() {
-        this.onLoad(this.page, this.query);
-      },
-      onLoad(page, params = {}) {
-        this.loading = true;
-        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
-          const data = res.data.data;
-          this.page.total = data.total;
-          this.data = data.records;
-          this.loading = false;
-          this.selectionClear();
-        });
-      }
+    created() {
+      this.onLoad();
     }
   }
 </script>

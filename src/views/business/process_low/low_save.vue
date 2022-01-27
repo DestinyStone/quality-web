@@ -178,11 +178,11 @@
                 label="附件名称">
               </el-table-column>
               <el-table-column
-                prop="createUser"
+                prop="createUserName"
                 label="操作人">
               </el-table-column>
               <el-table-column
-                prop="createDept"
+                prop="createDeptName"
                 label="所属部门">
               </el-table-column>
               <el-table-column

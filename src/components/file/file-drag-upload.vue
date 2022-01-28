@@ -1,24 +1,34 @@
 <template>
-  <div>
+  <div style="display: flex;">
     <el-upload
       :http-request="handlerUpload"
       :on-remove="handlerRemove"
       :show-file-list="false"
+      drag
       :file-list="fileList"
       :limit="limit">
-      <div style="display: flex;">
-        <i><el-button size="mini" type="primary">点击上传</el-button></i>
-        <div @click.stop style="margin-left: 20px;">
-          <div v-if="file.name !== null && file.name !== undefined">
-            {{file.name}}
-            <i @click="handlerRemove" class="el-icon-close"/>
-          </div>
-          <div style="color: #C0C4CC;" v-if="validatenull(file)">
-            未选择任何文件
-          </div>
-        </div>
+      <div>
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">请粘贴图片显示区</div>
+        <div class="el-upload__tip" slot="tip"></div>
       </div>
+<!--      <div style="display: flex;">-->
+<!--        <i><el-button size="mini" type="primary">点击上传</el-button></i>-->
+<!--        <div @click.stop style="margin-left: 20px;">-->
+<!--          <div v-if="file.name !== null && file.name !== undefined">-->
+<!--            {{file.name}}-->
+<!--            <i @click="handlerRemove" class="el-icon-close"/>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
     </el-upload>
+    <div v-if="!validatenull(file)" >
+      <el-image
+        :src="file.url"
+        style="height: 180px; margin-left: 40px; border-radius: 10px"
+        :preview-src-list="[file.url]"
+        fit="contain"></el-image>
+    </div>
   </div>
 </template>
 
@@ -26,7 +36,7 @@
   import {uploadFile} from "../../api/business/file/file";
 
   export default {
-    name: "fileUpload",
+    name: "fileDragUpload",
     props: {
       file: {
         type: Object,
@@ -38,7 +48,6 @@
     data() {
       return {
         fileCount: 0,
-        limit: 1,
         fileList: [],
       }
     },

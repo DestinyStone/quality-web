@@ -2,206 +2,218 @@
   <basic-container>
     <fix-color-title>不良录入</fix-color-title>
     <el-divider></el-divider>
-    <div style="width: 90%; min-width: 900px; margin-top: 60px;">
-      <div style="width: 80%; margin: 0 auto;">
+    <div style=" margin-top: 60px;">
+      <div style=" margin: 0 auto;">
         <el-form :model="form" :rules="rules" ref="form" label-width="240px">
-          <el-form-item label="标题" prop="title">
-            <el-input v-model="form.title" placeholder="请输入标题"></el-input>
-          </el-form-item>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="不良分类" prop="type">
-                <div style="width: 300px;">
-                  <el-radio v-model="form.type" :label="0">外购件</el-radio>
-                  <el-radio v-model="form.type" :label="1">内制件</el-radio>
-                  <el-radio v-model="form.type" :label="2">其他</el-radio>
+          <div style="font-weight: 700; margin-left: 100px;">不良现状</div>
+          <div style="width: 90%;">
+            <div style="width: 70%;  min-width: 900px; margin: 0 auto;">
+              <el-form-item label="标题" prop="title">
+                <el-input v-model="form.title" placeholder="请输入标题"></el-input>
+              </el-form-item>
+              <el-row>
+                <el-col :span="12">
+                  <el-form-item label="不良分类" prop="type">
+                    <div style="width: 300px;">
+                      <el-radio v-model="form.type" :label="0">外购件</el-radio>
+                      <el-radio v-model="form.type" :label="1">内制件</el-radio>
+                      <el-radio v-model="form.type" :label="2">其他</el-radio>
+                    </div>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="不良等级" prop="level">
+                    <el-select v-model="form.level" placeholder="请选择不良等级" style="width: 100%;">
+                      <el-option
+                        v-for="item in levelDict"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="12">
+                  <el-form-item label="发生地点" prop="triggerAddress">
+                    <el-select v-model="form.triggerAddress" placeholder="请选择发生地点" style="width: 100%;">
+                      <el-option
+                        v-for="item in triggerAddressDict"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="发生工序" prop="triggerProcess">
+                    <el-select v-model="form.triggerProcess" placeholder="请选择发生工序" style="width: 100%;">
+                      <el-option
+                        v-for="item in triggerProcessDict"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="12">
+                  <el-form-item label="品番号" prop="designation">
+                    <el-input v-model="form.designation" placeholder="请输入品番号"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="品名" prop="name">
+                    <el-input v-model="form.name" placeholder="请输入品名"></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="12">
+                  <el-form-item label="责任部门/厂家" prop="dutyDept">
+                    <el-input v-model="form.dutyDept" placeholder="请输入品番号"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="机型" prop="apparatusType">
+                    <el-select v-model="form.apparatusType" placeholder="请选择机型" style="width: 100%;">
+                      <el-option
+                        v-for="item in apparatusTypeDict"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="12">
+                  <el-form-item label="发现数量" prop="findQuantity">
+                    <el-input v-model="form.findQuantity"  placeholder="请输入发现数量"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="发现时间" prop="findTime">
+                    <el-date-picker
+                      format="yyyy-MM-dd"
+                      value-format="yyyy-MM-dd"
+                      style="width: 100%;"
+                      v-model="form.findTime"
+                      type="date"
+                      placeholder="请选择发现时间">
+                    </el-date-picker>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-form-item label="不良内容" prop="content">
+                <el-input v-model="form.content"   placeholder="请输入不良内容"></el-input>
+              </el-form-item>
+              <el-form-item label="拜托事项" prop="pleaseContent">
+                <el-input v-model="form.pleaseContent"
+                          type="textarea"
+                          :rows="4"
+                          resize="none"
+                          placeholder="请输入拜托事项"></el-input>
+              </el-form-item>
+              <el-form-item label="测量结果" prop="testResult">
+                <el-input v-model="form.testResult"
+                          type="textarea"
+                          :rows="6"
+                          resize="none"
+                          placeholder="请输入测量结果"></el-input>
+              </el-form-item>
+              <el-form-item label="关联部件确认(性能，作业等影响)" prop="correlationConfirm">
+                <el-input v-model="form.correlationConfirm"
+                          type="textarea"
+                          :rows="4"
+                          resize="none"
+                          placeholder="请输入关联部件确认"></el-input>
+              </el-form-item>
+              <el-form-item label="不良图示/测定报告(最多5张图片)" prop="imgReportIds">
+                <file-image-upload :file-list.sync="form.imgReportIds" :limit="5"/>
+              </el-form-item>
+              <el-form-item label="图片特殊说明" prop="imgRemark">
+                <el-input v-model="form.imgRemark"></el-input>
+              </el-form-item>
+              <el-form-item label="不良测定报告" prop="testReportFileId">
+                <file-upload :file.sync="form.testReportFileId"/>
+              </el-form-item>
+            </div>
+          </div>
+
+          <div style="font-weight: 700; margin-top: 100px; margin-left: 100px;">临时处理 <span style="color: #C0C4CC; font-weight: 100;">判断人: (xxA xxB不良临时对策方案必须经过科长以上认可)</span></div>
+          <div style="width: 90%; margin-top: 30px;">
+            <div  style="width: 70%;  min-width: 900px; margin: 0 auto;">
+              <el-form-item label="流出防止" prop="banOutflowRemark">
+                <el-input v-model="form.banOutflowRemark" placeholder="请输入流出防止"></el-input>
+              </el-form-item>
+              <el-form-item label="不良追溯" prop="formRemark">
+                <el-input v-model="form.formRemark"  placeholder="请输入不良追溯"></el-input>
+              </el-form-item>
+              <el-form-item label="生产对应" prop="productRemark">
+                <el-input v-model="form.productRemark" placeholder="请输入生产对应"></el-input>
+              </el-form-item>
+              <el-form-item label="异常件的返修方法, 关联部品的更换, 返修完毕的确认" prop="rebackFixConfirm">
+                <el-input v-model="form.rebackFixConfirm"
+                          type="textarea"
+                          :rows="4"
+                          resize="none" placeholder="请输入异常件的返修方法, 关联部品的更换, 返修完毕的确认"></el-input>
+              </el-form-item>
+              <el-form-item label="不良排查及隔离" prop="separateFileId">
+                <file-upload :file.sync="form.separateFileId"/>
+              </el-form-item>
+              <el-form-item label="变化点" prop="changeRemark">
+                <el-input v-model="form.changeRemark" placeholder="请输入变化点"></el-input>
+              </el-form-item>
+              <el-form-item label="是否发行业务通知书" prop="isBusinessFile">
+                <el-radio v-model="form.isBusinessFile" :label="1">是</el-radio>
+                <el-radio v-model="form.isBusinessFile" :label="0">否</el-radio>
+              </el-form-item>
+              <el-form-item label="相关附件" prop="busincessIdFiles" v-if="form.isBusinessFile === 1">
+                <div>
+                  <file-mult-upload :file-list.sync="form.busincessIdFiles" @upload="handlerBusincessUpload"/>
+                  <el-table
+                    :key="tableUpdate"
+                    :header-cell-style="{background: 'rgb(239, 245, 255)', 'textAlign': 'center'}"
+                    :cell-style="{'textAlign': 'center'}"
+                    :data="form.busincessIdFiles"
+                    border
+                    height="250"
+                    style="width: 100%">
+                    <el-table-column
+                      prop="name"
+                      show-overflow-tooltip
+                      label="附件名称">
+                    </el-table-column>
+                    <el-table-column
+                      prop="createUserName"
+                      label="操作人">
+                    </el-table-column>
+                    <el-table-column
+                      prop="createDeptName"
+                      label="所属部门">
+                    </el-table-column>
+                    <el-table-column
+                      prop="createTime"
+                      label="操作时间">
+                    </el-table-column>
+                    <el-table-column
+                      label="操作">
+                      <template slot-scope="scope">
+                        <el-link :underline="false"  type="danger" @click="removeBusincessIdFiles(scope.row)">删除</el-link>
+                      </template>
+                    </el-table-column>
+                  </el-table>
                 </div>
               </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="不良等级" prop="level">
-                <el-select v-model="form.level" placeholder="请选择不良等级" style="width: 100%;">
-                  <el-option
-                    v-for="item in levelDict"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="发生地点" prop="triggerAddress">
-                <el-select v-model="form.triggerAddress" placeholder="请选择发生地点" style="width: 100%;">
-                  <el-option
-                    v-for="item in triggerAddressDict"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="发生工序" prop="triggerProcess">
-                <el-select v-model="form.triggerProcess" placeholder="请选择发生工序" style="width: 100%;">
-                  <el-option
-                    v-for="item in triggerProcessDict"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="品番号" prop="designation">
-                <el-input v-model="form.designation" placeholder="请输入品番号"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="品名" prop="name">
-                <el-input v-model="form.name" placeholder="请输入品名"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="责任部门/厂家" prop="dutyDept">
-                <el-input v-model="form.dutyDept" placeholder="请输入品番号"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="机型" prop="apparatusType">
-                <el-select v-model="form.apparatusType" placeholder="请选择机型" style="width: 100%;">
-                  <el-option
-                    v-for="item in apparatusTypeDict"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="发现数量" prop="findQuantity">
-                <el-input v-model="form.findQuantity"  placeholder="请输入发现数量"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="发现时间" prop="findTime">
-                <el-date-picker
-                  format="yyyy-MM-dd"
-                  value-format="yyyy-MM-dd"
-                  style="width: 100%;"
-                  v-model="form.findTime"
-                  type="date"
-                  placeholder="请选择发现时间">
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-form-item label="不良内容" prop="content">
-            <el-input v-model="form.content"   placeholder="请输入不良内容"></el-input>
-          </el-form-item>
-          <el-form-item label="拜托事项" prop="pleaseContent">
-            <el-input v-model="form.pleaseContent"
-                      type="textarea"
-                      :rows="4"
-                      resize="none"
-                      placeholder="请输入拜托事项"></el-input>
-          </el-form-item>
-          <el-form-item label="测量结果" prop="testResult">
-            <el-input v-model="form.testResult"
-                      type="textarea"
-                      :rows="6"
-                      resize="none"
-                      placeholder="请输入测量结果"></el-input>
-          </el-form-item>
-          <el-form-item label="关联部件确认(性能，作业等影响)" prop="correlationConfirm">
-            <el-input v-model="form.correlationConfirm"
-                      type="textarea"
-                      :rows="4"
-                      resize="none"
-                      placeholder="请输入关联部件确认"></el-input>
-          </el-form-item>
-          <el-form-item label="不良图示/测定报告(最多5张图片)" prop="imgReportIds">
-            <file-image-upload :file-list.sync="form.imgReportIds" :limit="5"/>
-          </el-form-item>
-          <el-form-item label="图片特殊说明" prop="imgRemark">
-            <el-input v-model="form.imgRemark"></el-input>
-          </el-form-item>
-          <el-form-item label="不良测定报告" prop="testReportFileId">
-            <file-upload :file.sync="form.testReportFileId"/>
-          </el-form-item>
-          <el-form-item label="流出防止" prop="banOutflowRemark">
-            <el-input v-model="form.banOutflowRemark" placeholder="请输入流出防止"></el-input>
-          </el-form-item>
-          <el-form-item label="不良追溯" prop="formRemark">
-            <el-input v-model="form.formRemark"  placeholder="请输入不良追溯"></el-input>
-          </el-form-item>
-          <el-form-item label="生产对应" prop="productRemark">
-            <el-input v-model="form.productRemark" placeholder="请输入生产对应"></el-input>
-          </el-form-item>
-          <el-form-item label="异常件的返修方法, 关联部品的更换, 返修完毕的确认" prop="rebackFixConfirm">
-            <el-input v-model="form.rebackFixConfirm"
-                      type="textarea"
-                      :rows="4"
-                      resize="none" placeholder="请输入异常件的返修方法, 关联部品的更换, 返修完毕的确认"></el-input>
-          </el-form-item>
-          <el-form-item label="不良排查及隔离" prop="separateFileId">
-            <file-upload :file.sync="form.separateFileId"/>
-          </el-form-item>
-          <el-form-item label="变化点" prop="changeRemark">
-            <el-input v-model="form.changeRemark" placeholder="请输入变化点"></el-input>
-          </el-form-item>
-          <el-form-item label="是否发行业务通知书" prop="isBusinessFile">
-            <el-radio v-model="form.isBusinessFile" :label="1">是</el-radio>
-            <el-radio v-model="form.isBusinessFile" :label="0">否</el-radio>
-          </el-form-item>
-          <el-form-item label="相关附件" prop="busincessIdFiles" v-if="form.isBusinessFile === 1">
-            <div>
-              <file-mult-upload :file-list.sync="form.busincessIdFiles" @upload="handlerBusincessUpload"/>
-              <el-table
-                :key="tableUpdate"
-                :header-cell-style="{background: 'rgb(239, 245, 255)', 'textAlign': 'center'}"
-                :cell-style="{'textAlign': 'center'}"
-                :data="form.busincessIdFiles"
-                border
-                height="250"
-                style="width: 100%">
-                <el-table-column
-                  prop="name"
-                  show-overflow-tooltip
-                  label="附件名称">
-                </el-table-column>
-                <el-table-column
-                  prop="createUserName"
-                  label="操作人">
-                </el-table-column>
-                <el-table-column
-                  prop="createDeptName"
-                  label="所属部门">
-                </el-table-column>
-                <el-table-column
-                  prop="createTime"
-                  label="操作时间">
-                </el-table-column>
-                <el-table-column
-                  label="操作">
-                  <template slot-scope="scope">
-                    <el-link :underline="false"  type="danger" @click="removeBusincessIdFiles(scope.row)">删除</el-link>
-                  </template>
-                </el-table-column>
-              </el-table>
             </div>
-          </el-form-item>
+          </div>
+
         </el-form>
         <div style="display: flex; justify-content: center; margin-top: 20px;">
           <div>

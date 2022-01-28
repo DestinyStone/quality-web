@@ -1,6 +1,6 @@
 <template>
   <div style="display: flex; white-space: nowrap; font-size: 12px;" class="tag-select">
-    <div v-for="item in data" @click="handlerClick(item)" :class="{active: item.value === active}">
+    <div v-for="item in data" @click="handlerClick(item)" :key="item" :class="{active: item.value === active}">
       {{item.label}}<span v-if="!validatenull(item.count)">({{item.count}})</span>
     </div>
   </div>

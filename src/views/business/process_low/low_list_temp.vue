@@ -28,7 +28,7 @@
   import {mapGetters} from "vuex";
 
   export default {
-    name: "lowList",
+    name: "processLowList",
     data() {
       return {
         form: {},

@@ -39,6 +39,8 @@
       </div>
       <el-divider></el-divider>
       <el-table
+        v-loading="loading"
+        element-loading-text="拼命加载中"
         :header-cell-style="{background: '#fafafa', 'textAlign': 'center', fontWeight: 700, color: 'rgba(0,0,0,.85)',fontSize: '12px'}"
         :cell-style="{'textAlign': 'center'}"
         :data="data"
@@ -136,18 +138,33 @@
           </template>
         </el-table-column>
       </el-table>
+      <div style="display: flex; justify-content: flex-end; padding: 30px;">
+        <div style="display: flex; justify-content: center; flex-flow: column">共 {{page.total}} 条</div>
+        <el-pagination
+          style="margin-left: 30px;"
+          background
+          layout="sizes, prev, pager, next"
+          @current-change="onLoad"
+          @size-change="onLoad"
+          :page-sizes="[10, 20, 30]"
+          :current-page.sync="page.current"
+          :page-size.sync="page.size"
+          :total="page.total">
+        </el-pagination>
+      </div>
     </div>
   </basic-container>
 </template>
 
 <script>
-  import TagSelect from "./component/tag_select";
+  import TagSelect from "../../../components/min/tag_select";
   import {processLowPage, processLowSelfBack} from "../../../api/business/process_low/process_low";
   export default {
-    name: "low_list",
+    name: "processLowList",
     components: {TagSelect},
     data() {
       return {
+        loading: true,
         windowHeight: 0,
         activeTag: -1,
         tagData: [
@@ -192,11 +209,13 @@
     },
     methods: {
       onLoad() {
+        this.loading = true;
         processLowPage(this.page.current, this.page.size, this.query).then(res => {
           let data = res.data.data;
           this.data.splice(0, this.data.length);
           this.data = data.records;
           this.page.total = data.total;
+          this.loading = false;
         })
       },
       handlerQueryReset() {
@@ -221,7 +240,7 @@
     },
     computed: {
       tableHeight() {
-        return (this.windowHeight - 230) + "px";
+        return (this.windowHeight - 280) + "px";
       }
     },
     created() {

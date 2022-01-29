@@ -142,24 +142,24 @@
                 trigger: "click"
               }]
             },
-            {
-              label: "机构类型",
-              type: "select",
-              dicUrl: "/api/blade-system/dict/dictionary?code=org_category",
-              props: {
-                label: "dictValue",
-                value: "dictKey"
-              },
-              dataType: "number",
-              width: 120,
-              prop: "deptCategory",
-              slot: true,
-              rules: [{
-                required: true,
-                message: "请输入机构类型",
-                trigger: "blur"
-              }]
-            },
+            // {
+            //   label: "机构类型",
+            //   type: "select",
+            //   dicUrl: "/api/blade-system/dict/dictionary?code=org_category",
+            //   props: {
+            //     label: "dictValue",
+            //     value: "dictKey"
+            //   },
+            //   dataType: "number",
+            //   width: 120,
+            //   prop: "deptCategory",
+            //   slot: true,
+            //   rules: [{
+            //     required: true,
+            //     message: "请输入机构类型",
+            //     trigger: "blur"
+            //   }]
+            // },
             {
               label: "排序",
               prop: "sort",

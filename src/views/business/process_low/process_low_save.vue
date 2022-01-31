@@ -165,7 +165,10 @@
                           resize="none" placeholder="请输入异常件的返修方法, 关联部品的更换, 返修完毕的确认"></el-input>
               </el-form-item>
               <el-form-item label="不良排查及隔离" prop="separateFileId">
-                <file-upload :file.sync="form.separateFileId"/>
+                <file-drag-upload :file.sync="form.separateFileId"/>
+              </el-form-item>
+              <el-form-item label="不良排查及隔离附件" prop="separateFileDependId">
+                <file-upload :file.sync="form.separateFileDependId"/>
               </el-form-item>
               <el-form-item label="变化点" prop="changeRemark">
                 <el-input v-model="form.changeRemark" placeholder="请输入变化点"></el-input>
@@ -200,6 +203,7 @@
                     </el-table-column>
                     <el-table-column
                       prop="createTime"
+                      width="180"
                       label="操作时间">
                     </el-table-column>
                     <el-table-column
@@ -237,9 +241,10 @@
   import {processLowSave} from "../../../api/business/process_low/process_low";
   import FileMultUpload from "../../../components/file/file-mult-upload";
   import FixColorTitle from "../../../components/min/fix_color_title";
+  import FileDragUpload from "../../../components/file/file-drag-upload";
   export default {
     name: "processLowSave",
-    components: {FixColorTitle, FileMultUpload, FileUpload, FileImageUpload},
+    components: {FileDragUpload, FixColorTitle, FileMultUpload, FileUpload, FileImageUpload},
     data() {
       return {
         form: {},
@@ -343,11 +348,16 @@
             formCopy.testReportFileId = this.form.testReportFileId.id;
             formCopy.testReportFileName = this.form.testReportFileId.name;
           }
-
           if (!this.validatenull(this.form.separateFileId)) {
             formCopy.separateFileId = this.form.separateFileId.id;
             formCopy.separateFileName = this.form.separateFileId.name;
           }
+
+          if (!this.validatenull(this.form.separateFileDependId)) {
+            formCopy.separateFileDependId = this.form.separateFileDependId.id;
+            formCopy.separateFileDependName = this.form.separateFileDependId.name;
+          }
+
 
           if (this.validatenull(formCopy.busincessIdFiles)) {
             formCopy.busincessIdFiles = [];
@@ -371,9 +381,10 @@
       save(data) {
         processLowSave(data).then(() => {
           this.$message({type: "success", message: "新增成功"});
+          this.$router.push({path: "/business/process_low/process_low_list"})
         })
       },
-    },
+  },
     created() {
       this.init();
     }

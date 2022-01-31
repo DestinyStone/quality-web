@@ -133,7 +133,7 @@
           <template slot-scope="scope">
             <div style="display: flex; justify-content: space-around;">
                 <el-link :underline="false" v-if="scope.row.bpmStatus === 0"  type="primary" @click="handlerSelfBack(scope.row)">撤回</el-link>
-                <el-link :underline="false"  type="primary">详情</el-link>
+                <el-link :underline="false"  type="primary" v-if="scope.row.bpmStatus !== 4">详情</el-link>
             </div>
           </template>
         </el-table-column>
@@ -158,7 +158,7 @@
 
 <script>
   import TagSelect from "../../../components/min/tag_select";
-  import {processLowPage, processLowSelfBack} from "../../../api/business/process_low/process_low";
+  import {processLowPage, processLowQuality, processLowSelfBack} from "../../../api/business/process_low/process_low";
   export default {
     name: "processLowList",
     components: {TagSelect},
@@ -169,10 +169,10 @@
         activeTag: -1,
         tagData: [
           {label: "全部", value: -1},
-          {label: "自撤回", value: 0, count: 100},
-          {label: "已驳回", value: 1, count: 100},
-          {label: "进行中", value: 2, count: 100},
-          {label: "已办结", value: 3, count: 100},
+          {label: "自撤回", value: 0},
+          {label: "已驳回", value: 1},
+          {label: "进行中", value: 2},
+          {label: "已办结", value: 3},
         ],
         query: {},
         typeDict: [
@@ -208,6 +208,15 @@
       this.windowHeight = document.body.clientHeight;
     },
     methods: {
+      onLoadQuality() {
+        processLowQuality().then(res => {
+          let data = res.data.data;
+          this.tagData[1].count = data.selfBack;
+          this.tagData[2].count = data.back;
+          this.tagData[3].count = data.process;
+          this.tagData[4].count = data.finish;
+        })
+      },
       onLoad() {
         this.loading = true;
         processLowPage(this.page.current, this.page.size, this.query).then(res => {
@@ -245,6 +254,7 @@
     },
     created() {
       this.onLoad();
+      this.onLoadQuality();
     }
   }
 </script>

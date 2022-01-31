@@ -34,6 +34,12 @@
     methods: {
       handlerSwitch() {
         this.status = !this.status;
+      },
+      close() {
+        this.status = false;
+      },
+      open() {
+        this.status = true;
       }
     },
     created() {

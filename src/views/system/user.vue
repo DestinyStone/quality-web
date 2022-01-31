@@ -1,10 +1,12 @@
 <template>
   <el-row>
     <el-col :span="5">
-      <div class="box">
-        <el-scrollbar>
-          <basic-container>
-            <avue-tree :option="treeOption" :data="treeData" @node-click="nodeClick"/>
+      <div class="box" style="height: 1000px">
+        <el-scrollbar >
+          <basic-container >
+            <div :style="{height: userHeight}">
+              <avue-tree :option="treeOption" :data="treeData" @node-click="nodeClick"/>
+            </div>
           </basic-container>
         </el-scrollbar>
       </div>
@@ -196,6 +198,7 @@
         }
       };
       return {
+        windowHeight: 0,
         form: {},
         search:{},
         roleBox: false,
@@ -693,12 +696,17 @@
         });
         return ids.join(",");
       },
+      userHeight() {
+        return this.windowHeight - 190 + "px";
+      }
     },
     mounted() {
       // 非租户模式默认加载管理组数据
       if (!website.tenantMode) {
         this.initData(website.tenantId);
       }
+
+      this.windowHeight = document.body.clientHeight;
     },
     methods: {
       nodeClick(data) {

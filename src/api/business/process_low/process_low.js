@@ -1,5 +1,22 @@
 import request from '@/router/axios';
 
+export const processLowApproveReSubmit= (id, data) => {
+  return request({
+    url: `/api/business/process/low/re/submit/${id}`,
+    method: 'post',
+    data: data
+  })
+}
+export const processLowApprovePass= (id) => {
+  return request({
+    url: '/api/business/process/low/approve/pass',
+    method: 'get',
+    params: {
+      id
+    }
+  })
+}
+
 export const processLowSelfBack = (id) => {
   return request({
     url: '/api/business/process/low/self/back',
@@ -51,9 +68,9 @@ export const processLowDetail = (id) => {
   })
 }
 
-export const processLowEditCheck = (id, bpmId, data) => {
+export const processLowEditCheck = (id, data) => {
   return request({
-    url: `/api/business/process/low/edit/check/${id}/${bpmId}`,
+    url: `/api/business/process/low/edit/check/${id}`,
     method: 'post',
     data: data
   })
@@ -75,3 +92,9 @@ export const processLowQuality = () => {
 }
 
 
+export const processLowApproveQuality = () => {
+  return request({
+    url: '/api/business/process/low/approve/quality',
+    method: 'get',
+  })
+}

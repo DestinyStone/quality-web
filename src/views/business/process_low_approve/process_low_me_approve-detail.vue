@@ -123,7 +123,7 @@
                 <td class="message-value">
                   <el-image
                     style="width: 100px; height: 100px"
-                    :src="data.separateFile.url"
+                    :src="data.separateFile || data.separateFile.url"
                     fit="contain"></el-image>
                 </td>
                 <td class="message-title">不良排查及隔离图片源文件</td>
@@ -258,80 +258,6 @@
           </el-form-item>
         </el-form>
       </extensible-container>
-      <!--<extensible-container title="原因调查, 对策实施填写" :default-status="true">-->
-        <!--<table-->
-          <!--class="message-table"-->
-          <!--style="width: 100%;"-->
-        <!--&gt;-->
-          <!--<col width="15%" />-->
-          <!--<col width="35%" />-->
-          <!--<col width="15%" />-->
-          <!--<col width="35%" />-->
-          <!--<tr>-->
-            <!--<td class="message-title">不良分析调查</td>-->
-            <!--<td class="message-value">222222</td>-->
-            <!--<td class="message-title">不良分析图片</td>-->
-            <!--<td class="message-value">3333</td>-->
-          <!--</tr>-->
-          <!--<tr>-->
-            <!--<td class="message-title">发生原因类型</td>-->
-            <!--<td class="message-value">222222</td>-->
-            <!--<td class="message-title">发生原因</td>-->
-            <!--<td class="message-value">3333</td>-->
-          <!--</tr>-->
-          <!--<tr>-->
-            <!--<td class="message-title">发生对策</td>-->
-            <!--<td class="message-value">222222</td>-->
-            <!--<td class="message-title">流程原因</td>-->
-            <!--<td class="message-value">3333</td>-->
-          <!--</tr>-->
-          <!--<tr>-->
-            <!--<td class="message-title">流出对策</td>-->
-            <!--<td class="message-value">222222</td>-->
-            <!--<td class="message-title">是否上次标准类型更新</td>-->
-            <!--<td class="message-value">3333</td>-->
-          <!--</tr>-->
-        <!--</table>-->
-        <!--<div style=" font-weight: 700; margin-top: 40px;">附件</div>-->
-        <!--<div>-->
-          <!--<table-->
-            <!--class="message-table"-->
-            <!--style="width: 100%;"-->
-          <!--&gt;-->
-            <!--<col width="15%" />-->
-            <!--<col width="35%" />-->
-            <!--<col width="15%" />-->
-            <!--<col width="35%" />-->
-            <!--<tr>-->
-              <!--<td class="message-title">流出防止</td>-->
-              <!--<td class="message-value">222222</td>-->
-              <!--<td class="message-title">不良追溯</td>-->
-              <!--<td class="message-value">3333</td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-              <!--<td class="message-title">生成对应</td>-->
-              <!--<td class="message-value">222222</td>-->
-              <!--<td class="message-title">异常件的返修方法, 关联部品的更换， 返修完毕的确认</td>-->
-              <!--<td class="message-value">3333</td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-              <!--<td class="message-title">不良排查及隔离(外购品, 毛坯, 在制品, 完成品, 分总成, 发动机)</td>-->
-              <!--<td class="message-value">222222</td>-->
-              <!--<td class="message-title">变化点(与不良内容有因果关系的变化点)</td>-->
-              <!--<td class="message-value">3333</td>-->
-            <!--</tr>-->
-          <!--</table>-->
-        <!--</div>-->
-        <!--<el-form :model="causeForm" :rules="causeRules" ref="causeForm" label-width="150px">-->
-          <!--<div style=" font-weight: 700; margin-top: 40px;">附件上传</div>-->
-          <!--<el-form-item label="放行通知书附件" prop="caseType" style="margin-top: 20px;">-->
-            <!--<file-upload/>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item label="业务通知书附件" prop="caseType">-->
-            <!--<file-upload/>-->
-          <!--</el-form-item>-->
-        <!--</el-form>-->
-      <!--</extensible-container>-->
     </div>
     <div>
       <el-divider></el-divider>
@@ -496,7 +422,6 @@
       init() {
         processLowDetail(this.id).then(res => {
           this.data = res.data.data;
-          console.log(this.data);
         })
       }
     },

@@ -4,12 +4,12 @@
              ref="form"
              :rules="rules"
              label-width="120px">
-      <el-form-item label="驳回原因" prop="backCause">
-        <el-input v-model="form.backCause"
+      <el-form-item label="催办内容" prop="content">
+        <el-input v-model="form.content"
                   type="textarea"
                   :rows="4"
                   resize="none"
-                  placeholder="驳回原因"></el-input>
+                  placeholder="请输入催办内容"></el-input>
       </el-form-item>
     </el-form>
   </div>
@@ -17,15 +17,12 @@
 
 <script>
   export default {
-    name: "approveReject",
+    name: "approveUrge",
     props: {
       bpmId: {
         type: String,
       },
-      busId: {
-        type: String
-      },
-      reject: {
+      save: {
         type: Function,
       }
     },
@@ -33,7 +30,7 @@
       return {
         form: {},
         rules: {
-          backCause: [{required: true, message: '请输入延迟说明', trigger: 'blur'},],
+          content: [{required: true, message: '请输入催办内容', trigger: 'blur'},],
         }
       }
     },
@@ -43,8 +40,8 @@
           if (!valid) {
             return;
           }
-          this.form.busId = this.busId;
-          this.reject(this.form);
+          this.form.bpmId = this.bpmId;
+          this.save(this.form);
         })
       }
     }

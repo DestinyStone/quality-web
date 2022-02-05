@@ -34,6 +34,9 @@
         fileCount: 0,
       }
     },
+    created() {
+      this.fileCount = this.fileList.length;
+    },
     watch: {
       fileList() {
         this.$emit("update:fileList", this.fileList);

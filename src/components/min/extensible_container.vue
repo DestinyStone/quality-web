@@ -24,7 +24,7 @@
       },
       defaultStatus: {
         type: Boolean
-      }
+      },
     },
     data() {
       return {
@@ -66,13 +66,11 @@
 }
 .extensible-container .content {
   border: 1px solid #F2F6FC;
-  overflow: hidden;
+  overflow: auto;
   transition: max-height 0.3s;
   max-height: 0;
 }
 .extensible-container .content-open {
-  overflow: auto;
   max-height: 900px;
-  padding-bottom: 50px;
 }
 </style>

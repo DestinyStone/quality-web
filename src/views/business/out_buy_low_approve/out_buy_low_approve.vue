@@ -11,10 +11,11 @@
         </div>
         <div style="margin-top: 20px;">
           <el-table
+            :key="activeTag"
             v-loading="loading"
             element-loading-text="拼命加载中"
             :header-cell-style="{background: '#fafafa', 'textAlign': 'center', fontWeight: 700, color: 'rgba(0,0,0,.85)',fontSize: '12px'}"
-            :cell-style="{'textAlign': 'center'}"
+            :cell-style="{'textAlign': 'center',}"
             :data="data"
             border
             :height="tableHeight"
@@ -73,44 +74,66 @@
               label="推进状态">
               <template slot-scope="scope">
                 <div>
-                  <el-tag v-if="scope.row.bpmPushStatus===0" type="success">{{pushStatusMap[scope.row.bpmPushStatus]}}</el-tag>
-                  <el-tag v-if="scope.row.bpmPushStatus===1" type="danger">{{pushStatusMap[scope.row.bpmPushStatus]}}</el-tag>
-                  <el-tag v-if="scope.row.bpmPushStatus===2" type="warning">{{pushStatusMap[scope.row.bpmPushStatus]}}</el-tag>
+                  <el-tag size="small" v-if="scope.row.bpmPushStatus===0" type="success">{{pushStatusMap[scope.row.bpmPushStatus]}}</el-tag>
+                  <el-tag size="small" v-if="scope.row.bpmPushStatus===1" type="danger">{{pushStatusMap[scope.row.bpmPushStatus]}}</el-tag>
+                  <el-tag size="small" v-if="scope.row.bpmPushStatus===2" type="warning">{{pushStatusMap[scope.row.bpmPushStatus]}}</el-tag>
                 </div>
               </template>
             </el-table-column>
             <el-table-column
               prop="startTime"
               min-width="200"
+              v-if="activeTag !== 2"
               label="接受时间">
             </el-table-column>
             <el-table-column
               prop="endTime"
               min-width="200"
+              v-if="activeTag !== 2"
               label="处理截至时间">
             </el-table-column>
             <el-table-column
-              prop="createTime"
+              v-if="activeTag !== 2"
+              prop="urgeQuality"
               min-width="200"
-              label="催办信息">
+              label="催办消息">
               <template slot-scope="scope">
-                // TODO
+                <div style="color: #2d8cf0; cursor: pointer;" @click="handlerOpenUrgeDetail(scope.row)">
+                  {{scope.row.urgeQuality}}条
+                </div>
               </template>
             </el-table-column>
             <el-table-column
+              v-if="activeTag === 2"
+              prop="putOfRemark"
+              min-width="200"
+              label="延期消息">
+            </el-table-column>
+            <el-table-column
+              v-if="activeTag === 2"
+              min-width="200"
+              label="延期处理时间">
+              <template slot-scope="scope">
+                {{validatenull(scope.row.putOfRemark) ? "" : scope.row.endTime}}
+              </template>
+            </el-table-column>
+
+            <el-table-column
               width = "140"
+              v-if="activeTag === 0 || activeTag === 2"
+              fixed="right"
               label="操作">
               <template slot-scope="scope">
                 <div style="display: flex; justify-content: space-around;">
                   <el-link :underline="false" v-if="scope.row.bpmPushStatus === 1 && activeTag === 0"  type="primary" @click="handlerPutOf(scope.row)">延期</el-link>
                   <el-link :underline="false"
                            v-if="(scope.row.bpmPushStatus === 0 || scope.row.bpmPushStatus === 2)
-                              && scope.row.processBpmStatus === 2
-                              && activeTag === 0
-                            "
+                            && scope.row.processBpmStatus === 2
+                            && activeTag === 0
+                          "
                            @click="handler(scope.row)"
                            type="primary">处理</el-link>
-                  <el-link type="primary" :underline="false" v-if="activeTag === 2">
+                  <el-link type="primary" @click="handlerOpenUrge(scope.row)" :underline="false" v-if="activeTag === 2">
                     催办
                   </el-link>
                 </div>
@@ -139,18 +162,38 @@
                  append-to-body>
         <put-of ref="putOf" :bpm-id="currentSelect.bpmId" v-if="showPutOfDialog" :save="handlerUpdatePutOf"/>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="showPutOfDialog = false">取 消</el-button>
-          <el-button type="primary" @click="handleTriggerPutOf">确 定</el-button>
+          <el-button size="small" @click="showPutOfDialog = false">取 消</el-button>
+          <el-button size="small" type="primary" @click="handleTriggerPutOf">确 定</el-button>
+       </span>
+      </el-dialog>
+      <el-dialog title="催办内容"
+                 :visible.sync="showUrgeDialog"
+                 append-to-body>
+          <approve-urge ref="urge" :bpm-id="currentSelect.bpmId" v-if="showUrgeDialog" :save="handlerSaveUrge"/>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="small" @click="showUrgeDialog = false">取 消</el-button>
+          <el-button size="small" type="primary" @click="handleTriggerUrgeDialog">确 定</el-button>
+       </span>
+      </el-dialog>
+      <el-dialog title="催办详情"
+                 :visible.sync="showUrgeDetail"
+                 width="50%"
+                 append-to-body>
+        <approve-urge-list :bpm-id="currentSelect.bpmId" v-if="showUrgeDetail"/>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="small" @click="showUrgeDetail = false">关 闭</el-button>
        </span>
       </el-dialog>
     </basic-container>
-    <process-low-me-approve-detail
-      v-if="showDetail"
-      :id="currentSelect.id"
-      :bpm-id="currentSelect.bpmId"
-      @close="handlerClose"
-      @refresh="handlerRefresh"
+    <approve-convert :bus-id="currentSelect.id"
+                     v-if="showDetail"
+                     :resource-type="currentSelect.resourceType"
+                     :flag="currentSelect.bpmFlag"
+                     @close="handlerClose"
+                     @refresh="onLoad"
     />
+    <!--<out-buy-low-approve-detail/>-->
+    <!--<process-low-me-approve-detail v-if="showDetail" :id="currentSelect.id" :bpm-id="currentSelect.bpmId" @close="handlerClose" @refresh="handlerRefresh"/>-->
   </div>
 
 </template>
@@ -158,13 +201,19 @@
 <script>
   import TagSelect from "../../../components/min/tag_select";
   import ExtensibleContainer from "../../../components/min/extensible_container";
-  import ProcessLowMeApproveDetail from "./process_low_me_approve-detail";
   import {processLowApprovePage, processLowApproveQuality} from "../../../api/business/process_low/process_low";
   import PutOf from "../components/put_of";
-  import {approvePutOf} from "../../../api/business/process/process";
+  import {approvePutOf, approveUrgeSave} from "../../../api/business/process/process";
+  import {qprApprovePage} from "../../../api/business/out_buy_low/qpr";
+  import OutBuyLowApproveDetail from "./out_buy_low_approve_detail";
+  import ApproveConvert from "../components/approve_convert";
+  import ApproveUrge from "../components/approve_urge";
+  import ApproveUrgeList from "../components/approve_urge_list";
   export default {
-    name: "processLowMeApprove",
-    components: {PutOf, ProcessLowMeApproveDetail, ExtensibleContainer, TagSelect},
+    name: "outBuyLowApprove",
+    components: {
+      ApproveUrgeList,
+      ApproveUrge, ApproveConvert, OutBuyLowApproveDetail, PutOf, ExtensibleContainer, TagSelect},
     data() {
       return{
         showMain: true,
@@ -193,6 +242,8 @@
         pushStatusMap: {0: "正常推进", 1: "已超期", 2: "已延期",},
         currentSelect: {},
         showPutOfDialog: false,
+        showUrgeDialog: false,
+        showUrgeDetail: false,
       }
     },
     mounted() {
@@ -204,6 +255,21 @@
       }
     },
     methods: {
+      handlerOpenUrgeDetail(row) {
+        this.currentSelect = row;
+        this.showUrgeDetail = true;
+      },
+      handlerOpenUrge(row) {
+        this.currentSelect = row;
+        this.showUrgeDialog = true;
+      },
+      handlerSaveUrge(form) {
+        approveUrgeSave(form).then(() => {
+          this.$message({type: "success", message: "催办成功"});
+          this.onLoad();
+          this.showUrgeDialog = false;
+        })
+      },
       handlerRefresh() {
         this.onLoad();
       },
@@ -216,6 +282,9 @@
         this.currentSelect = row;
         this.showMain = false;
         this.showDetail = true;
+      },
+      handleTriggerUrgeDialog() {
+        this.$refs['urge'].submit();
       },
       handleTriggerPutOf() {
         this.$refs['putOf'].submit();
@@ -238,7 +307,7 @@
       },
       onLoad() {
         this.loading = true;
-        processLowApprovePage(this.page.current, this.page.size, this.query).then(res => {
+        qprApprovePage(this.page.current, this.page.size, this.query).then(res => {
           let data = res.data.data;
           this.data = data.records;
           this.page.total = data.total;
@@ -262,9 +331,9 @@
 </script>
 
 <style>
-.process-low-me-approve .tag-select > div {
-  height: 40px;
-  line-height: 40px;
-  padding: 0 30px;
-}
+  .process-low-me-approve .tag-select > div {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 30px;
+  }
 </style>

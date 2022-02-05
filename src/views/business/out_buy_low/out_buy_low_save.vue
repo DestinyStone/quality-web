@@ -3,8 +3,8 @@
     <fix-color-title>QPR录入</fix-color-title>
     <el-divider></el-divider>
     <div style="width: 90%;">
-      <div style="width: 70%; min-width: 800px; margin: 0 auto; margin-top: 60px;">
-        <el-form :model="form" :rules="rules" ref="form" label-width="240px">
+      <div style="width: 70%; min-width: 800px; margin: 0 auto; margin-top: 30px;">
+        <el-form size="small" :model="form" :rules="rules" ref="form" label-width="240px">
           <el-form-item label="标题" prop="title">
             <el-input v-model="form.title" placeholder="请输入标题"></el-input>
           </el-form-item>
@@ -14,10 +14,8 @@
           <el-form-item label="品名" prop="name">
             <el-input v-model="form.name" placeholder="请输入品名"></el-input>
           </el-form-item>
-          <el-form-item label="机型" prop="apparatusTypes">
-            <el-checkbox-group v-model="form.apparatusTypes">
-              <el-checkbox :label="0">TNGA2.0</el-checkbox>
-            </el-checkbox-group>
+          <el-form-item label="机型" prop="apparatusType">
+              <el-radio v-model="form.apparatusType" :label="0">TNGA2.0</el-radio>
           </el-form-item>
           <el-form-item label="供应商名称" prop="dutyDept">
             <el-input v-model="form.dutyDept" placeholder="供应商名称"></el-input>
@@ -40,6 +38,9 @@
             <el-radio v-model="form.level" :label="4">C</el-radio>
             <el-radio v-model="form.level" :label="5">批量</el-radio>
             <el-radio v-model="form.level" :label="6">停线</el-radio>
+          </el-form-item>
+          <el-form-item label="不良数量" prop="findQuantity">
+            <el-input v-model="form.findQuantity" placeholder="请输入不良数量"></el-input>
           </el-form-item>
           <el-form-item label="发生地点" prop="triggerAddress">
             <el-select v-model="form.triggerAddress" placeholder="请选择发生地点" style="width: 100%;">
@@ -93,15 +94,15 @@
             <file-image-upload :file-list.sync="form.imgReportIds" :limit="5"/>
           </el-form-item>
         </el-form>
-        <div style="display: flex; justify-content: center; margin-top: 20px;">
+        <div style="display: flex; justify-content: center; margin-top: 40px;">
           <div>
-            <el-button>取消</el-button>
+            <el-button size="small" @click="handlerClose">取消</el-button>
           </div>
           <div style="margin-left: 40px;">
-            <el-button type="primary" @click="handlerSubmit">提交</el-button>
+            <el-button type="primary" size="small" @click="handlerSubmit">提交</el-button>
           </div>
         </div>
-        <div style="height: 100px"></div>
+        <div style="height: 10px"></div>
       </div>
     </div>
   </basic-container>
@@ -121,10 +122,11 @@
           title: [{ required: true, message: '请输入标题', trigger: 'blur' },],
           designation: [{ required: true, message: '请输入品番号', trigger: 'blur' },],
           name: [{ required: true, message: '请输入品名', trigger: 'blur' },],
-          apparatusTypes: [{ required: true, message: '请选择机型', trigger: 'blur' },],
+          apparatusType: [{ required: true, message: '请选择机型', trigger: 'blur' },],
           dutyDept: [{ required: true, message: '请输入供应商名称', trigger: 'blur' },],
           findTime: [{ required: true, message: '请选择不良发现日', trigger: 'blur' },],
           level: [{ required: true, message: '请选择不良等级', trigger: 'blur' },],
+          findQuantity: [{ required: true, message: '请输入不良数量', trigger: 'blur' },],
           triggerAddress: [{ required: true, message: '请选择发生地点', trigger: 'blur' },],
           dispostType: [{ required: true, message: '请选择不良品处理', trigger: 'blur' },],
           eventRemark: [{ required: true, message: '请输入事件概要', trigger: 'blur' },],
@@ -146,7 +148,26 @@
         this.$set(this.form, "dispost", "");
       }
     },
+    props: {
+      isUseOut: {
+        type: Boolean,
+        default: false,
+      },
+      save:{
+        type: Function,
+      },
+      close: {
+        type: Function,
+      }
+    },
     methods: {
+      handlerClose() {
+        if (this.isUseOut) {
+          this.close();
+          return;
+        }
+        this.$router.push({path: "/business/out_buy_low/out_buy_low_list"})
+      },
       init() {
         this.loadProperties();
       },
@@ -164,15 +185,20 @@
             formCopy.imgReportIds = this.form.imgReportIds.map(item => item.id).join(",");
           }
 
-          if (!this.validatenull(this.form.apparatusTypes)) {
-            formCopy.apparatusTypes = this.form.apparatusTypes.join(",");
-          }
-          this.save(formCopy);
+          // if (!this.validatenull(this.form.apparatusTypes)) {
+          //   formCopy.apparatusTypes = this.form.apparatusTypes.join(",");
+          // }
+          this.handlerSave(formCopy);
         });
       },
-      save(data) {
+      handlerSave(data) {
+        if (this.isUseOut) {
+          this.save(data);
+          return;
+        }
         qprSave(data).then(() => {
           this.$message({type: "success", message: "新增成功"});
+          this.$router.push({path: "/business/out_buy_low/out_buy_low_list"})
         })
       }
     },

@@ -1,11 +1,11 @@
 <template>
-  <basic-container >
-    <div>
+  <basic-container>
+    <div v-show="showMain">
       <div style="display: flex; justify-content: space-between;">
         <tag-select :data="tagData" :active="activeTag" @click="handlerSwitchTag"/>
         <div style="display: flex; flex-flow: column; justify-content: center; margin-left: 20px;">
           <div style="display: flex; justify-content: flex-end;">
-            <el-input size="small" style="max-width: 250px" v-model="query.searchKey" placeholder="请输入标题/事件概要/供应商名称"/>
+            <el-input size="small" style="max-width: 250px" v-model="query.searchKey" placeholder="请输入标题/不良内容/供应商名称"/>
             <el-select size="small" style="width: 130px; margin-left: 15px;" v-model="query.type" placeholder="不良分类">
               <el-option
                 v-for="item in typeDict"
@@ -14,7 +14,15 @@
                 :value="item.value">
               </el-option>
             </el-select>
-            <el-select  style="width: 130px; margin-left: 15px;" size="small" v-model="query.triggerAddress" placeholder="发生地点">
+            <el-select style="width: 130px; margin-left: 15px;" size="small" v-model="query.apparatusType" placeholder="机型">
+              <el-option
+                v-for="item in apparatusTypeDict"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+            <el-select  style="width: 130px; margin-left: 15px;"size="small" v-model="query.triggerAddress" placeholder="发生地点">
               <el-option
                 v-for="item in triggerAddressDict"
                 :key="item.value"
@@ -73,6 +81,13 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="apparatusType"
+          label="机型">
+          <template slot-scope="scope">
+            {{apparatusTypeMap[scope.row.apparatusType]}}
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="findQuantity"
           label="不良数量">
         </el-table-column>
@@ -115,11 +130,12 @@
         </el-table-column>
         <el-table-column
           width = "140"
+          fixed="right"
           label="操作">
           <template slot-scope="scope">
             <div style="display: flex; justify-content: space-around;">
               <el-link :underline="false" v-if="scope.row.bpmStatus === 0"  type="primary" @click="handlerSelfBack(scope.row)">撤回</el-link>
-              <el-link :underline="false"  type="primary">详情</el-link>
+              <el-link :underline="false"  type="primary" v-if="scope.row.bpmStatus !== 4">详情</el-link>
             </div>
           </template>
         </el-table-column>
@@ -127,8 +143,8 @@
       <div style="display: flex; justify-content: flex-end; padding: 30px;">
         <div style="display: flex; justify-content: center; flex-flow: column">共 {{page.total}} 条</div>
         <el-pagination
-          background
           style="margin-left: 30px;"
+          background
           layout="sizes, prev, pager, next"
           @current-change="onLoad"
           @size-change="onLoad"
@@ -143,24 +159,25 @@
 </template>
 
 <script>
-
-  import {processLowPage, processLowSelfBack} from "../../../api/business/process_low/process_low";
   import TagSelect from "../../../components/min/tag_select";
-  import {qprPage} from "../../../api/business/out_buy_low/qpr";
+  import {processLowPage, processLowQuality, processLowSelfBack} from "../../../api/business/process_low/process_low";
+  import {qprPage, qprQuality} from "../../../api/business/out_buy_low/qpr";
   export default {
-    name: "processLowList",
+    name: "outBuyLowList",
     components: {TagSelect},
     data() {
       return {
+        showMain: true,
+        showDetail: false,
         loading: true,
         windowHeight: 0,
         activeTag: -1,
         tagData: [
           {label: "全部", value: -1},
-          {label: "自撤回", value: 0, count: 100},
-          {label: "已驳回", value: 1, count: 100},
-          {label: "进行中", value: 2, count: 100},
-          {label: "已办结", value: 3, count: 100},
+          {label: "自撤回", value: 0},
+          {label: "已驳回", value: 1},
+          {label: "进行中", value: 2},
+          {label: "已办结", value: 3},
         ],
         query: {},
         typeDict: [
@@ -190,12 +207,22 @@
         triggerProcessMap: {0: "铸造钢体", 1: "铸造缸盖", 2: "缸盖加工", 3: "缸体加工", 4: "曲轴加工", 5: "连杆加工", 6: "凸轮轴加工"},
         levelMap: {0: "R", 1: "S", 2: "A", 3: "B", 4: "C", 5: "批量", 6: "停线"},
         approveMap: {0: "待审批", 1: "审批中", 2: "已结案", 3: "退回", 4: "自撤回"},
+        apparatusTypeMap: {0: "TNGA2.0"},
       }
     },
     mounted() {
       this.windowHeight = document.body.clientHeight;
     },
     methods: {
+      onLoadQuality() {
+        qprQuality().then(res => {
+          let data = res.data.data;
+          this.$set(this.tagData[1], 'count', data.selfBack);
+          this.$set(this.tagData[2], 'count', data.back);
+          this.$set(this.tagData[3], 'count', data.process);
+          this.$set(this.tagData[4], 'count', data.finish);
+        })
+      },
       onLoad() {
         this.loading = true;
         qprPage(this.page.current, this.page.size, this.query).then(res => {
@@ -204,7 +231,8 @@
           this.data = data.records;
           this.page.total = data.total;
           this.loading = false;
-        })
+        });
+        this.onLoadQuality();
       },
       handlerQueryReset() {
         this.query = {};

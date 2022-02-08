@@ -16,7 +16,7 @@
               </tr>
               <tr>
                 <td>当前业务环节: </td>
-                <td> <span style="color: red;">●</span>{{bpmStatus}}</td>
+                <td> <span style="color: #2d8cf0; font-size: 14px;" :style="{'color': (bpmStatus === 1 || bpmStatus === 0 ? '#2d8cf0' : 'red')}">●</span>{{bpmStatusRemark}}</td>
               </tr>
             </table>
           </div>
@@ -78,10 +78,9 @@
                  :visible.sync="showDetailDialog"
                  width="50%"
                  append-to-body>
-        <approve-detail :bpm-id="bpmId"/>
+        <approve-detail :bus-id="busId"/>
         <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="showDetailDialog = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="handleTriggerReject">确 定</el-button>
+        <el-button type="primary" size="small" @click="showDetailDialog = false">关 闭</el-button>
       </span>
       </el-dialog>
     </div>
@@ -110,6 +109,9 @@
         type: String,
       },
       busId: {
+        type: String,
+      },
+      bpmStatusRemark: {
         type: String,
       }
     },
@@ -151,6 +153,11 @@
         for(let key in this.data) {
           if (this.data[key].bpmStatus === 2) {
             this.$set(this, 'defaultActive', parseInt(key));
+            return;
+          }
+
+          if (this.data[key].bpmStatus === 0 || this.data[key].bpmStatus === 1) {
+            this.$set(this, 'defaultActive', parseInt(key - 1));
             return;
           }
 

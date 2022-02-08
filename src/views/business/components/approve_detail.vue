@@ -7,14 +7,43 @@
       :cell-style="{'textAlign': 'center'}"
       :data="data"
       border
-      :height="tableHeight"
+      height="250"
       style="width: 100%">
       <el-table-column
-        label="序号"
+        label="操作时间"
         width="80">
-        <template slot-scope="scope">
-          {{scope.$index + 1}}
-        </template>
+      </el-table-column>
+      <el-table-column
+        label="操作者"
+        width="80">
+      </el-table-column>
+      <el-table-column
+        label="所属部门"
+        width="80">
+      </el-table-column>
+      <el-table-column
+        label="角色"
+        width="80">
+      </el-table-column>
+      <el-table-column
+        label="操作状态"
+        width="80">
+      </el-table-column>
+      <el-table-column
+        label="操作结果"
+        width="80">
+      </el-table-column>
+      <el-table-column
+        label="开始时间"
+        width="80">
+      </el-table-column>
+      <el-table-column
+        label="截止时间"
+        width="80">
+      </el-table-column>
+      <el-table-column
+        label="耗时"
+        width="80">
       </el-table-column>
     </el-table>
   </div>
@@ -26,7 +55,7 @@
   export default {
     name: "approveDetail",
     props: {
-      bpmId: {
+      busId: {
         type: String
       }
     },
@@ -38,7 +67,7 @@
     },
     methods: {
       init() {
-        approveLogList(this.bpmId).then(res => {
+        approveLogList(this.busId).then(res => {
           this.data = res.data.data;
         })
       }

@@ -1,174 +1,180 @@
 <template>
-  <basic-container>
-    <div v-show="showMain">
-      <div style="display: flex; justify-content: space-between;">
-        <tag-select :data="tagData" :active="activeTag" @click="handlerSwitchTag"/>
-        <div style="display: flex; flex-flow: column; justify-content: center; margin-left: 20px;">
-          <div style="display: flex; justify-content: flex-end;">
-            <el-input size="small" style="max-width: 250px" v-model="query.searchKey" placeholder="请输入标题/不良内容/供应商名称"/>
-            <el-select size="small" style="width: 130px; margin-left: 15px;" v-model="query.type" placeholder="不良分类">
-              <el-option
-                v-for="item in typeDict"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-            <el-select style="width: 130px; margin-left: 15px;" size="small" v-model="query.apparatusType" placeholder="机型">
-              <el-option
-                v-for="item in apparatusTypeDict"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-            <el-select  style="width: 130px; margin-left: 15px;"size="small" v-model="query.triggerAddress" placeholder="发生地点">
-              <el-option
-                v-for="item in triggerAddressDict"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-            <div style="display: flex; margin-left: 20px;">
-              <el-button type="primary" size="small" @click="onLoad">查询</el-button>
-              <el-button size="small" @click="handlerQueryReset">重置</el-button>
+  <div>
+    <basic-container  v-show="showMain">
+      <div>
+        <div style="display: flex; justify-content: space-between;">
+          <tag-select :data="tagData" :active="activeTag" @click="handlerSwitchTag"/>
+          <div style="display: flex; flex-flow: column; justify-content: center; margin-left: 20px;">
+            <div style="display: flex; justify-content: flex-end;">
+              <el-input size="small" style="max-width: 250px" v-model="query.searchKey" placeholder="请输入标题/不良内容/供应商名称"/>
+              <el-select size="small" style="width: 130px; margin-left: 15px;" v-model="query.type" placeholder="不良分类">
+                <el-option
+                  v-for="item in typeDict"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <el-select style="width: 130px; margin-left: 15px;" size="small" v-model="query.apparatusType" placeholder="机型">
+                <el-option
+                  v-for="item in apparatusTypeDict"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <el-select  style="width: 130px; margin-left: 15px;"size="small" v-model="query.triggerAddress" placeholder="发生地点">
+                <el-option
+                  v-for="item in triggerAddressDict"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <div style="display: flex; margin-left: 20px;">
+                <el-button type="primary" size="small" @click="onLoad">查询</el-button>
+                <el-button size="small" @click="handlerQueryReset">重置</el-button>
+              </div>
             </div>
           </div>
         </div>
+        <el-divider></el-divider>
+        <el-table
+          v-loading="loading"
+          element-loading-text="拼命加载中"
+          :header-cell-style="{background: '#fafafa', 'textAlign': 'center', fontWeight: 700, color: 'rgba(0,0,0,.85)',fontSize: '12px'}"
+          :cell-style="{'textAlign': 'center'}"
+          :data="data"
+          border
+          :height="tableHeight"
+          style="width: 100%">
+          <el-table-column
+            label="序号"
+            width="80">
+            <template slot-scope="scope">
+              {{scope.$index + 1}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="code"
+            label="不良编号"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="type"
+            label="不良分类">
+            <template slot-scope="scope">
+              {{typeMap[scope.row.type]}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="designation"
+            label="品番号">
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="品名">
+          </el-table-column>
+          <el-table-column
+            label="发生地点">
+            <template slot-scope="scope">
+              {{triggerAddressMap[scope.row.triggerAddress]}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="apparatusType"
+            label="机型">
+            <template slot-scope="scope">
+              {{apparatusTypeMap[scope.row.apparatusType]}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="findQuantity"
+            label="不良数量">
+          </el-table-column>
+          <el-table-column
+            prop="level"
+            label="不良等级">
+            <template slot-scope="scope">
+              {{levelMap[scope.row.level]}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="eventRemark"
+            label="事件概要">
+          </el-table-column>
+          <el-table-column
+            prop="dutyDept"
+            min-width="200"
+            label="供应商名称">
+          </el-table-column>
+          <el-table-column
+            prop="bpmStatus"
+            label="状态">
+            <template slot-scope="scope">
+              {{approveMap[scope.row.bpmStatus]}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="bpmNode"
+            min-width="200"
+            label="当前业务环节">
+          </el-table-column>
+          <el-table-column
+            prop="createUserName"
+            label="提交人">
+          </el-table-column>
+          <el-table-column
+            prop="createTime"
+            min-width="200"
+            label="提交时间">
+          </el-table-column>
+          <el-table-column
+            width = "140"
+            fixed="right"
+            label="操作">
+            <template slot-scope="scope">
+              <div style="display: flex; justify-content: space-around;">
+                <el-link :underline="false" v-if="scope.row.bpmStatus === 0"  type="primary" @click="handlerSelfBack(scope.row)">撤回</el-link>
+                <el-link :underline="false"  type="primary" v-if="scope.row.bpmStatus !== 4" @click="handlerDetail(scope.row)">详情</el-link>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div style="display: flex; justify-content: flex-end; padding: 30px;">
+          <div style="display: flex; justify-content: center; flex-flow: column">共 {{page.total}} 条</div>
+          <el-pagination
+            style="margin-left: 30px;"
+            background
+            layout="sizes, prev, pager, next"
+            @current-change="onLoad"
+            @size-change="onLoad"
+            :page-sizes="[10, 20, 30]"
+            :current-page.sync="page.current"
+            :page-size.sync="page.size"
+            :total="page.total">
+          </el-pagination>
+        </div>
       </div>
-      <el-divider></el-divider>
-      <el-table
-        v-loading="loading"
-        element-loading-text="拼命加载中"
-        :header-cell-style="{background: '#fafafa', 'textAlign': 'center', fontWeight: 700, color: 'rgba(0,0,0,.85)',fontSize: '12px'}"
-        :cell-style="{'textAlign': 'center'}"
-        :data="data"
-        border
-        :height="tableHeight"
-        style="width: 100%">
-        <el-table-column
-          label="序号"
-          width="80">
-          <template slot-scope="scope">
-            {{scope.$index + 1}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="code"
-          label="不良编号"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          prop="type"
-          label="不良分类">
-          <template slot-scope="scope">
-            {{typeMap[scope.row.type]}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="designation"
-          label="品番号">
-        </el-table-column>
-        <el-table-column
-          prop="name"
-          label="品名">
-        </el-table-column>
-        <el-table-column
-          label="发生地点">
-          <template slot-scope="scope">
-            {{triggerAddressMap[scope.row.triggerAddress]}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="apparatusType"
-          label="机型">
-          <template slot-scope="scope">
-            {{apparatusTypeMap[scope.row.apparatusType]}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="findQuantity"
-          label="不良数量">
-        </el-table-column>
-        <el-table-column
-          prop="level"
-          label="不良等级">
-          <template slot-scope="scope">
-            {{levelMap[scope.row.level]}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="eventRemark"
-          label="事件概要">
-        </el-table-column>
-        <el-table-column
-          prop="dutyDept"
-          min-width="200"
-          label="供应商名称">
-        </el-table-column>
-        <el-table-column
-          prop="bpmStatus"
-          label="状态">
-          <template slot-scope="scope">
-            {{approveMap[scope.row.bpmStatus]}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="bpmNode"
-          min-width="200"
-          label="当前业务环节">
-        </el-table-column>
-        <el-table-column
-          prop="createUserName"
-          label="提交人">
-        </el-table-column>
-        <el-table-column
-          prop="createTime"
-          min-width="200"
-          label="提交时间">
-        </el-table-column>
-        <el-table-column
-          width = "140"
-          fixed="right"
-          label="操作">
-          <template slot-scope="scope">
-            <div style="display: flex; justify-content: space-around;">
-              <el-link :underline="false" v-if="scope.row.bpmStatus === 0"  type="primary" @click="handlerSelfBack(scope.row)">撤回</el-link>
-              <el-link :underline="false"  type="primary" v-if="scope.row.bpmStatus !== 4">详情</el-link>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div style="display: flex; justify-content: flex-end; padding: 30px;">
-        <div style="display: flex; justify-content: center; flex-flow: column">共 {{page.total}} 条</div>
-        <el-pagination
-          style="margin-left: 30px;"
-          background
-          layout="sizes, prev, pager, next"
-          @current-change="onLoad"
-          @size-change="onLoad"
-          :page-sizes="[10, 20, 30]"
-          :current-page.sync="page.current"
-          :page-size.sync="page.size"
-          :total="page.total">
-        </el-pagination>
-      </div>
-    </div>
-  </basic-container>
+    </basic-container>
+    <out-buy-low-detail v-if="showDetail" :bus-id="currentSelect.id" @close="handlerClose"/>
+  </div>
+
 </template>
 
 <script>
   import TagSelect from "../../../components/min/tag_select";
   import {processLowPage, processLowQuality, processLowSelfBack} from "../../../api/business/process_low/process_low";
   import {qprPage, qprQuality} from "../../../api/business/out_buy_low/qpr";
+  import OutBuyLowDetail from "./out_buy_low_detail";
   export default {
     name: "outBuyLowList",
-    components: {TagSelect},
+    components: {OutBuyLowDetail, TagSelect},
     data() {
       return {
         showMain: true,
         showDetail: false,
+        currentSelect: {},
         loading: true,
         windowHeight: 0,
         activeTag: -1,
@@ -214,6 +220,15 @@
       this.windowHeight = document.body.clientHeight;
     },
     methods: {
+      handlerClose() {
+        this.showMain = true;
+        this.showDetail = false;
+      },
+      handlerDetail(detail) {
+        this.currentSelect = detail;
+        this.showMain = false;
+        this.showDetail = true;
+      },
       onLoadQuality() {
         qprQuality().then(res => {
           let data = res.data.data;

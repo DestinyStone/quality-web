@@ -64,7 +64,20 @@
         this.$emit("update:file", {});
         this.$emit("remove");
       },
+      fileValidate(file) {
+        const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG/PNG 格式 !');
+          this.reload++;
+          return;
+        }
+        return isJPG;
+      },
       handlerUpload(request) {
+        if (!this.fileValidate(request.file)) {
+          return;
+        }
+
         let formData = new FormData();
         formData.append("file", request.file);
         uploadFile(formData).then(res => {

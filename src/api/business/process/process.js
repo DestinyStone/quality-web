@@ -45,9 +45,9 @@ export const approveUrgeList = (bpmId, query) => {
   })
 }
 
-export const approveLogList = (bpmId, query) => {
+export const approveLogList = (busId, query) => {
   return request({
-    url: `/api/business/process/log/list/${bpmId}`,
+    url: `/api/business/process/log/list/${busId}`,
     method: 'get',
     params: {
       ...query

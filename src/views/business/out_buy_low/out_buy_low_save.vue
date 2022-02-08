@@ -40,7 +40,7 @@
             <el-radio v-model="form.level" :label="6">停线</el-radio>
           </el-form-item>
           <el-form-item label="不良数量" prop="findQuantity">
-            <el-input v-model="form.findQuantity" placeholder="请输入不良数量"></el-input>
+            <el-input v-model="form.findQuantity" oninput="value=value.replace(/[^\d]/g,'')" placeholder="请输入不良数量"></el-input>
           </el-form-item>
           <el-form-item label="发生地点" prop="triggerAddress">
             <el-select v-model="form.triggerAddress" placeholder="请选择发生地点" style="width: 100%;">
@@ -58,7 +58,8 @@
                 <div>
                   返还
                 </div>
-                <el-input :disabled="form.dispostType !== 0" v-model="form.dispost" size="mini" style="width: 80px; position: relative; top: -7px; margin-left: 10px;"/>
+                <el-input :disabled="true" v-if="form.dispostType !== 0" size="mini" style="width: 80px; position: relative; top: -7px; margin-left: 10px;"/>
+                <el-input :disabled="false"  v-if="form.dispostType === 0" oninput="value=value.replace(/[^\d]/g,'')" v-model="form.dispost" size="mini" style="width: 80px; position: relative; top: -7px; margin-left: 10px;"/>
               </div>
             </el-radio>
             <el-radio v-model="form.dispostType" :label="1">保留</el-radio>
@@ -68,7 +69,10 @@
                 <div>
                   其他
                 </div>
-                <el-input :disabled="form.dispostType !== 3" v-model="form.dispost" size="mini" style="width: 80px; position: relative; top: -7px; margin-left: 10px;"/>
+                <el-input :disabled="true" v-if="form.dispostType !== 3" size="mini"
+                          style="width: 150px; position: relative; top: -7px; margin-left: 10px;"/>
+                <el-input :disabled="false"  v-if="form.dispostType === 3"  v-model="form.dispost" size="mini"
+                          style="width: 150px; position: relative; top: -7px; margin-left: 10px;"/>
               </div>
             </el-radio>
           </el-form-item>

@@ -75,7 +75,7 @@
               <el-row>
                 <el-col :span="12">
                   <el-form-item label="责任部门/厂家" prop="dutyDept">
-                    <el-input v-model="form.dutyDept" placeholder="请输入品番号"></el-input>
+                    <el-input v-model="form.dutyDept" placeholder="请输入责任部门/厂家"></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -94,7 +94,7 @@
               <el-row>
                 <el-col :span="12">
                   <el-form-item label="发现数量" prop="findQuantity">
-                    <el-input v-model="form.findQuantity"  placeholder="请输入发现数量"></el-input>
+                    <el-input oninput="value=value.replace(/[^\d]/g,'')" v-model="form.findQuantity"  placeholder="请输入发现数量"></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">

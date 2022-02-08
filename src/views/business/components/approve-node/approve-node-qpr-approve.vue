@@ -4,7 +4,7 @@
       :busId="busId"
       :resource-type="resourceType"
       :reject="handlerReject"
-      :show-reject-dialog="showApproveRejectDialog"
+      :show-reject-dialog.sync="showApproveRejectDialog"
       message-title="外购件不良"
       message-min-title="联络书基本信息"
       bpm-status="333"
@@ -28,6 +28,7 @@
   import ApproveContainer from "./approve-container";
   import OutBuyLowBasicMessage from "../../out_buy_low/component/out_buy_low_basic_message";
   import {approveReject} from "../../../../api/business/process_low/process_low";
+  import {approveOutBuyQprReject} from "../../../../api/business/out_buy_low/qpr";
   export default {
     name: "approveNodeQprApprove",
     props: {
@@ -55,7 +56,8 @@
         this.$emit("pass");
       },
       handlerReject(form) {
-        approveReject(form).then(() => {
+        let reject = this.resourceType === 0 ? approveOutBuyQprReject : approveReject;
+        reject(form).then(() => {
           this.$message({type: "success", message: "驳回成功"});
           this.showApproveRejectDialog = false;
           this.$emit("refresh");

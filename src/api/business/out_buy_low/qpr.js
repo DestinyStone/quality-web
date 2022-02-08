@@ -77,3 +77,11 @@ export const qprSave = (data) => {
     data: data
   })
 }
+
+export const approveOutBuyQprReject = (data) => {
+  return request({
+    url: '/api/business/out/buy/qpr/approve/reject',
+    method: 'post',
+    data: data
+  })
+}

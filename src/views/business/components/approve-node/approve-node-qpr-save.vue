@@ -10,6 +10,7 @@
       :bpm-node="data.bpmNode"
       :form="data.bpmNode"
       :reject="handlerReject"
+      bpm-status-remark="不良联络书发行确认"
       :show-reject-dialog="showApproveRejectDialog"
       :code="data.code">
       <div slot="content">

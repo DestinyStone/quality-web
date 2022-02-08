@@ -49,19 +49,19 @@
           </tr>
           <tr>
             <td class="message-title">不良内容</td>
-            <td class="message-value">{{data.content}}</td>
+            <td class="message-value" colspan="3">{{data.content}}</td>
           </tr>
           <tr>
             <td class="message-title">拜托事项</td>
-            <td class="message-value">{{data.pleaseContent}}</td>
+            <td class="message-value" colspan="3">{{data.pleaseContent}}</td>
           </tr>
           <tr>
             <td class="message-title">测量结果</td>
-            <td class="message-value">{{data.testResult}}</td>
+            <td class="message-value"  colspan="3">{{data.testResult}}</td>
           </tr>
           <tr>
             <td class="message-title">关联部件确认(性能, 作业等影响)</td>
-            <td class="message-value">{{data.correlationConfirm}}</td>
+            <td class="message-value" colspan="3">{{data.correlationConfirm}}</td>
           </tr>
           <tr>
             <td class="message-title">不良图片</td>

@@ -12,6 +12,7 @@
       v-if="flag === 'qprSave'"
       :bus-id="busId"
       :resource-type="resourceType"
+      @refresh="handleRefresh"
       @close="handlerClose"
       :data="data"
     />
@@ -41,7 +42,9 @@
     <approve-node-check-approve
       :bus-id="busId"
       v-if="flag === 'checkApprove'"
+      :resource-type="resourceType"
       @pass="handlerPass"
+      @refresh="handleRefresh"
       @close="handlerClose"
     />
   </div>

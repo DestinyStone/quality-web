@@ -1,8 +1,11 @@
 <template>
   <approve-detail-container
     :bus-id="busId"
+    :code="data.code"
+    :bpm-status="data.bpmStatus"
     :active.sync="active"
     :tagData="tagData"
+    :bpm-status-remark="bpmStatusRemark"
     messageTitle="不良业务相关表单"
     @processAfterInit="handlerAfterInit"
     @close="$emit('close')"
@@ -10,7 +13,7 @@
     <div slot="processLowMessage">
       <div v-if="!isEdit">
         <div style="display: flex; justify-content: space-between;">
-          <fix-color-title>工序内不良联络书</fix-color-title>
+          <fix-correlor-title>工序内不良联络书</fix-correlor-title>
           <div
             v-if="bpmStatus === 3"
             @click="handlerClickEdit"
@@ -68,7 +71,8 @@
         ],
         isShowQprCheck: false,
         isEdit: false,
-        data: {}
+        data: {},
+        bpmStatusRemark: "",
       }
     },
     methods: {
@@ -91,7 +95,27 @@
         })
       },
       handlerAfterInit(data) {
-        console.log(data);
+        if (data[0].bpmStatus === 0) {
+          this.bpmStatusRemark = "自撤回";
+          return;
+        }
+
+        if (data[data.length - 1].bpmStatus === 3) {
+          this.bpmStatusRemark = "已完成";
+          return;
+        }
+
+        for(let key in data) {
+          if(data[key].bpmStatus === 4) {
+            this.bpmStatusRemark = "已退回";
+            return;
+          }
+
+          if(data[key].bpmStatus === 2) {
+            this.bpmStatusRemark = data[key].bpmRemark;
+            return;
+          }
+        }
       },
     },
     created() {

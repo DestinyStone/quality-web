@@ -135,7 +135,7 @@
             <template slot-scope="scope">
               <div style="display: flex; justify-content: space-around;">
                 <el-link :underline="false" v-if="scope.row.bpmStatus === 0"  type="primary" @click="handlerSelfBack(scope.row)">撤回</el-link>
-                <el-link :underline="false"  type="primary" v-if="scope.row.bpmStatus !== 4" @click="handlerClickDetail(scope.row)">详情</el-link>
+                <el-link :underline="false"  type="primary" @click="handlerClickDetail(scope.row)">详情</el-link>
               </div>
             </template>
           </el-table-column>

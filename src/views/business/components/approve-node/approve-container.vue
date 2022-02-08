@@ -5,6 +5,8 @@
                        :bpm-node="node"
                        :form="form"
                        :code="code"
+                       :bpm-status-remark="bpmStatusRemark"
+                       @afterInit="handlerAfterInit"
     />
     <div>
       <basic-container>
@@ -66,9 +68,6 @@
       form: {
         type: String
       },
-      bpmStatus: {
-        type: String,
-      },
       busId: {
         type: String,
       },
@@ -80,9 +79,16 @@
         default: false,
       }
     },
+    watch: {
+      showRejectDialog() {
+        this.$emit("update:showRejectDialog", this.showRejectDialog);
+      }
+    },
     data() {
       return {
         data: {},
+        bpmStatusRemark: "",
+        bpmStatus: 1,
       }
     },
     methods: {
@@ -92,6 +98,31 @@
       handleTriggerReject() {
         this.$refs['approveReject'].submit();
       },
+      handlerAfterInit(data) {
+        if (data[0].bpmStatus === 0) {
+          this.bpmStatus = 4;
+          this.bpmStatusRemark = "自撤回";
+          return;
+        }
+
+        if (data[data.length - 1].bpmStatus === 3) {
+          this.bpmStatusRemark = "已完成";
+          return;
+        }
+
+        for (let key in data) {
+          if (data[key].bpmStatus === 4) {
+            this.bpmStatus = 4;
+            this.bpmStatusRemark = "已退回";
+            return;
+          }
+
+          if (data[key].bpmStatus === 2) {
+            this.bpmStatusRemark = data[key].bpmRemark;
+            return;
+          }
+        }
+      }
     }
   }
 </script>

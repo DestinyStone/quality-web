@@ -30,7 +30,7 @@
               width="100"
               label="业务类型">
               <template slot-scope="scope">
-                工序内不良
+                {{scope.row.resourceType === 0 ? '外购件不良' : '工序内不良'}}
               </template>
             </el-table-column>
             <el-table-column

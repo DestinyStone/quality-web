@@ -5,6 +5,7 @@
                        :bpm-node="node"
                        :form="form"
                        :code="code"
+                       :bpm-status-remark="bpmStatusRemark"
                        @switch="handlerSwitch"
                        @afterInit="handlerAfterInit"
     />
@@ -74,6 +75,9 @@
         type: String,
       },
       busId: {
+        type: String,
+      },
+      bpmStatusRemark: {
         type: String,
       }
     },

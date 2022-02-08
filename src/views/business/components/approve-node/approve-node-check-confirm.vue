@@ -82,7 +82,7 @@
     </div>
     <div slot="operator">
       <el-button size="small" @click="handlerClose">返回</el-button>
-      <el-button type="danger" size="small">驳回供应商</el-button>
+      <el-button type="danger" size="small" @click="handlerRejectProvider"  v-if="!isTriggerEdit">驳回供应商</el-button>
       <el-button type="success" size="small" v-if="!isTriggerEdit" @click="handlerClickEdit">填写不良言论</el-button>
       <el-button type="success" size="small" v-if="isTriggerEdit" @click="handlerSubmit">提交</el-button>
     </div>
@@ -156,6 +156,9 @@
       this.init();
     },
     methods: {
+      handlerRejectProvider() {
+        this.$message({type: "warning", message: "未实现"});
+      },
       init() {
         qprDetail(this.busId).then(res => {
           this.data = res.data.data;

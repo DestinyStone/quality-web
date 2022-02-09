@@ -13,7 +13,9 @@
         <out-buy-low-basic-message :data="data"/>
       </extensible-container>
       <extensible-container title="不良原因&对策" ref="checkMessage">
-        <check-basic-message :data="data"/>
+        <div style="padding-bottom: 80px;">
+          <check-basic-message :data="data"/>
+        </div>
       </extensible-container>
       <extensible-container title="不良调查结论" :default-status="true" v-if="isTriggerEdit">
       </extensible-container>

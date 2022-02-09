@@ -1,5 +1,15 @@
 import request from '@/router/axios';
 
+export const outBuySelf = (id) => {
+  return request({
+    url: '/api/business/out/buy/qpr/self/back',
+    method: 'get',
+    params: {
+      id
+    }
+  })
+}
+
 export const qprQuality = () => {
   return request({
     url: `/api/business/out/buy/qpr/quality`,

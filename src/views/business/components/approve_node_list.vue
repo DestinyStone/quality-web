@@ -36,11 +36,7 @@
                       {{item.operatorTime}}
                     </div>
                     <div v-if="!validatenull(item.backCause)" style="display: flex; justify-content: center;">
-                      <el-tooltip class="item" effect="dark" :content="item.backCause" placement="top">
-                        <div style="width: 100px; overflow: hidden;">
-                          退回原因:{{item.backCause.length > 5 ? `${item.backCause.substring(0, 5)}...` : item.backCause}}
-                        </div>
-                      </el-tooltip>
+                      <tooltop-text :text="'退回原因:' + item.backCause" :limit="10"/>
                     </div>
                     <div v-if="!validatenull(item.operatorUserName)">
                       操作人: {{item.operatorUserName}}
@@ -78,7 +74,7 @@
                  :visible.sync="showDetailDialog"
                  width="50%"
                  append-to-body>
-        <approve-detail :bus-id="busId"/>
+        <approve-detail :bus-id="busId" v-if="showDetailDialog"/>
         <span slot="footer" class="dialog-footer">
         <el-button type="primary" size="small" @click="showDetailDialog = false">关 闭</el-button>
       </span>
@@ -91,10 +87,11 @@
 <script>
   import {approveList} from "../../../api/business/process/process";
   import ApproveDetail from "./approve_detail";
+  import TooltopText from "../../../components/min/tooltop-text";
 
   export default {
     name: "approveNodeList",
-    components: {ApproveDetail},
+    components: {TooltopText, ApproveDetail},
     props: {
       code: {
         type: String,
@@ -129,6 +126,7 @@
     methods: {
       handlerClickDetail() {
         this.showDetailDialog = true;
+
       },
       handlerSwitch() {
         this.isHide = !this.isHide;

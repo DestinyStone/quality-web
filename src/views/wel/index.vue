@@ -43,7 +43,7 @@
             <div class="el-font-size">
               <span>产品名称</span>
               <el-divider direction="vertical"/>
-              <span><el-tag>单位信息资源管理系统</el-tag></span>
+              <span><el-tag>品质业务管理系统</el-tag></span>
             </div>
           </basic-container>
         </el-row>

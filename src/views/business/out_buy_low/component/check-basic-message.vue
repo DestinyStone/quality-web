@@ -60,7 +60,7 @@
           <el-table-column
             label="操作">
             <template slot-scope="scope">
-              <el-link :underline="false"  type="danger">下载</el-link>
+              <el-link :underline="false"  type="primary" @click="handlerDownload(scope.row.id)">下载</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -70,6 +70,9 @@
 </template>
 
 <script>
+  import {downloadFile} from "../../../../api/business/file/file";
+  import {downloadResFile} from "../../../../util/util";
+
   export default {
     name: "check-basic-message",
     props: {
@@ -78,6 +81,13 @@
         default() {
           return {}
         }
+      }
+    },
+    methods: {
+      handlerDownload(fileId) {
+        downloadFile(fileId).then(res => {
+          downloadResFile(res);
+        })
       }
     }
   }

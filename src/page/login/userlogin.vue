@@ -7,6 +7,7 @@
            label-width="0">
     <el-form-item v-if="tenantMode" prop="tenantId">
       <el-input size="small"
+                v-show="false"
                 @keyup.enter.native="handleLogin"
                 v-model="loginForm.tenantId"
                 auto-complete="off"

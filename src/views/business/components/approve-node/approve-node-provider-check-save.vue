@@ -16,7 +16,7 @@
             <fix-color-title>QPR联络书</fix-color-title>
             <extensible-container title="基本信息" ref="basicMessage" style="margin-top: 20px;" :status="!isClickEdit">
               <div style="height: 1100px;">
-                <out-buy-low-basic-message :data="data"/>
+                <out-buy-low-basic-message :id="busId" :data="data"/>
               </div>
             </extensible-container>
             <extensible-container v-if="isClickEdit" title="不良原因&对策" :default-status="true">

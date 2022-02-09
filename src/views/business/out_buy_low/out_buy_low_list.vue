@@ -136,7 +136,7 @@
             <template slot-scope="scope">
               <div style="display: flex; justify-content: space-around;">
                 <el-link :underline="false" v-if="scope.row.bpmStatus === 0"  type="primary" @click="handlerSelfBack(scope.row)">撤回</el-link>
-                <el-link :underline="false"  type="primary" v-if="scope.row.bpmStatus !== 4" @click="handlerDetail(scope.row)">详情</el-link>
+                <el-link :underline="false"  type="primary" @click="handlerDetail(scope.row)">详情</el-link>
               </div>
             </template>
           </el-table-column>
@@ -165,7 +165,7 @@
 <script>
   import TagSelect from "../../../components/min/tag_select";
   import {processLowPage, processLowQuality, processLowSelfBack} from "../../../api/business/process_low/process_low";
-  import {qprPage, qprQuality} from "../../../api/business/out_buy_low/qpr";
+  import {outBuySelf, qprPage, qprQuality} from "../../../api/business/out_buy_low/qpr";
   import OutBuyLowDetail from "./out_buy_low_detail";
   export default {
     name: "outBuyLowList",
@@ -262,7 +262,7 @@
       },
       handlerSelfBack(row) {
         this.$confirm("是否确定撤回?", "提示", {confirmButtonText: "确定", cancelButtonText: "取消", type: "warning"}).then(() => {
-          processLowSelfBack(row.id).then(() => {
+          outBuySelf(row.id).then(() => {
             this.$message({type: "success", message: "撤回成功"});
             this.onLoad();
           })

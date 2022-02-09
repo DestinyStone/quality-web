@@ -365,3 +365,24 @@ export const downloadFileBase64 = (path, name) => {
     }
   };
 }
+
+/**
+ * 下载文件
+ * @param res 请求返回的res
+ */
+export const downloadResFile = (res) => {
+  /** 获取生成设置好的文件名 */
+  let filename = res.headers["content-disposition"];
+  filename = filename.split("=")[1];
+  filename = decodeURIComponent(filename, "utf-8");
+  /** 接收文件流 */
+  const blob = new Blob([res.data]);
+  let url = URL.createObjectURL(blob);
+  /** 模拟浏览器操作Document，并模拟下载动作 */
+  let link = document.createElement("a");
+  link.style.display = "none";
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+}

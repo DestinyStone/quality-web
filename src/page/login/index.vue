@@ -4,17 +4,21 @@
        @keyup.enter.native="handleLogin">
     <top-color v-show="false"></top-color>
     <div class="login-weaper animated bounceInDown">
-      <div class="login-left">
+      <div class="login-left" style="background: unset; background-image: url('/img/login-background.png');background-size:100% 100%;">
         <div class="login-time">
           {{time}}
         </div>
-        <img class="img" src="/img/logo.png" alt="">
-        <p class="title">{{ $t('login.info') }}</p>
+        <div style="height: 100px">
+
+        </div>
+<!--        <img class="img" src="/img/logo.png" alt="">-->
+<!--        <p class="title">{{ $t('login.info') }}</p>-->
       </div>
       <div class="login-border">
-        <div class="login-main">
-          <h4 class="login-title">
-            {{ $t('login.title') }}{{website.title}}
+        <div class="login-main" >
+          <h4 class="login-title" style="width: 100%;">
+<!--            {{ $t('login.title') }}-->
+            {{ $t('login.info') }}
             <top-lang></top-lang>
           </h4>
           <userLogin v-if="activeName==='user'"></userLogin>

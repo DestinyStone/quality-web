@@ -50,23 +50,33 @@
               tag-class="el-icon-time"
             >
               <el-table
-                :header-cell-style="{ 'textAlign': 'center'}"
+                v-loading="messageLoading"
+                id="message"
+                class="no-el-table"
+                :header-cell-style="{ 'textAlign': 'center', 'border-top': '1px solid red;'}"
                 :cell-style="{'textAlign': 'center'}"
-                border
-                :data="data"
+                :data="messageData"
                 :height="itemHeight - 60"
                 style="width: 100%">
                 <el-table-column
-                  prop="date"
+                  prop="title"
                   label="标题">
+                  <template slot-scope="scope">
+                    <div style="text-align: left; color: #25a5f7;">
+                      <span style="cursor: pointer;">{{scope.row.title}}</span>
+                    </div>
+                  </template>
                 </el-table-column>
                 <el-table-column
-                  prop="name"
+                  prop="createTime"
                   label="接收时间">
                 </el-table-column>
                 <el-table-column
                   width="120"
-                  label="">
+                  prop="type">
+                  <template slot-scope="scope">
+                    站内消息
+                  </template>
                 </el-table-column>
               </el-table>
             </title-container>
@@ -102,6 +112,7 @@
   import FixTagTitle from "../../../components/min/fix_tag_title";
   import AwaitCard from "./component/await-card";
   import TitleContainer from "./component/title-container";
+  import {messagePage} from "../../../api/business/work/message";
   export default {
     name: "index",
     components: {TitleContainer, AwaitCard, FixTagTitle},
@@ -116,17 +127,71 @@
           {title: "不良待办", router: "/business/out_buy_low_approve/out_buy_low_approve"},
         ],
         data: [],
+        messageData: [],
+        messagePage: {
+          pageSize: 5,
+          currentPage: 1,
+          total: 0
+        },
+        messageLoading: false,
+        isAccessLoadMessage: true,
       }
     },
     mounted() {
       this.windowHeight = document.body.clientHeight;
+      this.eventScrollMessage();
     },
     created() {
-
+      this.loadMessageData();
     },
     methods: {
+      loadMessageData() {
+        if (!this.isAccessLoadMessage) {
+          return;
+        }
+        this.messageLoading = true;
+        messagePage(this.messagePage.currentPage, this.messagePage.pageSize, {}).then(res => {
+          let data = res.data.data;
+          this.messageLoading = false;
+          if (data.records.length === 0) {
+            this.isAccessLoadMessage = false;
+            return;
+          }
+          this.messageData = this.messageData.concat(data.records);
+          this.messagePage.currentPage++;
+        }).then(() => {
+          if (!this.contentIsOverflow(document.getElementById("message"))) {
+            this.loadMessageData();
+          }
+        })
+      },
       handlerClickFastMenu(item) {
         this.$router.push({path: item.router});
+      },
+      eventScrollMessage() {
+        let message = document.getElementById("message");
+        this.eventScrollBottom(message, () => {
+          this.loadMessageData();
+        })
+      },
+      eventScrollBottom(tableDom, back) {
+        let dom = tableDom.querySelector(".el-table__body-wrapper");
+        dom.addEventListener("scroll", function() {
+          const scrollDistance = dom.scrollHeight - dom.scrollTop - dom.clientHeight;
+          if (scrollDistance > 0) {
+            return;
+          }
+          back();
+        });
+      },
+      contentIsOverflow(tableDom) {
+        let dom = tableDom.querySelector(".el-table__body-wrapper");
+        let trs = dom.getElementsByClassName("el-table__row");
+        if (this.validatenull(trs)) {
+          return false;
+        }
+        let trOne = trs.item(0);
+        return trOne.clientHeight * trs.length > dom.clientHeight;
       }
     },
     computed: {
@@ -135,7 +200,7 @@
       },
       height() {
         return this.windowHeight - 410 + "px";
-      }
+      },
     }
   }
 </script>
@@ -143,5 +208,11 @@
 <style>
 .work .el-card__body {
   padding: 10px 20px 10px 10px;
+}
+  .work .no-el-table td .is-leaf {
+    border-bottom: unset;
+  }
+.work .no-el-table tr {
+  border-top: 1px solid #EBEEF5;
 }
 </style>

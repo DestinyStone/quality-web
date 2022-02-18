@@ -6,7 +6,7 @@
       </div>
       {{title}}
     </fix-tag-title>
-    <el-divider></el-divider>
+    <el-divider v-if="isExistDivider"></el-divider>
     <slot></slot>
   </div>
 </template>
@@ -17,6 +17,10 @@
     name: "title-container",
     components: {FixTagTitle},
     props: {
+      isExistDivider: {
+        type: Boolean,
+        default: true
+      },
       title: {
         type: String,
       },

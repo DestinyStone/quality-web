@@ -5,7 +5,13 @@
         title="事项"
         tag-class="el-icon-time"
       >
-        <await-card style="width: 180px"/>
+        <div style="display: flex;">
+          <await-card
+            @handler="handlerAwait(item)"
+            :data="item"
+            v-for="(item, index) in awaitData" :key="'await' + index"
+            style="width: 180px; margin-right: 20px;"/>
+        </div>
       </title-container>
     </basic-container>
     <el-row>
@@ -118,6 +124,11 @@
     components: {TitleContainer, AwaitCard, FixTagTitle},
     data() {
       return {
+        awaitData: [
+          {title: "不良待办", quality: 10, urgeQuality: 5, router: "/business/out_buy_low_approve/out_buy_low_approve"},
+          {title: "检查法待办", quality: 10, urgeQuality: 5, router: "/business/check/check_approve"},
+          {title: "DI数据待办", quality: 10, urgeQuality: 5, router: "/business/di/account_approve"},
+        ],
         windowHeight: 0,
         fastMenu: [
           {title: "不良录入", router: "/business/process_low/process_low_save"},
@@ -145,6 +156,9 @@
       this.loadMessageData();
     },
     methods: {
+      handlerAwait(item) {
+        this.$router.push({path: item.router});
+      },
       loadMessageData() {
         if (!this.isAccessLoadMessage) {
           return;

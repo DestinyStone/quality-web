@@ -7,7 +7,7 @@ export const downloadFile = (id) => {
     params: {
       id
     },
-    blob: 'blob',
+    responseType: 'blob'
   })
 }
 

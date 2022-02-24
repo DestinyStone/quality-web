@@ -46,11 +46,11 @@
                 <td>供应商承认零件检查法签字文件</td>
               </tr>
               <tr>
-                <td>
-                  <file-upload :file.sync="form.providerExcelFileId"/>
+                <td style="width: 50%">
+                  <file-upload :file-name-limit="20" :file.sync="form.providerExcelFileId"/>
                 </td>
-                <td>
-                  <file-upload :file.sync="form.providerSignatureId"/>
+                <td style="width: 50%">
+                  <file-upload :file-name-limit="20" :file.sync="form.providerSignatureId"/>
                 </td>
               </tr>
             </table>
@@ -98,7 +98,8 @@
       <div style="display: flex; justify-content: center; padding: 40px;">
         <div>
           <el-button size="small" @click="$emit('cancel')">取消</el-button>
-          <el-button size="small" type="primary" @click="handlerSave">新增</el-button>
+          <el-button size="small" v-if="!isUpdate" type="primary" @click="handlerSubmit">新增</el-button>
+          <el-button size="small" v-if="isUpdate" type="primary" @click="handlerSubmit">提交</el-button>
         </div>
       </div>
     </div>
@@ -112,33 +113,42 @@
   import FileMultUpload from "../../../../components/file/file-mult-upload";
   import FileUpload from "../../../../components/file/file-upload";
   import FileDragUpload from "../../../../components/file/file-drag-upload";
+  import {detailCheck} from "../../../../api/check/check";
   export default {
     name: "checkSubmit",
     components: {FileDragUpload, FileUpload, FileMultUpload, FileImageUpload, TitleContainer, FixColorTitle},
     props: {
       save: {
         type: Function,
+      },
+      isUpdate: {
+        type: Boolean,
+        default: false,
+      },
+      id: {
+        type: String,
+      },
+      update: {
+        type: Function,
       }
     },
     data() {
       let validateCheckFile = (rule, value, callback) => {
-        console.log(this.form);
         if (this.validatenull(this.form.providerExcelFileId) && this.validatenull(this.form.providerSignatureId)) {
-          callback(new Error('请上次供应商承认零件检查法EXCEL文件和签字文件'));
+          callback(new Error('请上传供应商承认零件检查法EXCEL文件和签字文件'));
           return;
         }
         if (this.validatenull(this.form.providerExcelFileId)) {
-          callback(new Error('请上次供应商承认零件检查法EXCEL文件'));
+          callback(new Error('请上传供应商承认零件检查法EXCEL文件'));
           return;
         }
         if (this.validatenull(this.form.providerSignatureId)) {
-          callback(new Error('请上次供应商承认零件检查法签字文件'));
+          callback(new Error('请上传供应商承认零件检查法签字文件'));
           return;
         }
         callback();
       };
       return {
-        data: {},
         windowHeight: 0,
         form: {},
         rules: {
@@ -148,7 +158,7 @@
           changeImageId: [{required: true, message: '请输入新规格及变更图片', trigger: 'blur'},],
           deptIdea: [{required: true, message: '请输入相关部门意见', trigger: 'blur'},],
           checkDeptIdea: [{required: true, message: '请输入检查管理部门意见', trigger: 'blur'},],
-          checkFile: [{validator: validateCheckFile, trigger: 'blur'},],
+          checkFile: [{required: true, validator: validateCheckFile, trigger: 'blur'},],
         },
         tableUpdate: 0,
       }
@@ -162,13 +172,26 @@
       }
     },
     methods: {
+      removeBusincessIdFiles(row) {
+        this.$confirm("是否删除改文件?", "提示", {confirmButtonText: "确定", cancelButtonText: "取消", type: "warning"}).then(() => {
+          for(let key in this.form.extendsFileIds) {
+            let item = this.form.extendsFileIds[key];
+            if (item.id === row.id) {
+              this.form.extendsFileIds.splice(key, 1);
+              break;
+            }
+          }
+
+          this.handlerBusincessUpload();
+        });
+      },
       handlerBusincessUpload() {
         this.tableUpdate++;
       },
       handlerReback() {
         this.$emit("reback");
       },
-      handlerSave() {
+      handlerSubmit() {
         this.$refs['form'].validate((valid) => {
           if (!valid) {
             return;
@@ -192,10 +215,31 @@
           if (!this.validatenull(this.form.extendsFileIds)) {
             copy.extendsFileIds = this.form.extendsFileIds.map(item => item.id).join(",");
           }
-
-          this.save(copy);
+          if (this.validatenull(this.form.extendsFileIds)) {
+            copy.extendsFileIds = "";
+          }
+          if (this.isUpdate) {
+            this.update(copy);
+          }else {
+            this.save(copy);
+          }
         })
+      },
+      init() {
+        if (this.isUpdate) {
+          detailCheck(this.id).then(res => {
+            this.form = res.data.data;
+            this.$set(this.form, 'changeImageId', this.form.changeImageFile);
+            this.$set(this.form, 'providerExcelFileId', this.form.providerExcelFile);
+            this.$set(this.form, 'providerSignatureId', this.form.providerSignatureFile);
+            this.$set(this.form, 'toyotaExcelFileId', this.form.toyotaExcelFile);
+            this.$set(this.form, 'extendsFileIds', this.form.extendsFiles);
+          })
+        }
       }
+    },
+    created() {
+      this.init();
     }
   }
 </script>

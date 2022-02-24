@@ -1,4 +1,5 @@
 import {validatenull} from './validate'
+import {downloadFile} from "../api/business/file/file";
 //表单序列化
 export const serialize = data => {
   let list = [];

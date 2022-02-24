@@ -2,15 +2,16 @@
   <div>
     <basic-container v-if="showMain">
       <div>
-        <div style="display: flex; justify-content: space-between;">
+        <div style="display: flex; justify-content: space-between">
           <div>
-            <tag-select :data="tagData" :active="activeTag" @click="handlerSwitchTag"/>
+            <el-button size="small" type="primary" @click="handlerClickSaveCheck">新增检查法</el-button>
+            <el-button size="small" type="primary">检查制作提醒</el-button>
           </div>
           <div>
-            <el-input size="small" v-model="query.searchKey" style="margin-left: 10px; width: 300px" placeholder="品番号/品番名/供应商"/>
+            <el-input size="small"  v-model="query.searchKey" style="width: 300px" placeholder="品番号/品番名/供应商名称"/>
             <el-button size="small" type="primary" style="margin-left: 10px;" @click="onLoad">查询</el-button>
-            <el-button size="small" style="margin-left: 10px;" @click="resetQuery">重置</el-button>
           </div>
+
         </div>
         <el-divider></el-divider>
         <div style="margin-top: 10px;">
@@ -22,7 +23,12 @@
             :data="data"
             border
             :height="tableHeight"
+            @selection-change="handleSelectionChange"
             style="width: 100%">
+            <el-table-column
+              type="selection"
+              width="55">
+            </el-table-column>
             <el-table-column
               label="序号"
               width="80">
@@ -31,14 +37,8 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="管理编号"
-              prop="code"
-              width="180">
-            </el-table-column>
-            <el-table-column
               label="品番号"
-              prop="designation"
-              width="180">
+              prop="designation">
             </el-table-column>
             <el-table-column
               prop="name"
@@ -47,20 +47,6 @@
             <el-table-column
               prop="dutyDept"
               label="供应商名称">
-            </el-table-column>
-            <el-table-column
-              prop="bpmNode"
-              label="业务类型">
-              <template slot-scope="scope">
-                {{scope.row.bpmNode === 0 ? '新增检查法' : '修订检查法'}}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="bpmStatus"
-              label="状态">
-              <template slot-scope="scope">
-                {{approveMap[scope.row.bpmStatus]}}
-              </template>
             </el-table-column>
             <el-table-column
               prop="createTime"
@@ -72,7 +58,7 @@
               label="操作">
               <template slot-scope="scope">
                 <div style="display: flex; justify-content: space-around;">
-                  <el-link :underline="false"  type="primary" @click="handlerDetail(scope.row)">详情</el-link>
+                  <el-link :underline="false"  type="primary" @click="handlerClickRowSaveCheck(scope.row)">新增检查法</el-link>
                 </div>
               </template>
             </el-table-column>
@@ -94,46 +80,34 @@
         </div>
       </div>
     </basic-container>
-    <check-detail v-if="showDetail" @reback="handlerReBack" :id="currentSelect.id"/>
+    <check-submit v-if="showSubmit" @cancel="handlerCancel" :save="save"/>
   </div>
-
 </template>
 
 <script>
-  import CheckDetail from "./component/check_detail";
-  import {pageCheck, qualityCheck} from "../../../api/check/check";
-  import TagSelect from "../../../components/min/tag_select";
+  import CheckSubmit from "./component/check_submit";
+  import {getAccessSavePage, saveCheck} from "../../../api/check/check";
   export default {
-    name: "checkList",
-    components: {TagSelect, CheckDetail},
+    name: "checkSaveList",
+    components: {CheckSubmit},
     data() {
       return {
+        showMain: true,
+        showSubmit: false,
         windowHeight: 0,
         loading: true,
-        data: [{name: 1}],
+        data: [],
         query: {},
         page: {
           current: 1,
           size: 10,
           total: 0,
         },
-        statusDict: [
-          {value: 1, label: '已完成'},
-          {value: 0, label: '未完成'},
-          {value: 2, label: '已退回'},
-        ],
-        approveMap: {0: "待审批", 1: "审批中", 2: "已结案", 3: "退回", 4: "自撤回"},
-        showMain: true,
-        showDetail: false,
-        activeTag: -1,
-        tagData: [
-          {label: "全部", value: -1},
-          {label: "进行中", value: 2},
-          {label: "已驳回", value: 1},
-          {label: "已办结", value: 3},
-        ],
-        currentSelect: {},
+        selectList: [],
       }
+    },
+    created() {
+      this.init();
     },
     mounted() {
       this.windowHeight = document.body.clientHeight;
@@ -141,51 +115,53 @@
     computed: {
       tableHeight() {
         return this.windowHeight - 330;
-      }
+      },
     },
     methods: {
-      resetQuery() {
-        this.activeTag = -1;
-        this.query = {};
-        this.query.activeTag = -1;
-        this.onLoad();
-      },
-      handlerSwitchTag(tag) {
-        this.activeTag = tag.value;
-        this.query.bpmStatusFilter = tag.value;
-        this.onLoad();
-      },
-      handlerReBack() {
-        this.showMain = true;
-        this.showDetail = false;
-        this.onLoad();
-      },
-      handlerDetail(row) {
-        this.currentSelect = row;
-        this.showMain = false;
-        this.showDetail = true;
-      },
-      onLoadQuality() {
-        qualityCheck().then(res => {
-          let data = res.data.data;
-          this.$set(this.tagData[1], 'count', data.process);
-          this.$set(this.tagData[2], 'count', data.back);
-          this.$set(this.tagData[3], 'count', data.finish);
+      save(form) {
+        let resourceList = this.selectList.map(item => ({resourceId: item.resourceId, resourceType: item.resourceType}));
+        form.resourceList = resourceList;
+        saveCheck(form).then(() => {
+          this.$message({type: "success", message: "新增成功"});
+          this.showMain = true;
+          this.showSubmit = false;
+          this.onLoad();
         })
+      },
+      handleSelectionChange(selectList) {
+        this.selectList = selectList;
+      },
+      init() {
+        this.onLoad();
       },
       onLoad() {
         this.loading = true;
-        pageCheck(this.page.current, this.page.size, this.query).then(res => {
+        getAccessSavePage(this.page.current, this.page.size, this.query).then(res => {
           let data = res.data.data;
           this.data = data.records;
           this.page.total = data.total;
           this.loading = false;
         })
-        this.onLoadQuality();
+      },
+      handlerClickRowSaveCheck(row) {
+        this.selectList.push(row);
+        this.showMain = false;
+        this.showSubmit = true;
+      },
+      handlerClickSaveCheck() {
+        if (this.selectList.length === 0) {
+          this.$message({type: "warning", message: "请至少选择一条数据"});
+          return;
+        }
+
+        this.showMain = false;
+        this.showSubmit = true;
+      },
+      handlerCancel() {
+        this.showMain = true;
+        this.showSubmit = false;
+        this.selectList = [];
       }
-    },
-    created() {
-      this.onLoad();
     }
   }
 </script>

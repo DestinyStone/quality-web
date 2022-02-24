@@ -10,8 +10,12 @@
         <i><el-button size="mini" type="primary">点击上传</el-button></i>
         <div @click.stop style="margin-left: 20px;">
           <div v-if="file.name !== null && file.name !== undefined">
-            {{file.name}}
-            <i @click="handlerRemove" class="el-icon-close"/>
+            <div style="display: flex;">
+              <tooltop-text :text="file.name" :limit="fileNameLimit"/>
+              <div style="display: flex; justify-content: center; flex-flow: column;">
+                <i @click="handlerRemove" class="el-icon-close"/>
+              </div>
+            </div>
           </div>
           <div style="color: #C0C4CC;" v-if="validatenull(file)">
             未选择任何文件
@@ -24,9 +28,11 @@
 
 <script>
   import {uploadFile} from "../../api/business/file/file";
+  import TooltopText from "../min/tooltop-text";
 
   export default {
     name: "fileUpload",
+    components: {TooltopText},
     props: {
       file: {
         type: Object,
@@ -34,6 +40,10 @@
           return {}
         }
       },
+      fileNameLimit: {
+        type: Number,
+        default: 100,
+      }
     },
     data() {
       return {

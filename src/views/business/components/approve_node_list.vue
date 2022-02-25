@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 10px;">
+  <div class="approve-node-list-container" style="padding: 10px;">
     <div style="position:relative; background: #FFFFFF">
       <div style="display: flex; justify-content: space-between;" :class="{'approve-node-list-open': !isHide}" class="approve-node-list">
         <div style="width: 20%;">
@@ -48,12 +48,13 @@
           </div>
         </div>
         <div style="width: 20%;  display: flex; justify-content: flex-end;">
-          <div style="width: 120px;">
+          <div style="display: flex; width: 200px; justify-content: flex-end;">
             <div
               @click="handlerClickDetail"
-              style="margin: 20px 20px 0 0;border: 1px solid #007AD9; font-size: 12px; cursor:pointer; background-color: #EFF5FF; color: #007AD9; text-align: center; padding: 0 10px; height: 30px; line-height: 30px;">
+              class="operator-button">
               查看审批详情
             </div>
+            <el-tag v-if="isCancel" type="warning" style="border-radius: unset" class="operator-button" @click="$emit('close')"><< 返回</el-tag>
           </div>
         </div>
       </div>
@@ -64,10 +65,15 @@
           <i class="el-icon-arrow-up" v-if="!isHide"/>
           <i class="el-icon-arrow-down" v-if="isHide"/>
         </div>
-        <div
-          @click="handlerClickDetail"
-          v-if="isShowHideDetail" style="position:absolute; right: 10px; top: 12px;border: 1px solid #007AD9; font-size: 12px; cursor:pointer; background-color: #EFF5FF; color: #007AD9; text-align: center; padding: 0 10px; height: 30px; line-height: 30px;">
-          查看审批详情
+        <div style=" position:absolute; right: 10px; top: -8px;"  v-if="isShowHideDetail">
+          <div style="display: flex;">
+            <div
+              @click="handlerClickDetail"
+              class="operator-button">
+              查看审批详情
+            </div>
+            <el-tag v-if="isCancel" type="warning" style="border-radius: unset" class="operator-button" @click="$emit('close')"><< 返回</el-tag>
+          </div>
         </div>
       </div>
       <el-dialog title="详情"
@@ -110,6 +116,10 @@
       },
       bpmStatusRemark: {
         type: String,
+      },
+      isCancel: {
+        type: Boolean,
+        default: false,
       }
     },
     data() {
@@ -198,4 +208,16 @@
   background: #2d8cf0;
   font-weight: 700; color: #FFFFFF;
 }
+  .approve-node-list-container .operator-button {
+    margin: 20px 20px 0 0;
+    border: 1px solid #007AD9;
+    font-size: 12px;
+    cursor:pointer;
+    background-color: #EFF5FF;
+    color: #007AD9;
+    text-align: center;
+    padding: 0 10px;
+    height: 30px;
+    line-height: 30px;
+  }
 </style>

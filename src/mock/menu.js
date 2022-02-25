@@ -3,6 +3,7 @@ import Mock from 'mockjs'
 const top = [{
   label: "首页",
   path: "/wel/index",
+  // path: "/wel/index",
   icon: 'el-icon-menu',
   meta: {
     i18n: 'dashboard',

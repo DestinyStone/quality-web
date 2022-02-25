@@ -3,11 +3,11 @@
     <div>
       <div style="display: flex; justify-content: space-between;">
         <div style="display: flex;">
-          <el-input size="small" style="width: 300px" placeholder="品番号/品番名"/>
-          <el-button size="small" type="primary" style="margin-left: 10px;">查询</el-button>
+          <el-button size="small" type="primary" style="margin-left: 10px;">上报周期配置</el-button>
         </div>
        <div>
-         <el-button size="small" type="primary" style="margin-left: 10px;">上报周期配置</el-button>
+         <el-input size="small" style="width: 300px" v-model="query.searchKey" placeholder="品番号/品番名/供应商名称"/>
+         <el-button size="small" type="primary" style="margin-left: 10px;" @click="onLoad">查询</el-button>
        </div>
       </div>
       <el-divider></el-divider>
@@ -30,17 +30,22 @@
           </el-table-column>
           <el-table-column
             label="品番号"
+            prop="designation"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="type"
+            prop="name"
             label="品番名">
           </el-table-column>
           <el-table-column
+            prop="dutyDept"
             label="供应商名称">
           </el-table-column>
           <el-table-column
             label="状态">
+            <template slot-scope="scope">
+              启用
+            </template>
           </el-table-column>
           <el-table-column
             label="最新版本">
@@ -80,6 +85,8 @@
 </template>
 
 <script>
+  import {diAccountPage} from "../../../api/business/di/di";
+
   export default {
     name: "accountList",
     data() {
@@ -103,6 +110,23 @@
         return this.windowHeight - 330;
       }
     },
+    methods: {
+      init() {
+        this.onLoad();
+      },
+      onLoad() {
+        this.loading =  true;
+        diAccountPage(this.page.current, this.page.size, this.query).then(res => {
+          let data = res.data.data;
+          this.data = data.records;
+          this.page.total = data.total;
+          this.loading = false;
+        })
+      }
+    },
+    created() {
+      this.init();
+    }
   }
 </script>
 

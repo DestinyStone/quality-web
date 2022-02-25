@@ -5,7 +5,8 @@
                        :bpm-node="node"
                        :form="form"
                        :code="code"
-                       :bpm-status-remark="bpmStatusRemark"
+                       :is-cancel="true"
+                       @close="$emit('close')"
                        @switch="handlerSwitch"
                        @afterInit="handlerAfterInit"
     />
@@ -35,7 +36,6 @@
       </el-row>
     </div>
     <div style="position: absolute; bottom: 0; left: 0; cursor: pointer;">
-      <el-tag type="warning" @click="$emit('close')"><< 返回</el-tag>
     </div>
   </div>
 

@@ -45,6 +45,13 @@
               label="供应商名称">
             </el-table-column>
             <el-table-column
+              prop="bpmStatus"
+              label="审批状态">
+              <template slot-scope="scope">
+                {{approveMap[scope.row.bpmStatus]}}
+              </template>
+            </el-table-column>
+            <el-table-column
               show-overflow-tooltip
               prop="toyotaExcelFileName"
               label="最新版本">
@@ -60,7 +67,7 @@
               label="操作">
               <template slot-scope="scope">
                 <div style="display: flex; justify-content: space-around;">
-                  <el-link :underline="false"  type="primary" @click="handlerClickRowSaveCheck(scope.row)">发起修订</el-link>
+                  <el-link :underline="false" v-if="scope.row.bpmStatus === 2 || scope.row.bpmStatus === 3"  type="primary" @click="handlerClickRowSaveCheck(scope.row)">发起修订</el-link>
                   <el-link :underline="false"  type="primary" @click="handlerClickOpenAccount(scope.row)">检查法版本</el-link>
                 </div>
               </template>
@@ -114,6 +121,7 @@
         },
         selectList: [],
         currentSelect: {},
+        approveMap: {0: "待审批", 1: "审批中", 2: "已结案", 3: "退回", 4: "自撤回"},
       }
     },
     created() {

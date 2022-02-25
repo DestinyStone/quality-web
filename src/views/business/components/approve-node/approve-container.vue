@@ -16,12 +16,14 @@
           <div style="margin-top: 20px;">
             <slot name="bigContent"></slot>
             <extensible-container :title="messageMinTitle" :default-status="true" v-if="!validatenull(messageMinTitle)">
-              <slot name="content"/>
+              <div  style="padding: 80px;">
+                <slot name="content"/>
+              </div>
             </extensible-container>
           </div>
         </div>
       </basic-container>
-      <div style="bottom: 0; position: fixed; width: 100%; background: #FFFFFF">
+      <div style="bottom: 0; position: fixed; z-index: 999; width: 100%; background: #FFFFFF">
         <div style=" padding: 10px 0; width: 85%;">
           <div style="display: flex; justify-content: center;">
             <slot name="operator"/>

@@ -128,7 +128,7 @@
               <div v-if="validatenull(data.separateFileDependName)" style="color: #C0C4CC;">
                 无文件
               </div>
-              <div style="color: #2d8cf0; cursor: pointer;">
+              <div style="color: #2d8cf0; cursor: pointer;" @click="handlerDownLoad(data.separateFileDependId)">
                 {{data.separateFileDependName}}
               </div>
             </td>
@@ -171,9 +171,9 @@
             label="操作时间">
           </el-table-column>
           <el-table-column
-            label="下载">
+            label="操作">
             <template slot-scope="scope">
-              下载
+              <div style="cursor: pointer; color: #F56C6C;" @click="handlerDownLoad(scope.row.id)">下载</div>
             </template>
           </el-table-column>
         </el-table>
@@ -183,6 +183,9 @@
 </template>
 
 <script>
+  import {downloadFile} from "../../../../api/business/file/file";
+  import {downloadResFile} from "../../../../util/util";
+
   export default {
     name: "processLowBasicMessage",
     data() {
@@ -200,6 +203,13 @@
         default() {
           return {}
         }
+      }
+    },
+    methods: {
+      handlerDownLoad(fileId) {
+        downloadFile(fileId).then(res => {
+          downloadResFile(res);
+        })
       }
     }
   }

@@ -113,6 +113,7 @@
               </template>
             </el-table-column>
             <el-table-column
+              show-overflow-tooltip
               v-if="isShowToyotaExcelFileColumn"
               prop="toyotaExcelFileName"
               label="丰田承认零件检查法Excel文件">

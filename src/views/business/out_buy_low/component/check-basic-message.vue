@@ -60,7 +60,7 @@
           <el-table-column
             label="操作">
             <template slot-scope="scope">
-              <el-link :underline="false"  type="primary" @click="handlerDownload(scope.row.id)">下载</el-link>
+              <div  style="cursor: pointer; color: #F56C6C;" @click="handlerDownload(scope.row.id)">下载</div>
             </template>
           </el-table-column>
         </el-table>

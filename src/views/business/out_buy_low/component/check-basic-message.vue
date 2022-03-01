@@ -12,19 +12,19 @@
           <col width="35%" />
           <tr>
             <td class="message-title">发生原因</td>
-            <td class="message-value">{{data.analyseTriggerCause}}</td>
+            <td class="message-value">{{userData.analyseTriggerCause}}</td>
             <td class="message-title">流出原因</td>
-            <td class="message-value">{{data.analyseOutCause}}</td>
+            <td class="message-value">{{userData.analyseOutCause}}</td>
           </tr>
           <tr>
             <td class="message-title">发生对策</td>
-            <td class="message-value">{{data.analyseTriggerStrategy}}</td>
+            <td class="message-value">{{userData.analyseTriggerStrategy}}</td>
             <td class="message-title">流出对策</td>
-            <td class="message-value">{{data.analyseOutStrategy}}</td>
+            <td class="message-value">{{userData.analyseOutStrategy}}</td>
           </tr>
           <tr>
             <td class="message-title">其他</td>
-            <td class="message-value">{{data.analyseOther}}</td>
+            <td class="message-value">{{userData.analyseOther}}</td>
           </tr>
         </table>
       </div>
@@ -35,7 +35,7 @@
         <el-table
           :header-cell-style="{background: 'rgb(239, 245, 255)', 'textAlign': 'center'}"
           :cell-style="{'textAlign': 'center'}"
-          :data="data.analyseExtendsFileList"
+          :data="userData.analyseExtendsFileList"
           border
           height="250"
           style="width: 100%; margin-top: 10px;">
@@ -72,10 +72,14 @@
 <script>
   import {downloadFile} from "../../../../api/business/file/file";
   import {downloadResFile} from "../../../../util/util";
+  import {qprDetail} from "../../../../api/business/out_buy_low/qpr";
 
   export default {
     name: "check-basic-message",
     props: {
+      id: {
+        type: String
+      },
       data: {
         type: Object,
         default() {
@@ -83,12 +87,36 @@
         }
       }
     },
+    data() {
+      return {
+        initData: {}
+      }
+    },
     methods: {
       handlerDownload(fileId) {
         downloadFile(fileId).then(res => {
           downloadResFile(res);
         })
+      },
+      init() {
+        if (this.validatenull(this.id)) {
+          return;
+        }
+        qprDetail(this.id).then(res => {
+          this.initData = res.data.data;
+        })
       }
+    },
+    computed: {
+      userData() {
+        if (this.validatenull(this.id)) {
+          return this.data;
+        }
+        return this.initData;
+      },
+    },
+    created() {
+      this.init();
     }
   }
 </script>

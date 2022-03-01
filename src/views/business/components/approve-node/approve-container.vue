@@ -16,7 +16,7 @@
           <div style="margin-top: 20px;">
             <slot name="bigContent"></slot>
             <extensible-container :title="messageMinTitle" :default-status="true" v-if="!validatenull(messageMinTitle)">
-              <div  style="padding: 80px;">
+              <div  style="padding: 10px;">
                 <slot name="content"/>
               </div>
             </extensible-container>

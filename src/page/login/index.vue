@@ -9,7 +9,6 @@
           {{time}}
         </div>
         <div style="height: 100px">
-
         </div>
 <!--        <img class="img" src="/img/logo.png" alt="">-->
 <!--        <p class="title">{{ $t('login.info') }}</p>-->

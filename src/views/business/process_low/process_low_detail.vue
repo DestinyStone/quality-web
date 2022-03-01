@@ -34,7 +34,17 @@
       </div>
     </div>
     <div slot="QprCheckResult">
-      22
+      <out-buy-low-basic-message :id="busId"/>
+    </div>
+    <div slot="CheckResult">
+      <extensible-container title="不良原因&对策">
+        <check-basic-message :id="busId"/>
+      </extensible-container>
+      <extensible-container title="不良调查结论" v-if="isShowCheckResult">
+        <div style="padding-bottom: 100px;">
+          <fill-message :id="busId"/>
+        </div>
+      </extensible-container>
     </div>
   </approve-detail-container>
 </template>
@@ -48,9 +58,15 @@
   import ProcessLowBasicMessage from "./component/process_low_basic_message";
   import ProcessLowSave from "./process_low_save";
   import ProcessLowSaveContent from "./component/process_low_save_content";
+  import OutBuyLowBasicMessage from "../out_buy_low/component/out_buy_low_basic_message";
+  import CheckBasicMessage from "../out_buy_low/component/check-basic-message";
+  import FillMessage from "../out_buy_low/component/fill_message";
   export default {
     name: "processLowDetail",
     components: {
+      FillMessage,
+      CheckBasicMessage,
+      OutBuyLowBasicMessage,
       ProcessLowSaveContent,
       ProcessLowSave,
       ProcessLowBasicMessage, ExtensibleContainer, FixColorTitle, ApproveDetailContainer, ApproveNodeList},
@@ -60,6 +76,12 @@
       },
       bpmStatus: {
         type: Number,
+      },
+      bpmNode: {
+        type: Number,
+      },
+      type: {
+        type: Number,
       }
     },
     data() {
@@ -67,12 +89,12 @@
         active: 0,
         tagData: [
           {label: "工序内不良联络书", slotName: "processLowMessage", value: 0},
-          // {label: "QPR调查结果", slotName: "QprCheckResult",  value: 1},
         ],
         isShowQprCheck: false,
         isEdit: false,
         data: {},
         bpmStatusRemark: "",
+        isShowCheckResult: false,
       }
     },
     methods: {
@@ -92,7 +114,17 @@
       init() {
         processLowDetail(this.busId).then(res => {
           this.data = res.data.data;
-        })
+        });
+        if (this.bpmNode > 0 && this.type === 0) {
+          this.tagData.push({label: "QPR调查结果", slotName: "QprCheckResult",  value: 1});
+        }
+
+        if (this.bpmNode > 2) {
+          this.tagData.push({label: "不良调查结果", slotName: "CheckResult",  value: 2});
+        }
+        if (this.bpmNode > 3) {
+          this.isShowCheckResult = true;
+        }
       },
       handlerAfterInit(data) {
         if (data[0].bpmStatus === 0) {

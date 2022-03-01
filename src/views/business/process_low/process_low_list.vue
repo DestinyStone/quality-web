@@ -118,6 +118,9 @@
             prop="bpmNode"
             min-width="200"
             label="当前业务环节">
+            <template slot-scope="scope">
+              {{bpmNodeMap[scope.row.bpmNode]}}
+            </template>
           </el-table-column>
           <el-table-column
             prop="createUserName"
@@ -159,6 +162,8 @@
     <process-low-detail v-if="showDetail"
                         :bus-id="currentSelect.id"
                         :bpm-status="currentSelect.bpmStatus"
+                        :bpm-node="currentSelect.bpmNode"
+                        :type="currentSelect.type"
                         @refresh="onLoad"
                         @close="handlerClose"/>
   </div>
@@ -215,6 +220,7 @@
         levelMap: {0: "R", 1: "S", 2: "A", 3: "B", 4: "C", 5: "批量", 6: "停线"},
         approveMap: {0: "待审批", 1: "审批中", 2: "已结案", 3: "退回", 4: "自撤回"},
         currentSelect: {},
+        bpmNodeMap: {0: "不良联络书发行确认", 1: "不良联络书发行审批", 2: "不良调查", 3: "调查结果确认",  4: "调查结果审批"},
       }
     },
     mounted() {

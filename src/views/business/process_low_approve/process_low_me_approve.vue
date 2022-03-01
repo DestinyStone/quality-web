@@ -60,11 +60,11 @@
               label="责任部门/厂家">
             </el-table-column>
             <el-table-column
-              prop="dutyDept"
+              prop="bpmNode"
               min-width="200"
               label="当前业务环节">
               <template slot-scope="scope">
-                TODO
+                {{bpmNodeMap[scope.row.bpmNode]}}
               </template>
             </el-table-column>
             <el-table-column
@@ -193,6 +193,7 @@
         pushStatusMap: {0: "正常推进", 1: "已超期", 2: "已延期",},
         currentSelect: {},
         showPutOfDialog: false,
+        bpmNodeMap: {0: "不良联络书发行确认", 1: "不良联络书发行审批", 2: "不良调查", 3: "调查结果确认",  4: "调查结果审批"},
       }
     },
     mounted() {

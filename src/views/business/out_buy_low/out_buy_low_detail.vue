@@ -13,7 +13,7 @@
     <div slot="processLowMessage">
       <div v-if="!isEdit">
         <div style="display: flex; justify-content: space-between;">
-          <fix-correlor-title>工序内不良联络书</fix-correlor-title>
+          <fix-correlor-title>外购件不良联络书</fix-correlor-title>
           <div
             v-if="bpmStatus === 3"
             @click="handlerClickEdit"
@@ -22,19 +22,21 @@
           </div>
         </div>
         <el-divider></el-divider>
-        <extensible-container title="基本信息" :default-status="true">
-          <process-low-basic-message :data="data"/>
-        </extensible-container>
+        <out-buy-low-basic-message :data="data"/>
       </div>
       <div v-if="isEdit">
-        <process-low-save-content :is-public="true"
-                                  :id="busId"
-                                  @save="handlerUpdate"
-                                  @close="handlerCloseUpdate"/>
+        33
       </div>
     </div>
-    <div slot="QprCheckResult">
-      22
+    <div slot="CheckResult">
+      <extensible-container title="不良原因&对策">
+        <check-basic-message :id="busId"/>
+      </extensible-container>
+      <extensible-container title="不良调查结论" v-if="isShowCheckResult">
+        <div style="padding-bottom: 100px;">
+          <fill-message :id="busId"/>
+        </div>
+      </extensible-container>
     </div>
   </approve-detail-container>
 </template>
@@ -48,9 +50,16 @@
   import ProcessLowSave from "../process_low/process_low_save";
   import ProcessLowSaveContent from "../process_low/component/process_low_save_content";
   import {processLowApproveReSubmit} from "../../../api/business/process_low/process_low";
+  import OutBuyLowBasicMessage from "./component/out_buy_low_basic_message";
+  import {qprDetail} from "../../../api/business/out_buy_low/qpr";
+  import CheckBasicMessage from "./component/check-basic-message";
+  import FillMessage from "./component/fill_message";
   export default {
     name: "outBuyLowDetail",
     components: {
+      FillMessage,
+      CheckBasicMessage,
+      OutBuyLowBasicMessage,
       ProcessLowSaveContent,
       ProcessLowSave,
       ProcessLowBasicMessage, ExtensibleContainer, FixColorTitle, ApproveDetailContainer, ApproveNodeList},
@@ -60,19 +69,23 @@
       },
       bpmStatus: {
         type: Number,
+      },
+      bpmNode: {
+        type: Number,
       }
     },
     data() {
       return {
         active: 0,
         tagData: [
-          {label: "工序内不良联络书", slotName: "processLowMessage", value: 0},
+          {label: "外购件不良联络书", slotName: "processLowMessage", value: 0},
           // {label: "QPR调查结果", slotName: "QprCheckResult",  value: 1},
         ],
         isShowQprCheck: false,
         isEdit: false,
         data: {},
         bpmStatusRemark: "",
+        isShowCheckResult: false,
       }
     },
     methods: {
@@ -90,9 +103,15 @@
         this.isEdit = true;
       },
       init() {
-        processLowDetail(this.busId).then(res => {
+        qprDetail(this.busId).then(res => {
           this.data = res.data.data;
         })
+        if (this.bpmNode > 2) {
+          this.tagData.push({label: "不良调查结果", slotName: "CheckResult",  value: 2});
+        }
+        if (this.bpmNode > 3) {
+          this.isShowCheckResult = true;
+        }
       },
       handlerAfterInit(data) {
         if (data[0].bpmStatus === 0) {

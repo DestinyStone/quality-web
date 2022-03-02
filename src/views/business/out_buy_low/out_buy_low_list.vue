@@ -23,7 +23,7 @@
                   :value="item.value">
                 </el-option>
               </el-select>
-              <el-select  style="width: 130px; margin-left: 15px;"size="small" v-model="query.triggerAddress" placeholder="发生地点">
+              <el-select  style="width: 130px; margin-left: 15px;" size="small" v-model="query.triggerAddress" placeholder="发生地点">
                 <el-option
                   v-for="item in triggerAddressDict"
                   :key="item.value"
@@ -167,7 +167,6 @@
 
 <script>
   import TagSelect from "../../../components/min/tag_select";
-  import {processLowPage, processLowQuality, processLowSelfBack} from "../../../api/business/process_low/process_low";
   import {outBuySelf, qprPage, qprQuality} from "../../../api/business/out_buy_low/qpr";
   import OutBuyLowDetail from "./out_buy_low_detail";
   export default {

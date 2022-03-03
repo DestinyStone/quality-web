@@ -75,7 +75,7 @@
               <el-row>
                 <el-col :span="12">
                   <el-form-item label="责任部门/厂家" prop="dutyDept">
-                    <el-input v-model="form.dutyDept" placeholder="请输入责任部门/厂家"></el-input>
+                    <duty-select placeholder="请输入责任部门/厂家" :default-value="form.dutyDept" @change="(data) => {$set(form, 'dutyDept', data)}"/>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -243,9 +243,10 @@
   import FileMultUpload from "../../../../components/file/file-mult-upload";
   import FixColorTitle from "../../../../components/min/fix_color_title";
   import FileDragUpload from "../../../../components/file/file-drag-upload";
+  import DutySelect from "../../components/duty_select";
   export default {
     name: "processLowSaveContent",
-    components: {FileDragUpload, FixColorTitle, FileMultUpload, FileUpload, FileImageUpload},
+    components: {DutySelect, FileDragUpload, FixColorTitle, FileMultUpload, FileUpload, FileImageUpload},
     data() {
       return {
         form: {},

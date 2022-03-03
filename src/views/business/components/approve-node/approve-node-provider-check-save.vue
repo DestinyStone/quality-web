@@ -168,6 +168,7 @@
           analyseOutStrategy: [{ required: true, message: '请输入流出对策', trigger: 'blur' },],
         },
         tableUpdate: 0,
+        bpmNodeMapForm: {0: "不良联络书", 1: "不良联络书", 2: "调查结果表", 3: "调查结果表", 4: "调查结果表"},
       }
     },
     mounted() {

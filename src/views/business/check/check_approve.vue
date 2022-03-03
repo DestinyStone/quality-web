@@ -52,7 +52,7 @@
               </el-table-column>
               <el-table-column
                 prop="dutyDept"
-                min-width="120"
+                min-width="240"
                 label="供应商名称">
               </el-table-column>
               <el-table-column

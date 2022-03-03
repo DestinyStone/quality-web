@@ -1,5 +1,12 @@
 import request from '@/router/axios';
 
+export const getAllProvider = () => {
+  return request({
+    url: '/api/business/common/provider/list',
+    method: 'get',
+  });
+}
+
 export const getList = (current, size, params) => {
   return request({
     url: '/api/blade-system/role/list',

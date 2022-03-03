@@ -7,8 +7,8 @@
     message-title="外购件不良"
     bpm-status="333"
     bpm-node="213213"
-    form="f213123orm"
-    code="123123">
+    :form="bpmNodeMapForm[data.bpmNode]"
+    :code="data.code">
     <div slot="bigContent">
       <extensible-container title="不良基本信息" ref="basicMessage">
         <out-buy-low-basic-message :data="data"/>
@@ -56,6 +56,7 @@
       return {
         data: {},
         showRejectDialog: false,
+        bpmNodeMapForm: {0: "不良联络书", 1: "不良联络书", 2: "调查结果表", 3: "调查结果表", 4: "调查结果表"},
       }
     },
     methods: {
@@ -81,7 +82,6 @@
       init() {
         qprDetail(this.busId).then(res => {
           this.data = res.data.data;
-          console.log(  this.data);
         })
       },
     }

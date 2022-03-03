@@ -7,15 +7,16 @@
     :tagData="tagData"
     :bpm-status-remark="bpmStatusRemark"
     messageTitle="不良业务相关表单"
+    :form="bpmNodeMapForm[data.bpmNode]"
     @processAfterInit="handlerAfterInit"
     @close="$emit('close')"
   >
     <div slot="processLowMessage">
       <div v-if="!isEdit">
         <div style="display: flex; justify-content: space-between;">
-          <fix-correlor-title>工序内不良联络书</fix-correlor-title>
+          <fix-color-title>工序内不良联络书</fix-color-title>
           <div
-            v-if="bpmStatus === 3"
+            v-if="bpmStatus === 3 || bpmStatus === 4"
             @click="handlerClickEdit"
             style="background: #2d8cf0; color: #FFFFFF; margin-right: 20px; padding: 4px 10px; font-size: 12px; cursor: pointer;">
             修改
@@ -82,6 +83,9 @@
       },
       type: {
         type: Number,
+      },
+      bpmStatusRemark: {
+        type: String,
       }
     },
     data() {
@@ -95,6 +99,7 @@
         data: {},
         bpmStatusRemark: "",
         isShowCheckResult: false,
+        bpmNodeMapForm: {0: "不良联络书", 1: "不良联络书", 2: "调查结果表", 3: "调查结果表", 4: "调查结果表"},
       }
     },
     methods: {

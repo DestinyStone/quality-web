@@ -1,5 +1,13 @@
 import request from '@/router/axios';
 
+export const remarkOutBuy = (id, data) => {
+  return request({
+    url: `/api/business/out/buy/qpr/re/submit/${id}`,
+    method: 'post',
+    data: data,
+  })
+}
+
 export const outBuySelf = (id) => {
   return request({
     url: '/api/business/out/buy/qpr/self/back',

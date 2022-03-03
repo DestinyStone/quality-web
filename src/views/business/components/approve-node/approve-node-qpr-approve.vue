@@ -7,10 +7,8 @@
       :show-reject-dialog.sync="showApproveRejectDialog"
       message-title="外购件不良"
       message-min-title="联络书基本信息"
-      bpm-status="333"
-      bpm-node="213213"
-      form="f213123orm"
-      code="123123">
+      :form="bpmNodeMapForm[data.bpmNode]"
+      :code="data.code">
       <div slot="content">
         <out-buy-low-basic-message :data="data"/>
       </div>
@@ -48,6 +46,7 @@
     data() {
       return {
         showApproveRejectDialog: false,
+        bpmNodeMapForm: {0: "不良联络书", 1: "不良联络书", 2: "调查结果表", 3: "调查结果表", 4: "调查结果表"},
       }
     },
     components: {OutBuyLowBasicMessage, ApproveContainer},

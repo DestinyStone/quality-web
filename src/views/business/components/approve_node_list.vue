@@ -7,16 +7,16 @@
           <div style="font-size: 12px; margin:  40px 20px">
             <table class="current-message-table">
               <tr>
-                <td>当前业务环节: </td>
-                <td>{{node}}</td>
+                <td style="padding: 5px;">当前业务环节: </td>
+                <td>{{bpmStatusRemark}}</td>
               </tr>
               <tr>
-                <td style="text-align: right;">业务表单: </td>
+                <td style="text-align: right; padding: 5px;">业务表单: </td>
                 <td>{{form}}</td>
               </tr>
               <tr>
-                <td>当前业务环节: </td>
-                <td> <span style="color: #2d8cf0; font-size: 14px;" :style="{'color': (bpmStatus === 1 || bpmStatus === 0 ? '#2d8cf0' : 'red')}">●</span>{{bpmStatusRemark}}</td>
+                <td style="text-align: right; padding: 5px;">状态: </td>
+                <td> <span style="color: #2d8cf0; font-size: 14px;" :style="{'color': statusColor}">●</span>{{status}}</td>
               </tr>
             </table>
           </div>
@@ -131,6 +131,8 @@
         isHide: false,
         isShowHideDetail: false,
         isExistBack: false,
+        statusMap: {0: "待审批", 1: "审批中", 2: "已结案", 3: "退回", 4: "自退回"},
+        statusColorMap: {0: "#2d8cf0", 1: "#2d8cf0", 2: "#3ab54a", 3: "red", 4: "red"}
       }
     },
     methods: {
@@ -177,6 +179,14 @@
         }
         this.defaultActive = parseInt(this.data.length);
       },
+    },
+    computed: {
+      statusColor() {
+        return this.statusColorMap[this.bpmStatus];
+      },
+      status() {
+        return this.statusMap[this.bpmStatus];
+      }
     },
     created() {
       this.onLoad();

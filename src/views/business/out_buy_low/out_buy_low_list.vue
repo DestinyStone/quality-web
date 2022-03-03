@@ -160,7 +160,12 @@
         </div>
       </div>
     </basic-container>
-    <out-buy-low-detail v-if="showDetail" :bpm-node="currentSelect.bpmNode" :bus-id="currentSelect.id" @close="handlerClose"/>
+    <out-buy-low-detail v-if="showDetail"
+                        :bpm-node="currentSelect.bpmNode"
+                        :bpm-status="currentSelect.bpmStatus"
+                        :bus-id="currentSelect.id"
+                        @refresh="onLoad"
+                        @close="handlerClose"/>
   </div>
 
 </template>

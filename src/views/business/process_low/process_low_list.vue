@@ -163,6 +163,7 @@
                         :bus-id="currentSelect.id"
                         :bpm-status="currentSelect.bpmStatus"
                         :bpm-node="currentSelect.bpmNode"
+                        :bpm-status-remark="bpmNodeMap[currentSelect.bpmNode]"
                         :type="currentSelect.type"
                         @refresh="onLoad"
                         @close="handlerClose"/>

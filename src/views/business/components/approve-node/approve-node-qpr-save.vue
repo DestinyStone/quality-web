@@ -8,7 +8,7 @@
       message-min-title="联络书基本信息"
       :bpm-status="data.bpmStatus"
       :bpm-node="data.bpmNode"
-      :form="data.bpmNode"
+      :form="bpmNodeMapForm[data.bpmNode]"
       :reject="handlerReject"
       bpm-status-remark="不良联络书发行确认"
       :show-reject-dialog="showApproveRejectDialog"
@@ -44,6 +44,7 @@
         showMain: true,
         showQPRSave: false,
         showApproveRejectDialog: false,
+        bpmNodeMapForm: {0: "不良联络书", 1: "不良联络书", 2: "调查结果表", 3: "调查结果表", 4: "调查结果表"},
       }
     },
     props: {

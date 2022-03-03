@@ -5,6 +5,7 @@
                        :bpm-node="node"
                        :form="form"
                        :code="code"
+                       :bpm-status-remark="bpmStatusRemark"
                        :is-cancel="true"
                        @close="$emit('close')"
                        @switch="handlerSwitch"

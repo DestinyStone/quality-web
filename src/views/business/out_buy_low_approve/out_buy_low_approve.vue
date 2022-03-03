@@ -57,16 +57,13 @@
             </el-table-column>
             <el-table-column
               prop="dutyDept"
-              min-width="200"
+              min-width="240"
               label="责任部门/厂家">
             </el-table-column>
             <el-table-column
-              prop="bpmNode"
+              prop="bpmRemark"
               min-width="200"
               label="当前业务环节">
-              <template slot-scope="scope">
-                {{bpmNodeMap[scope.row.bpmNode]}}
-              </template>
             </el-table-column>
             <el-table-column
               prop="bpmPushStatus"

@@ -7,15 +7,16 @@
     :tagData="tagData"
     :bpm-status-remark="bpmStatusRemark"
     messageTitle="不良业务相关表单"
+    :form="bpmNodeMapForm[data.bpmNode]"
     @processAfterInit="handlerAfterInit"
     @close="$emit('close')"
   >
     <div slot="processLowMessage">
       <div v-if="!isEdit">
         <div style="display: flex; justify-content: space-between;">
-          <fix-correlor-title>外购件不良联络书</fix-correlor-title>
+          <fix-color-title>外购件不良联络书</fix-color-title>
           <div
-            v-if="bpmStatus === 3"
+            v-if="bpmStatus === 3 || bpmStatus === 4"
             @click="handlerClickEdit"
             style="background: #2d8cf0; color: #FFFFFF; margin-right: 20px; padding: 4px 10px; font-size: 12px; cursor: pointer;">
             修改
@@ -25,7 +26,10 @@
         <out-buy-low-basic-message :data="data"/>
       </div>
       <div v-if="isEdit">
-        33
+        <out-buy-low-save-content :id="busId"
+                                  :is-use-out="true"
+                                  :close="handlerCloseEdit"
+                                  :save="handlerUpdate"/>
       </div>
     </div>
     <div slot="CheckResult">
@@ -51,12 +55,16 @@
   import ProcessLowSaveContent from "../process_low/component/process_low_save_content";
   import {processLowApproveReSubmit} from "../../../api/business/process_low/process_low";
   import OutBuyLowBasicMessage from "./component/out_buy_low_basic_message";
-  import {qprDetail} from "../../../api/business/out_buy_low/qpr";
+  import {qprDetail, remarkOutBuy} from "../../../api/business/out_buy_low/qpr";
   import CheckBasicMessage from "./component/check-basic-message";
   import FillMessage from "./component/fill_message";
+  import OutBuyLowSave from "./out_buy_low_save";
+  import OutBuyLowSaveContent from "./component/out_buy_low_save_content";
   export default {
     name: "outBuyLowDetail",
     components: {
+      OutBuyLowSaveContent,
+      OutBuyLowSave,
       FillMessage,
       CheckBasicMessage,
       OutBuyLowBasicMessage,
@@ -86,11 +94,15 @@
         data: {},
         bpmStatusRemark: "",
         isShowCheckResult: false,
+        bpmNodeMapForm: {0: "不良联络书", 1: "不良联络书", 2: "调查结果表", 3: "调查结果表", 4: "调查结果表"},
       }
     },
     methods: {
+      handlerCloseEdit() {
+        this.isEdit = false;
+      },
       handlerUpdate(data) {
-        processLowApproveReSubmit(this.busId, data).then(() => {
+        remarkOutBuy(this.busId, data).then(() => {
           this.$message({type: "success", message: "修改成功"});
           this.$emit("refresh");
           this.$emit("close");

@@ -1,13 +1,6 @@
 <template>
   <div>
-    <approve-node-process-low-approve
-      v-if="flag === 'processLowApprove'"
-      :bus-id="busId"
-      :data="data"
-      :resource-type="resourceType"
-      @refresh="handleRefresh"
-      @close="handlerClose"
-    />
+    <!--    不良联络书发行确认-->
     <approve-node-qpr-save
       v-if="flag === 'qprSave'"
       :bus-id="busId"
@@ -16,6 +9,7 @@
       @close="handlerClose"
       :data="data"
     />
+<!--    不良联络书发行审批-->
     <approve-node-qpr-approve
       :bus-id="busId"
       :data="data"
@@ -25,6 +19,14 @@
       @pass="handlerPass"
       @close="handlerClose"
     />
+    <approve-node-process-low-approve
+      v-if="flag === 'processLowApprove'"
+      :bus-id="busId"
+      :data="data"
+      :resource-type="resourceType"
+      @refresh="handleRefresh"
+      @close="handlerClose"
+    />
     <approve-node-provider-check-save
       :bus-id="busId"
       :data="data"
@@ -32,6 +34,7 @@
       @refresh="handleRefresh"
       @close="handlerClose"
     />
+<!--    调查结果确认-->
     <approve-node-check-confirm
       :bus-id="busId"
       v-if="flag === 'checkConfirm'"
@@ -39,6 +42,7 @@
       @refresh="handleRefresh"
       @close="handlerClose"
     />
+<!--    调查结果审批-->
     <approve-node-check-approve
       :bus-id="busId"
       v-if="flag === 'checkApprove'"

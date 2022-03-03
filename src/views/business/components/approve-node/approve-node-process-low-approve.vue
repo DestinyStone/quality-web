@@ -6,10 +6,8 @@
       :resource-type="resourceType"
       message-title="外购件不良"
       message-min-title="联络书基本信息"
-      bpm-status="333"
-      bpm-node="213213"
-      form="f213123orm"
-      code="123123">
+      :form="bpmNodeMapForm[data.bpmNode]"
+      :code="data.code">
       <div slot="content">
         <div style="margin-top: 10px;">
           <process-low-basic-message :data="data"/>
@@ -183,7 +181,8 @@
           analyseOutCause: [{required: true, message: '请输入流出原因', trigger: 'blur'},],
           analyseOutStrategy: [{required: true, message: '请输入流出对策', trigger: 'blur'},],
           isUploadStandardFile: [{required: true, message: '请选择是否删除标准类文件', trigger: 'blur'},],
-        }
+        },
+        bpmNodeMapForm: {0: "不良联络书", 1: "不良联络书", 2: "调查结果表", 3: "调查结果表", 4: "调查结果表"},
       }
     },
     computed: {

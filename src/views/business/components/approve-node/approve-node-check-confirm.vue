@@ -3,10 +3,8 @@
     :busId="busId"
     :resource-type="resourceType"
     message-title="外购件不良"
-    bpm-status="333"
-    bpm-node="213213"
-    form="f213123orm"
-    code="123123">
+    :form="bpmNodeMapForm[data.bpmNode]"
+    :code="data.code">
     <div slot="bigContent">
       <extensible-container title="不良基本信息" ref="basicMessage" :default-status="true">
         <out-buy-low-basic-message :data="data"/>
@@ -151,7 +149,8 @@
           {label: "生管责任", value: 2},
           {label: "其他直接结案", value: 3},
           {label: "是否其他结案", value: 4},
-        ]
+        ],
+        bpmNodeMapForm: {0: "不良联络书", 1: "不良联络书", 2: "调查结果表", 3: "调查结果表", 4: "调查结果表"},
       }
     },
     created() {

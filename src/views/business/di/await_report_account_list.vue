@@ -2,20 +2,11 @@
   <basic-container>
     <div>
       <div style="display: flex; justify-content: space-between;">
-        <div style="display: flex;">
-          <el-select   size="small" v-model="query.status" style="width: 100px;" placeholder="状态">
-            <el-option
-              v-for="item in statusDict"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          <el-input size="small" style="margin-left: 10px; width: 300px" placeholder="品番号/品番名"/>
-          <el-button size="small" type="primary" style="margin-left: 10px;">查询</el-button>
-        </div>
         <div>
-          <el-button size="small" type="primary" style="margin-left: 10px;">上报周期配置</el-button>
+        </div>
+        <div style="display: flex;">
+          <el-input size="small" v-model="query.searchKey" style="margin-left: 10px; width: 300px" placeholder="品番号/品番名"/>
+          <el-button size="small" type="primary" style="margin-left: 10px;" @click="onLoad">查询</el-button>
         </div>
       </div>
       <el-divider></el-divider>
@@ -38,29 +29,32 @@
           </el-table-column>
           <el-table-column
             label="品番号"
+            prop="designation"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="type"
+            prop="name"
             label="品番名">
           </el-table-column>
           <el-table-column
+            prop="dutyDept"
             label="供应商名称">
           </el-table-column>
           <el-table-column
+            prop="status"
             label="状态">
+            <template slot-scope="scope">
+              {{statusMap[scope.row.status]}}
+            </template>
           </el-table-column>
           <el-table-column
-            label="提交时间">
-          </el-table-column>
-          <el-table-column
-            width = "140"
+            width = "180"
             fixed="right"
             label="操作">
             <template slot-scope="scope">
               <div style="display: flex; justify-content: space-around;">
-                <el-link :underline="false"  type="primary" @click="handlerDetail(scope.row)">详情</el-link>
-                <el-link :underline="false"  type="primary" @click="handlerDetail(scope.row)">上报数据</el-link>
+                <el-link :underline="false"  type="primary" @click="handlerReport(scope.row)">上报数据</el-link>
+                <el-link :underline="false"  type="primary" @click="handlerUnReport(scope.row)">无需上报</el-link>
               </div>
             </template>
           </el-table-column>
@@ -81,17 +75,44 @@
         </div>
       </div>
     </div>
+    <el-dialog :title="currentSelect.designation + ' DI数据上报'"
+               :visible.sync="showReportDialog"
+               width="45%"
+               append-to-body>
+      <report-form ref="report" v-if="showReportDialog" :trigger="handlerTriggerReport"/>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="showReportDialog = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="handleTriggerOpenReport">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog :title="currentSelect.designation + ' 无需上报DI数据'"
+               :visible.sync="showNoReportDialog"
+               width="30%"
+               append-to-body>
+      <no-report-form ref="noReportForm" :id="currentSelect.id" v-if="showNoReportDialog" :trigger="handlerTriggerNoReport"/>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="showNoReportDialog = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="handleTriggerOpenNoReport">确 定</el-button>
+      </span>
+    </el-dialog>
   </basic-container>
 </template>
 
 <script>
+  import {awaitReportDiAccountPage, reportDi, unReportDi} from "../../../api/business/di/di";
+  import NoReportForm from "./component/no-report-form";
+  import ReportForm from "./component/report-form";
+
   export default {
     name: "awaitReportAccountList",
+    components: {ReportForm, NoReportForm},
     data() {
       return {
+        showReportDialog: false,
+        showNoReportDialog: false,
         windowHeight: 0,
-        loading: false,
-        data: [{name: 1}],
+        loading: true,
+        data: [],
         query: {},
         page: {
           current: 1,
@@ -102,6 +123,8 @@
           {value: 0, label: '未上报'},
           {value: 1, label: '已退回'},
         ],
+        statusMap: {0: "未上报", 1: "已上报", 2: "无需上报"},
+        currentSelect: {},
       }
     },
     mounted() {
@@ -112,6 +135,51 @@
         return this.windowHeight - 330;
       }
     },
+    methods: {
+      handlerTriggerReport(form) {
+        reportDi(this.currentSelect.id, form).then(() => {
+          this.$message({type: "success", message: "DI数据上报成功"});
+          this.showReportDialog = false;
+          this.onLoad();
+        })
+      },
+      handleTriggerOpenReport() {
+        this.$refs['report'].submit();
+      },
+      handlerTriggerNoReport(form) {
+        unReportDi(this.currentSelect.id, form.noReportRemark).then(() => {
+          this.$message({type: "success", message: "无需上报成功"});
+          this.showNoReportDialog = false;
+          this.onLoad();
+        })
+      },
+      handleTriggerOpenNoReport() {
+        this.$refs['noReportForm'].submit();
+      },
+      handlerReport(row) {
+        this.currentSelect = row;
+        this.showReportDialog = true;
+      },
+      handlerUnReport(row) {
+        this.currentSelect = row;
+        this.showNoReportDialog = true;
+      },
+      init() {
+        this.onLoad();
+      },
+      onLoad() {
+        this.loading = true;
+        awaitReportDiAccountPage(this.page.current, this.page.size, this.query).then(res => {
+          let data = res.data.data;
+          this.data = data.records;
+          this.page.total = data.total;
+          this.loading = false;
+        })
+      }
+    },
+    created() {
+      this.init();
+    }
   }
 </script>
 

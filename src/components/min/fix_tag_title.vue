@@ -15,6 +15,7 @@
     props: {
       size: {
         type: Number,
+        default: 16,
       }
     }
   }

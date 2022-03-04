@@ -25,9 +25,10 @@
         min-width="120">
       </el-table-column>
       <el-table-column
+        show-overflow-tooltip
         prop="operatorRole"
         label="角色"
-        min-width="120">
+        min-width="180">
       </el-table-column>
       <el-table-column
         label="操作状态"

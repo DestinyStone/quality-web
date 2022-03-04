@@ -1,24 +1,14 @@
 <template>
-  <basic-container>
+  <basic-container class="report-account-list">
     <div>
-      <div style="display: flex; justify-content: space-between;">
-        <div style="display: flex;">
-          <el-select   size="small" v-model="query.status" style="width: 100px;" placeholder="状态">
-            <el-option
-              v-for="item in statusDict"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          <el-input size="small" style="margin-left: 10px; width: 300px" placeholder="品番号/品番名"/>
-          <el-button size="small" type="primary" style="margin-left: 10px;">查询</el-button>
-        </div>
-        <div>
-          <el-button size="small" type="primary" style="margin-left: 10px;">上报周期配置</el-button>
-        </div>
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid  #DCDFE6;">
+        <tag-select style="border-bottom: 1px solid #F5F5F5; width: 100%;" :data="tagData" :active="active" @click="handlerSwitchTag">
+          <div style="display: flex;" slot="operator">
+            <el-input size="small"  v-model="query.searchKey" style="margin-left: 10px; width: 300px" placeholder="品番号/品番名"/>
+            <el-button size="small" type="primary" style="margin-left: 10px;" @click="onLoad">查询</el-button>
+          </div>
+        </tag-select>
       </div>
-      <el-divider></el-divider>
       <div style="margin-top: 10px;">
         <el-table
           v-loading="loading"
@@ -37,20 +27,35 @@
             </template>
           </el-table-column>
           <el-table-column
+            prop="businessType"
+            label="业务类型"
+            width="180">
+            <template slot-scope="scope">
+              {{scope.row.businessType === 0 ? "DI数据上报" : "无需上报"}}
+            </template>
+          </el-table-column>
+          <el-table-column
             label="品番号"
+            prop="designation"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="type"
+            prop="name"
             label="品番名">
           </el-table-column>
           <el-table-column
+            prop="dutyDept"
             label="供应商名称">
           </el-table-column>
           <el-table-column
+            prop="bpmStatus"
             label="状态">
+            <template slot-scope="scope">
+              {{approveMap[scope.row.bpmStatus]}}
+            </template>
           </el-table-column>
           <el-table-column
+            prop="reportTime"
             label="提交时间">
           </el-table-column>
           <el-table-column
@@ -59,6 +64,7 @@
             label="操作">
             <template slot-scope="scope">
               <div style="display: flex; justify-content: space-around;">
+                <el-link :underline="false" v-if="scope.row.bpmStatus === 0"  type="primary" @click="handlerSelfBack(scope.row)">撤回</el-link>
                 <el-link :underline="false"  type="primary" @click="handlerDetail(scope.row)">详情</el-link>
               </div>
             </template>
@@ -80,17 +86,37 @@
         </div>
       </div>
     </div>
+    <el-dialog :title="currentSelect.designation + ' DI数据上报'"
+               :visible.sync="showDiReportDetailDialog"
+               width="50%"
+               append-to-body>
+      <di-detail :id="currentSelect.id"
+                 :is-back="currentSelect.bpmStatus === 3"
+                 :business-type="currentSelect.businessType"
+                 v-if="showDiReportDetailDialog"/>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="showDiReportDetailDialog = false">取 消</el-button>
+        <el-button size="small" type="primary" v-if="currentSelect.bpmStatus !== 3" @click="handleTriggerOpenDetail">确 定</el-button>
+        <el-button size="small" type="primary" v-if="currentSelect.bpmStatus === 3" @click="handleTriggerOpenDetail">提 交</el-button>
+      </span>
+    </el-dialog>
   </basic-container>
 </template>
 
 <script>
+  import {diSelfBack, reportDiAccountPage, reportQuality} from "../../../api/business/di/di";
+  import DiDetail from "./component/di-detail";
+  import TagSelect from "../../../components/min/tag_select";
+
   export default {
     name: "reportAccountList",
+    components: {TagSelect, DiDetail},
     data() {
       return {
+        showDiReportDetailDialog: false,
         windowHeight: 0,
         loading: false,
-        data: [{name: 1}],
+        data: [],
         query: {},
         page: {
           current: 1,
@@ -101,6 +127,15 @@
           {value: 0, label: '审批中'},
           {value: 1, label: '已完成'},
         ],
+        approveMap: {0: "待审批", 1: "审批中", 2: "已结案", 3: "退回"},
+        currentSelect: {},
+        tagData: [
+          {label: "全部", value: 0,},
+          {label: "进行中", value: 1,},
+          {label: "已驳回", value: 2,},
+          {label: "已完成", value: 3,},
+        ],
+        active: 0,
       }
     },
     mounted() {
@@ -111,9 +146,59 @@
         return this.windowHeight - 330;
       }
     },
+    methods: {
+      handlerSwitchTag(tag) {
+        this.active = tag.value;
+        this.query.tag = tag.value;
+        this.onLoad();
+      },
+      handleTriggerOpenDetail() {
+
+      },
+      handlerDetail(row) {
+        this.currentSelect = row;
+        this.showDiReportDetailDialog = true;
+      },
+      handlerSelfBack(row) {
+        this.$confirm("是否确定撤回?", {confirmButtonText: "确定", cancelButtonText: "取消", type: "warning"}).then(() => {
+            return diSelfBack(row.id);
+        }).then(() => {
+          this.$message({type: "success", message: "撤回成功"});
+          this.onLoad();
+        })
+      },
+      init() {
+        this.onLoad();
+      },
+      onLoad() {
+        this.loading = true;
+        reportDiAccountPage(this.page.current, this.page.size, this.query).then(res => {
+          let data = res.data.data;
+          this.data = data.records;
+          this.page.total = data.total;
+          this.loading = false;
+        })
+        this.loadQuality();
+      },
+      loadQuality() {
+        reportQuality().then(res => {
+          let data = res.data.data;
+          this.$set(this.tagData[1], 'count', data.await);
+          this.$set(this.tagData[2], 'count', data.back);
+          this.$set(this.tagData[3], 'count', data.finish);
+        })
+      }
+    },
+    created() {
+      this.init();
+    }
   }
 </script>
 
-<style scoped>
-
+<style >
+  .report-account-list .tag-select > div {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 30px;
+  }
 </style>

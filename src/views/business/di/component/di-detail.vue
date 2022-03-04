@@ -28,7 +28,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <report-form ref="report" v-if="isBack" :trigger="handlerTriggerReport"/>
+    <report-form ref="report" v-if="isBack" :trigger="trigger"/>
     <div  style="margin-top: 20px;" >
       <div style="font-weight: 700;">操作记录:</div>
       <approve-detail style="margin-top: 10px;"  :bus-id="id"/>
@@ -58,6 +58,10 @@
       isBack: {
         type: Boolean,
         default: false,
+      },
+      trigger: {
+        type: Function,
+        default: () => {},
       }
     },
     data() {
@@ -75,6 +79,9 @@
         reportDetail(this.id).then(res => {
           this.data.push(res.data.data);
         })
+      },
+      submit() {
+        this.$refs['report'].submit();
       }
     },
     created() {

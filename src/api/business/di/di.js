@@ -1,5 +1,26 @@
 import request from '@/router/axios';
 
+export const versionPage = (resourceId, resourceType, current, size) => {
+  return request({
+    url: '/api/business/di/version/page',
+    method: 'get',
+    params: {
+      current,
+      size,
+      resourceId,
+      resourceType
+    }
+  })
+}
+
+export const reReportDi = (id, data) => {
+  return request({
+    url: `/api/business/di/re/report/${id}`,
+    method: 'post',
+    data: data
+  })
+}
+
 export const reportReject = (data) => {
   return request({
     url: `/api/business/di/approve/reject`,

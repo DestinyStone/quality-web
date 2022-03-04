@@ -66,7 +66,7 @@
             <template slot-scope="scope">
               <div style="display: flex; justify-content: space-around;">
                 <el-link :underline="false"  type="primary" @click="handlerUpdate(scope.row)">修订</el-link>
-                <el-link :underline="false"  type="primary" @click="handlerDetail(scope.row)">DI数据版本</el-link>
+                <el-link :underline="false"  type="primary" @click="handlerOperVersionTable(scope.row)">DI数据版本</el-link>
               </div>
             </template>
           </el-table-column>
@@ -105,19 +105,31 @@
         <el-button size="small" type="primary" @click="handleTriggerReportConfig">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog :title="currentSelect.designation + 'DI数据'"
+                            :visible.sync="showDiVersionTableDialog"
+                            width="40%"
+                            append-to-body>
+      <di-version-table :resource-id="currentSelect.resourceId" :resource-type="currentSelect.resourceType"/>
+    <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="showDiVersionTableDialog = false">关 闭</el-button>
+      </span>
+  </el-dialog>
+
   </basic-container>
 </template>
 
 <script>
   import {diAccountPage, diAccountSubmit} from "../../../api/business/di/di";
   import ReportCycleForm from "./component/report-cycle-form";
+  import DiVersionTable from "./component/di-version-table";
 
   export default {
     name: "accountList",
-    components: {ReportCycleForm},
+    components: {DiVersionTable, ReportCycleForm},
     data() {
       return {
         isInitReport: false,
+        showDiVersionTableDialog: false,
         showReportConfig: false,
         windowHeight: 0,
         loading: false,
@@ -141,6 +153,10 @@
       }
     },
     methods: {
+      handlerOperVersionTable(row) {
+        this.currentSelect = row;
+        this.showDiVersionTableDialog = true;
+      },
       handlerUpdate(row) {
         this.$refs['table'].clearSelection();
         this.selectList = [];

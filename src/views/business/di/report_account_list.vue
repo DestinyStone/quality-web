@@ -91,20 +91,22 @@
                width="50%"
                append-to-body>
       <di-detail :id="currentSelect.id"
+                 ref="diDetail"
+                 :trigger="handlerReReport"
                  :is-back="currentSelect.bpmStatus === 3"
                  :business-type="currentSelect.businessType"
                  v-if="showDiReportDetailDialog"/>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="showDiReportDetailDialog = false">取 消</el-button>
-        <el-button size="small" type="primary" v-if="currentSelect.bpmStatus !== 3" @click="handleTriggerOpenDetail">确 定</el-button>
-        <el-button size="small" type="primary" v-if="currentSelect.bpmStatus === 3" @click="handleTriggerOpenDetail">提 交</el-button>
+        <el-button size="small" type="primary" v-if="currentSelect.bpmStatus !== 3" @click="showDiReportDetailDialog = false">确 定</el-button>
+        <el-button size="small" type="primary" v-if="currentSelect.bpmStatus === 3" @click="handleTriggerOpenSubmit">提 交</el-button>
       </span>
     </el-dialog>
   </basic-container>
 </template>
 
 <script>
-  import {diSelfBack, reportDiAccountPage, reportQuality} from "../../../api/business/di/di";
+  import {diSelfBack, reportDiAccountPage, reportQuality, reReportDi} from "../../../api/business/di/di";
   import DiDetail from "./component/di-detail";
   import TagSelect from "../../../components/min/tag_select";
 
@@ -147,13 +149,20 @@
       }
     },
     methods: {
+      handlerReReport(form) {
+        reReportDi(this.currentSelect.id, form).then(() => {
+          this.$message({type: "success", message: "提交成功"});
+          this.showDiReportDetailDialog = false;
+          this.onLoad();
+        })
+      },
+      handleTriggerOpenSubmit() {
+        this.$refs['diDetail'].submit();
+      },
       handlerSwitchTag(tag) {
         this.active = tag.value;
         this.query.tag = tag.value;
         this.onLoad();
-      },
-      handleTriggerOpenDetail() {
-
       },
       handlerDetail(row) {
         this.currentSelect = row;

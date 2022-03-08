@@ -12,7 +12,7 @@
         :cell-style="{'textAlign': 'center'}"
         :data="data"
         border
-        :height="tableHeight"
+        :height="250"
         @selection-change="handleSelectionChange"
         style="width: 100%">
         <el-table-column
@@ -28,7 +28,7 @@
           prop="providerExcelFileName">
           <template slot-scope="scope">
             <div style="cursor: pointer; color: #25a5f7;" @click="handlerDownload(scope.row.providerExcelFileId)">
-              <tooltop-text :text="scope.row.providerExcelFileName" :limit="30"/>
+              <tooltop-text :text="scope.row.providerExcelFileName" :limit="20"/>
             </div>
           </template>
         </el-table-column>
@@ -38,7 +38,7 @@
           label="丰田承认零件检查法EXCEL文件">
           <template slot-scope="scope">
             <div style="cursor: pointer; color: #25a5f7;" @click="handlerDownload(scope.row.toyotaExcelFileId)">
-              <tooltop-text :text="scope.row.toyotaExcelFileName" :limit="30"/>
+              <tooltop-text :text="scope.row.toyotaExcelFileName" :limit="20"/>
             </div>
           </template>
         </el-table-column>
@@ -48,7 +48,7 @@
           label="供应商承认零件检查法签字文件">
           <template slot-scope="scope">
             <div style="cursor: pointer; color: #25a5f7;" @click="handlerDownload(scope.row.providerSignatureId)">
-              <tooltop-text :text="scope.row.providerSignatureName" :limit="30"/>
+              <tooltop-text :text="scope.row.providerSignatureName" :limit="20"/>
             </div>
           </template>
         </el-table-column>

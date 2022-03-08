@@ -28,9 +28,9 @@
         min-width="120">
       </el-table-column>
       <el-table-column
-        label="岳峰"
-        prop="operatorDeptPath"
-        min-width="120">
+        label="上报时间"
+        prop="reportTime"
+        width="180">
       </el-table-column>
       <el-table-column
         show-overflow-tooltip
@@ -39,17 +39,12 @@
         min-width="180">
       </el-table-column>
       <el-table-column
-        label="最后更新时间"
-        prop="operatorStatus"
-        min-width="120">
-      </el-table-column>
-      <el-table-column
         width = "180"
         fixed="right"
         label="操作">
         <template slot-scope="scope">
           <div style="display: flex; justify-content: space-around;">
-            <el-link :underline="false"  type="primary" @click="handlerClickOpenAccount(scope.row)">下载</el-link>
+            <el-link :underline="false"  type="primary" @click="handlerDownload(scope.row.dataExcelFileId)">下载</el-link>
           </div>
         </template>
       </el-table-column>
@@ -60,6 +55,8 @@
 <script>
   import {versionPage} from "../../../../api/business/di/di";
   import TooltopText from "../../../../components/min/tooltop-text";
+  import {downloadFile} from "../../../../api/business/file/file";
+  import {downloadResFile} from "../../../../util/util";
 
   export default {
     name: "diVersionTable",
@@ -84,6 +81,11 @@
       }
     },
     methods: {
+      handlerDownload(fileId) {
+        downloadFile(fileId).then(res => {
+          downloadResFile(res);
+        })
+      },
       init() {
         this.loading = true;
         versionPage(this.resourceId, this.resourceType).then(res => {

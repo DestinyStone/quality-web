@@ -42,6 +42,8 @@
             </el-table-column>
             <el-table-column
               prop="dutyDept"
+              min-width="240"
+              show-overflow-tooltip
               label="供应商名称">
             </el-table-column>
             <el-table-column
@@ -53,6 +55,7 @@
             </el-table-column>
             <el-table-column
               show-overflow-tooltip
+              width="240"
               prop="toyotaExcelFileName"
               label="最新版本">
               <template slot-scope="scope">
@@ -60,6 +63,12 @@
                   <tooltop-text :text="scope.row.oldToyotaExcelFileName" :limit="30"/>
                 </div>
               </template>
+            </el-table-column>
+            <el-table-column
+              width="180"
+              prop="updateTime"
+              label="最近更新时间"
+              >
             </el-table-column>
             <el-table-column
               width = "180"

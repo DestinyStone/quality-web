@@ -7,7 +7,7 @@
       :file-list="fileList"
       :limit="limit">
       <div style="display: flex;">
-        <i><el-button size="mini" type="primary">点击上传</el-button></i>
+        <i><el-button size="mini" >点击上传</el-button></i>
         <div @click.stop style="margin-left: 20px;">
           <div v-if="file.name !== null && file.name !== undefined">
             <div style="display: flex;">

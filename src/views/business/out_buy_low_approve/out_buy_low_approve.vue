@@ -2,13 +2,18 @@
   <div>
     <basic-container v-if="showMain" class="process-low-me-approve">
       <div style="border-bottom: 1px solid  #DCDFE6;">
-        <tag-select style="" :data="tagData" :active="activeTag" @click="handlerSwitchTag"/>
+        <tag-select style="" :data="tagData" :active="activeTag" @click="handlerSwitchTag">
+          <div style="display: flex;" slot="operator">
+            <el-input style="width: 300px;" v-model="query.searchKey" placeholder="请输入事项编号/标题" size="small"></el-input>
+            <el-button type="primary" style="margin-left: 20px;" @click="onLoad" size="small">查询</el-button>
+          </div>
+        </tag-select>
       </div>
       <div>
-        <div style="display: flex; width: 20%; min-width: 300px; margin-top: 20px;">
-          <el-input v-model="query.searchKey" placeholder="请输入事项编号/标题" size="small"></el-input>
-          <el-button type="primary" style="margin-left: 20px;" @click="onLoad" size="small">查询</el-button>
-        </div>
+        <!--<div style="display: flex; width: 20%; min-width: 300px; margin-top: 20px;">-->
+          <!--<el-input v-model="query.searchKey" placeholder="请输入事项编号/标题" size="small"></el-input>-->
+          <!--<el-button type="primary" style="margin-left: 20px;" @click="onLoad" size="small">查询</el-button>-->
+        <!--</div>-->
         <div style="margin-top: 20px;">
           <el-table
             :key="activeTag"
@@ -58,6 +63,7 @@
             <el-table-column
               prop="dutyDept"
               min-width="240"
+              show-overflow-tooltip
               label="责任部门/厂家">
             </el-table-column>
             <el-table-column
@@ -138,7 +144,7 @@
             </el-table-column>
           </el-table>
         </div>
-        <div style="display: flex; justify-content: flex-end; padding: 30px;">
+        <div style="display: flex; justify-content: flex-end; padding: 15px;">
           <div style="display: flex; justify-content: center; flex-flow: column">共 {{page.total}} 条</div>
           <el-pagination
             style="margin-left: 30px;"
@@ -249,7 +255,7 @@
     },
     computed: {
       tableHeight() {
-        return (this.windowHeight - 350) + "px";
+        return (this.windowHeight - 260) + "px";
       }
     },
     methods: {

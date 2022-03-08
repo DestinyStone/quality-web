@@ -37,14 +37,18 @@
           <el-table-column
             label="品番号"
             prop="designation"
-            width="180">
+            show-overflow-tooltip
+            width="200">
           </el-table-column>
           <el-table-column
             prop="name"
+            show-overflow-tooltip
+            width="200"
             label="品番名">
           </el-table-column>
           <el-table-column
             prop="dutyDept"
+            min-width="240"
             label="供应商名称">
           </el-table-column>
           <el-table-column
@@ -56,6 +60,7 @@
           </el-table-column>
           <el-table-column
             prop="reportTime"
+            width="180"
             label="提交时间">
           </el-table-column>
           <el-table-column
@@ -70,7 +75,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <div style="display: flex; justify-content: flex-end; padding: 30px;">
+        <div style="display: flex; justify-content: flex-end; padding: 10px;">
           <div style="display: flex; justify-content: center; flex-flow: column">共 {{page.total}} 条</div>
           <el-pagination
             style="margin-left: 30px;"
@@ -145,7 +150,7 @@
     },
     computed: {
       tableHeight() {
-        return this.windowHeight - 330;
+        return this.windowHeight - 270;
       }
     },
     methods: {

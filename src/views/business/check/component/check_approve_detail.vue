@@ -1,6 +1,6 @@
 <template>
   <basic-container class="check-detail">
-    <div :style="{height: height + 'px'}">
+    <div :style="{height: height + 'px'}" style="overflow: auto;">
       <div style="display: flex; justify-content: space-between;">
         <fix-color-title>
           <div style="display: flex; justify-content: space-between;">

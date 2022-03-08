@@ -46,10 +46,13 @@
             </el-table-column>
             <el-table-column
               prop="dutyDept"
+              min-width="240"
+              show-overflow-tooltip
               label="供应商名称">
             </el-table-column>
             <el-table-column
               prop="bpmNode"
+              width="140"
               label="业务类型">
               <template slot-scope="scope">
                 {{scope.row.bpmNode === 0 ? '新增检查法' : '修订检查法'}}
@@ -64,6 +67,7 @@
             </el-table-column>
             <el-table-column
               prop="createTime"
+              width="180"
               label="创建时间">
             </el-table-column>
             <el-table-column

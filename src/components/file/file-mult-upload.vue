@@ -7,7 +7,7 @@
       :file-list="fileList"
       :limit="limit">
       <div style="display: flex;">
-        <i><el-button size="mini" type="primary">点击上传</el-button></i>
+        <i><el-button size="mini">点击上传</el-button></i>
       </div>
     </el-upload>
   </div>
@@ -34,9 +34,6 @@
         fileCount: 0,
       }
     },
-    created() {
-      this.fileCount = this.fileList.length;
-    },
     watch: {
       fileList() {
         this.$emit("update:fileList", this.fileList);
@@ -58,6 +55,7 @@
         let formData = new FormData();
         formData.append("file", request.file);
         uploadFile(formData).then(res => {
+          this.fileCount = this.fileList.length;
           this.fileList[this.fileCount++] = res.data.data;
           this.$emit("update:fileList", this.fileList);
           return res;

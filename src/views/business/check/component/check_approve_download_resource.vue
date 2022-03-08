@@ -1,9 +1,9 @@
 <template>
   <div>
     <check-approve-detail :is-operator="false" :id="busId" :is-access-upload-excel-file="isClickDownload" @upload="handlerUpload"/>
-    <div style="position:fixed; bottom: 0px; width: 100%; padding: 20px; background-color: #FFFFFF">
-      <div style="display: flex; justify-content: center;">
-        <div style="position: relative; left: -5%;">
+    <div style="bottom: 0; position: fixed; width: 100%; background: #FFFFFF; z-index: 999;">
+      <div style="width: 80%; padding: 10px 0;">
+        <div style="display: flex; justify-content: center;">
           <el-button size="small" @click="handlerCancel">返回</el-button>
           <el-button type="danger" size="small" v-if="!isClickDownload" @click="showRejectDialog = true">退回供应商</el-button>
           <el-button type="success" size="small" v-if="!isClickDownload" @click="isClickDownload = true">下载源文件完善</el-button>

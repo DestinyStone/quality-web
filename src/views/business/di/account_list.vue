@@ -6,7 +6,7 @@
           <el-button size="small" type="primary" style="margin-left: 10px;" @click="handlerClickSetReport">上报周期配置</el-button>
         </div>
        <div>
-         <el-input size="small" style="width: 300px" v-model="query.searchKey" placeholder="品番号/品番名/供应商名称"/>
+         <el-input size="small" style="width: 300px" v-model="query.searchKey" placeholder="品番号/品番名"/>
          <el-button size="small" type="primary" style="margin-left: 10px;" @click="onLoad">查询</el-button>
        </div>
       </div>
@@ -37,14 +37,19 @@
           <el-table-column
             label="品番号"
             prop="designation"
-            width="180">
+            show-overflow-tooltip
+            width="200">
           </el-table-column>
           <el-table-column
             prop="name"
+            show-overflow-tooltip
+            width="200"
             label="品番名">
           </el-table-column>
           <el-table-column
             prop="dutyDept"
+            min-width="240"
+            show-overflow-tooltip
             label="供应商名称">
           </el-table-column>
           <el-table-column
@@ -56,6 +61,7 @@
           </el-table-column>
           <el-table-column
             prop="lastFileName"
+            min-width="180"
             label="最新版本">
             <template slot-scope="scope">
               <div style="cursor: pointer; color: #25a5f7;" @click="handlerDownload(scope.row.lastFileId)">
@@ -65,6 +71,7 @@
           </el-table-column>
           <el-table-column
             prop="updateTime"
+            width="180"
             label="最新更新时间">
           </el-table-column>
           <el-table-column
@@ -81,7 +88,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <div style="display: flex; justify-content: flex-end; padding: 30px;">
+        <div style="display: flex; justify-content: flex-end; padding: 10px;">
           <div style="display: flex; justify-content: center; flex-flow: column">共 {{page.total}} 条</div>
           <el-pagination
             style="margin-left: 30px;"
@@ -99,9 +106,9 @@
     </div>
     <el-dialog title="上报周期配置"
                :visible.sync="showReportConfig"
-               width="40%"
+               width="60%"
                append-to-body>
-      <div style="width: 80%;">
+      <div style="width: 80%; margin: 0 auto">
         <report-cycle-form v-if="showReportConfig"
                            ref="reportCycle"
                            :handlerSubmit="submitReportConfig"
@@ -117,9 +124,12 @@
     </el-dialog>
     <el-dialog :title="currentSelect.designation + 'DI数据'"
                             :visible.sync="showDiVersionTableDialog"
-                            width="40%"
+                            width="60%"
                             append-to-body>
-      <di-version-table :resource-id="currentSelect.resourceId" :resource-type="currentSelect.resourceType"/>
+      <di-version-table
+        v-if="showDiVersionTableDialog"
+        :resource-id="currentSelect.resourceId"
+        :resource-type="currentSelect.resourceType"/>
     <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="showDiVersionTableDialog = false">关 闭</el-button>
       </span>
@@ -162,7 +172,7 @@
     },
     computed: {
       tableHeight() {
-        return this.windowHeight - 330;
+        return this.windowHeight - 270;
       }
     },
     methods: {

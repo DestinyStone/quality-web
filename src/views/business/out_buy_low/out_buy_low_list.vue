@@ -105,7 +105,8 @@
           </el-table-column>
           <el-table-column
             prop="dutyDept"
-            min-width="200"
+            min-width="240"
+            show-overflow-tooltip
             label="供应商名称">
           </el-table-column>
           <el-table-column
@@ -144,7 +145,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <div style="display: flex; justify-content: flex-end; padding: 30px;">
+        <div style="display: flex; justify-content: flex-end; padding: 15px;">
           <div style="display: flex; justify-content: center; flex-flow: column">共 {{page.total}} 条</div>
           <el-pagination
             style="margin-left: 30px;"
@@ -279,7 +280,7 @@
     },
     computed: {
       tableHeight() {
-        return (this.windowHeight - 280) + "px";
+        return (this.windowHeight - 260) + "px";
       }
     },
     created() {

@@ -48,25 +48,35 @@
             label="供应商名称">
           </el-table-column>
           <el-table-column
+            prop="status"
             label="状态">
             <template slot-scope="scope">
-              启用
+              {{scope.row.status === 0 ? "禁用" : "启用"}}
             </template>
           </el-table-column>
           <el-table-column
+            prop="lastFileName"
             label="最新版本">
+            <template slot-scope="scope">
+              <div style="cursor: pointer; color: #25a5f7;" @click="handlerDownload(scope.row.lastFileId)">
+                <tooltop-text :text="scope.row.lastFileName" :limit="30"/>
+              </div>
+            </template>
           </el-table-column>
           <el-table-column
+            prop="updateTime"
             label="最新更新时间">
           </el-table-column>
           <el-table-column
-            width = "140"
+            width = "180"
             fixed="right"
             label="操作">
             <template slot-scope="scope">
               <div style="display: flex; justify-content: space-around;">
                 <el-link :underline="false"  type="primary" @click="handlerUpdate(scope.row)">修订</el-link>
                 <el-link :underline="false"  type="primary" @click="handlerOperVersionTable(scope.row)">DI数据版本</el-link>
+                <el-link :underline="false"  type="primary" @click="handlerUpdateEnable(scope.row, 1)" v-if="scope.row.status === 0">启用</el-link>
+                <el-link :underline="false"  type="primary" @click="handlerUpdateEnable(scope.row, 0)" v-if="scope.row.status === 1">禁用</el-link>
               </div>
             </template>
           </el-table-column>
@@ -119,13 +129,16 @@
 </template>
 
 <script>
-  import {diAccountPage, diAccountSubmit} from "../../../api/business/di/di";
+  import {diAccountPage, diAccountSubmit, diConfigEnable} from "../../../api/business/di/di";
   import ReportCycleForm from "./component/report-cycle-form";
   import DiVersionTable from "./component/di-version-table";
+  import {downloadFile} from "../../../api/business/file/file";
+  import {downloadResFile} from "../../../util/util";
+  import TooltopText from "../../../components/min/tooltop-text";
 
   export default {
     name: "accountList",
-    components: {DiVersionTable, ReportCycleForm},
+    components: {TooltopText, DiVersionTable, ReportCycleForm},
     data() {
       return {
         isInitReport: false,
@@ -153,6 +166,18 @@
       }
     },
     methods: {
+      handlerUpdateEnable(row, status) {
+        diConfigEnable(row.resourceId, row.resourceType, status).then(() => {
+          let message = status === 1 ? "启用成功" : "禁用成功";
+          this.$emit({type: "success", message: message});
+          this.onLoad();
+        })
+      },
+      handlerDownload(fileId) {
+        downloadFile(fileId).then(res => {
+          downloadResFile(res);
+        })
+      },
       handlerOperVersionTable(row) {
         this.currentSelect = row;
         this.showDiVersionTableDialog = true;
@@ -176,6 +201,7 @@
         diAccountSubmit(form).then(() => {
           this.$message({type: "success", message: "配置成功"});
           this.showReportConfig = false;
+          this.onLoad();
         })
       },
       handleTriggerReportConfig() {

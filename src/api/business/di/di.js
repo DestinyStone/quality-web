@@ -1,5 +1,17 @@
 import request from '@/router/axios';
 
+export const diConfigEnable = (resourceId, resourceType, status) => {
+  return request({
+    url: '/api/business/di/enable',
+    method: 'get',
+    params: {
+      status,
+      resourceId,
+      resourceType
+    }
+  })
+}
+
 export const versionPage = (resourceId, resourceType, current, size) => {
   return request({
     url: '/api/business/di/version/page',

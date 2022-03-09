@@ -1,5 +1,17 @@
 import request from '@/router/axios';
 
+export const processLowAccountPage= (current, size, params) => {
+  return request({
+    url: '/api/business/process/low/account/page',
+    method: 'get',
+    params: {
+      current,
+      size,
+      ...params
+    }
+  })
+}
+
 export const processLowApproveReSubmit= (id, data) => {
   return request({
     url: `/api/business/process/low/re/submit/${id}`,

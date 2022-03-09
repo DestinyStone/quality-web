@@ -1,7 +1,7 @@
 <template>
   <div>
     <basic-container class="check-detail" v-show="showMain">
-      <div :style="{height: height + 'px'}">
+      <div :style="{height: height + 'px'}" style="overflow: auto">
         <div style="display: flex; justify-content: space-between;">
           <fix-color-title>
             <div style="display: flex; justify-content: space-between;">
@@ -192,7 +192,7 @@
     },
     computed: {
       height() {
-        return this.windowHeight - 180;
+        return this.windowHeight - 170;
       }
     },
     methods: {

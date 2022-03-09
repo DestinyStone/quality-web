@@ -81,7 +81,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <div style="display: flex; justify-content: flex-end; padding: 30px;">
+          <div style="display: flex; justify-content: flex-end; padding-top: 15px;">
             <div style="display: flex; justify-content: center; flex-flow: column">共 {{page.total}} 条</div>
             <el-pagination
               style="margin-left: 30px;"
@@ -144,7 +144,7 @@
     },
     computed: {
       tableHeight() {
-        return this.windowHeight - 330;
+        return this.windowHeight - 280;
       }
     },
     methods: {

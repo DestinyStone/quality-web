@@ -111,6 +111,9 @@
         </el-card>
       </el-col>
     </el-row>
+    <div style="height: 25px;">
+
+    </div>
   </div>
 </template>
 
@@ -149,7 +152,7 @@
       }
     },
     mounted() {
-      this.windowHeight = document.body.clientHeight;
+      this.windowHeight = document.body.clientHeight < 1000 ? 1000 : document.body.clientHeight;
       this.eventScrollMessage();
     },
     created() {

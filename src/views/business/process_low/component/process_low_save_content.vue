@@ -180,7 +180,7 @@
                 <el-radio v-model="form.isBusinessFile" :label="1">是</el-radio>
                 <el-radio v-model="form.isBusinessFile" :label="0">否</el-radio>
               </el-form-item>
-              <el-form-item label="相关附件" prop="busincessIdFiles" v-if="form.isBusinessFile === 1">
+              <el-form-item label="相关附件" prop="busincessIdFiles" >
                 <div>
                   <file-mult-upload :file-list.sync="form.busincessIdFiles" @upload="handlerBusincessUpload"/>
                   <el-table
@@ -272,6 +272,7 @@
           imgReportIds: [{ required: true, message: '请上传不良图示/测定报告(', trigger: 'blur' },],
           triggerAddress: [{ required: true, message: '请选择发生地点', trigger: 'blur' },],
           triggerProcess: [{ required: true, message: '请选择发生工序', trigger: 'blur' },],
+          isBusinessFile: [{ required: true, message: '请选择是否发行业务通知书', trigger: 'blur' },],
         },
         levelDict: [
           {value: 0, label: "R"},
@@ -321,13 +322,13 @@
     },
     watch: {
       'form.isBusinessFile'(val) {
-        if (val === 1) {
-          this.$set(this.rules, 'busincessIdFiles', [{ required: true, message: '请上传相关附件', trigger: 'blur' },]);
-          this.updateForm++;
-        }else {
-          this.rules.busincessIdFiles = null;
-        }
-        console.log(this.rules);
+        // if (val === 1) {
+        //   this.$set(this.rules, 'busincessIdFiles', [{ required: true, message: '请上传相关附件', trigger: 'blur' },]);
+        //   this.updateForm++;
+        // }else {
+        //   this.rules.busincessIdFiles = null;
+        // }
+        // console.log(this.rules);
       },
       'form.busincessIdFiles'() {
         this.$forceUpdate();

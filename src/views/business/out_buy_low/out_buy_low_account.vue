@@ -107,21 +107,25 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="content"
-            label="不良内容">
+            prop="eventRemark"
+            label="事件概要">
+          </el-table-column>
+          <el-table-column
+            prop="pleaseContent"
+            label="拜托事项">
           </el-table-column>
           <el-table-column
             width="200"
             label="不良图片">
             <template slot-scope="scope">
-             <div v-if="!validatenull(scope.row.imgReportList)" style="width: 100%; display: flex; justify-content: space-around;">
-               <el-image
-                 v-for="item in (scope.row.imgReportList || [])"
-                 style="width: 30px; height: 20px"
-                 :src="item.url"
-                 :preview-src-list="scope.row.imgReportList.map(item => item.url)"
-                 fit="contain"></el-image>
-             </div>
+              <div v-if="!validatenull(scope.row.imgReportFiles)" style="width: 100%; display: flex; justify-content: space-around;">
+                <el-image
+                  v-for="item in (scope.row.imgReportFiles || [])"
+                  style="width: 30px; height: 20px"
+                  :src="item.url"
+                  :preview-src-list="scope.row.imgReportFiles.map(item => item.url)"
+                  fit="contain"></el-image>
+              </div>
             </template>
           </el-table-column>
           <el-table-column
@@ -178,19 +182,6 @@
             min-width="200"
             label="提交时间">
           </el-table-column>
-          <el-table-column
-            width = "240"
-            fixed="right"
-            label="操作">
-            <template slot-scope="scope">
-              <div style="display: flex; justify-content: space-around;">
-                <el-link :underline="false"  type="primary" v-if="scope.row.bpmStatus === 1">修改</el-link>
-                <el-link :underline="false"  type="primary" @click="handlerClickDetail(scope.row)">详情</el-link>
-                <el-link :underline="false"  type="primary" v-if="(scope.row.bpmStatus === 0 || scope.row.bpmStatus === 1) && scope.row.isBusinessFile === 1" @click="handlerOpenUploadAdvice(scope.row)">通知书上传</el-link>
-                <el-link :underline="false"  type="primary" v-if="(scope.row.bpmStatus === 0 || scope.row.bpmStatus === 1) && scope.row.isUploadStandardFile === 1" @click="handlerOpenUploadStandard(scope.row)">标准类上传</el-link>
-              </div>
-            </template>
-          </el-table-column>
         </el-table>
         <div style="display: flex; justify-content: flex-end; padding: 15px;">
           <div style="display: flex; justify-content: center; flex-flow: column">共 {{page.total}} 条</div>
@@ -208,60 +199,22 @@
         </div>
       </div>
     </basic-container>
-    <process-low-detail v-if="showDetail"
-                        :bus-id="currentSelect.id"
-                        :bpm-status="currentSelect.bpmStatus"
-                        :bpm-node="currentSelect.bpmNode"
-                        :bpm-status-remark="bpmNodeMap[currentSelect.bpmNode]"
-                        :type="currentSelect.type"
-                        @refresh="onLoad"
-                        @close="handlerClose"/>
-    <el-dialog :title="currentSelect.code + ' 通知书上传'"
-               :visible.sync="isShowAdviceUploadDialog"
-               width="50%"
-               append-to-body>
-      <div style="width: 80%; margin: 0 auto;">
-        <advice-upload-form v-if="isShowAdviceUploadDialog"
-                            :id="currentSelect.id"
-                            ref="adviceUpload"
-                            :trigger="handlerUploadAdvice"/>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="isShowAdviceUploadDialog = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="handleTriggerUploadAdvice">确 定</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog :title="currentSelect.code + ' 标准类上传'"
-               :visible.sync="isShowStandardUploadDialog"
-               width="50%"
-               append-to-body>
-      <div style="width: 80%; margin: 0 auto;">
-        <standard-upload-form :id="currentSelect.id" v-if="isShowStandardUploadDialog" ref="standardUpload" :trigger="handlerUploadStandard"/>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="isShowStandardUploadDialog = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="handleTriggerUploadStandard">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 
 </template>
 
 <script>
-  import TagSelect from "../../../components/min/tag_select";
   import {
     processLowAccountExport,
-    processLowAccountPage,
     processLowQuality,
     processLowSelfBack, processLowUploadAdvice, processLowUploadStandard
   } from "../../../api/business/process_low/process_low";
-  import ProcessLowDetail from "./process_low_detail";
-  import AdviceUploadForm from "./component/advice_upload_form";
-  import StandardUploadForm from "./component/standard_upload_form";
+  import {qprAccountExport, qprAccountPage, qprPage} from "../../../api/business/out_buy_low/qpr";
+  import TagSelect from "../../../components/min/tag_select";
   import {downloadResFile} from "../../../util/util";
   export default {
-    name: "processLowAccount",
-    components: {StandardUploadForm, AdviceUploadForm, ProcessLowDetail, TagSelect},
+    name: "outBuyLowAccount",
+    components: {TagSelect},
     data() {
       return {
         showMain: true,
@@ -316,7 +269,7 @@
     },
     methods: {
       handlerExport() {
-        processLowAccountExport(this.page.current, this.page.size, this.query).then(res => {
+        qprAccountExport(this.page.current, this.page.size, this.query).then(res => {
           downloadResFile(res);
         })
       },
@@ -366,7 +319,7 @@
       },
       onLoad() {
         this.loading = true;
-        processLowAccountPage(this.page.current, this.page.size, this.query).then(res => {
+        qprAccountPage(this.page.current, this.page.size, this.query).then(res => {
           let data = res.data.data;
           this.data.splice(0, this.data.length);
           this.data = data.records;

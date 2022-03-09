@@ -1,6 +1,36 @@
 import request from '@/router/axios';
 
-export const processLowAccountPage= (current, size, params) => {
+export const processLowAccountExport = (current, size, params) => {
+  return request({
+    url: '/api/business/process/low/account/export',
+    method: 'get',
+    params: {
+      current,
+      size,
+      ...params
+    },
+    responseType: "blob",
+  })
+}
+
+export const processLowUploadAdvice = (id, data) => {
+  return request({
+    url: `/api/business/process/low/account/upload/advice/${id}`,
+    method: 'post',
+    data: data
+  })
+}
+
+export const processLowUploadStandard = (id, data) => {
+  return request({
+    url: `/api/business/process/low/account/upload/standard/${id}`,
+    method: 'post',
+    data: data
+  })
+}
+
+
+export const processLowAccountPage = (current, size, params) => {
   return request({
     url: '/api/business/process/low/account/page',
     method: 'get',

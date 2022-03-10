@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-select v-model="value"  style="width: 100%" type="small" @change="handlerChange" :placeholder="placeholder">
+    <el-select v-model="value" :key="reload"  style="width: 100%" type="small" @change="handlerChange" :placeholder="placeholder">
       <el-option
         v-for="item in options"
         :key="item.value"
@@ -27,16 +27,19 @@
     data() {
       return {
         value: null,
-        options: []
+        options: [],
+        reload: 0,
       }
     },
     created() {
-      this.value = this.defaultValue;
       getAllProvider().then(res => {
         let data = res.data;
         for(let key in data) {
           this.options.push({label: data[key], value:key});
         }
+      }).then(() => {
+        this.value = this.defaultValue;
+        this.reload++;
       })
     },
     methods: {

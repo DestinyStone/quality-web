@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="message-title">责任部门/厂家</td>
-            <td class="message-value">{{userData.dutyDept}}</td>
+            <td class="message-value">{{userData.dutyDeptName}}</td>
             <td class="message-title">机型</td>
             <td class="message-value">{{apparatusMap[userData.apparatusType]}}</td>
           </tr>

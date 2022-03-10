@@ -104,7 +104,7 @@
             label="事件概要">
           </el-table-column>
           <el-table-column
-            prop="dutyDept"
+            prop="dutyDeptName"
             min-width="240"
             show-overflow-tooltip
             label="供应商名称">

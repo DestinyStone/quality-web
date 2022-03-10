@@ -1,5 +1,13 @@
 import request from '@/router/axios';
 
+export const processLowQprReject = (data) => {
+  return request({
+    url: '/api/business/process/low/approve/handler/qpr/reject',
+    method: 'post',
+    data: data
+  })
+}
+
 export const processLowAccountExport = (current, size, params) => {
   return request({
     url: '/api/business/process/low/account/export',

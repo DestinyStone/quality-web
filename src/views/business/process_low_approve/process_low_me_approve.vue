@@ -55,7 +55,7 @@
               label="品番号">
             </el-table-column>
             <el-table-column
-              prop="dutyDept"
+              prop="dutyDeptName"
               min-width="200"
               label="责任部门/厂家">
             </el-table-column>

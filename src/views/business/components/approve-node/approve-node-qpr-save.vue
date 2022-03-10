@@ -34,7 +34,7 @@
   import OutBuyLowSave from "../../out_buy_low/out_buy_low_save";
   import {approveProcessLowQprSave} from "../../../../api/business/process/process";
   import ApproveReject from "../approve_reject";
-  import {approveReject} from "../../../../api/business/process_low/process_low";
+  import {approveReject, processLowQprReject} from "../../../../api/business/process_low/process_low";
   import ProcessLowBasicMessage from "../../process_low/component/process_low_basic_message";
   export default {
     name: "approve-node-qpr-save",
@@ -63,7 +63,7 @@
     },
     methods: {
       handlerReject(form) {
-        approveReject(form).then(() => {
+        processLowQprReject(form).then(() => {
           this.$message({type: "success", message: "驳回成功"});
           this.showApproveRejectDialog = false;
           this.$emit("refresh");

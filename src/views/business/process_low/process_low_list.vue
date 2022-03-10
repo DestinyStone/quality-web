@@ -103,7 +103,7 @@
             label="不良内容">
           </el-table-column>
           <el-table-column
-            prop="dutyDept"
+            prop="dutyDeptName"
             min-width="240"
             show-overflow-tooltip
             label="责任部门/厂家">

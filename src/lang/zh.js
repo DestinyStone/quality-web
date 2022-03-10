@@ -67,8 +67,8 @@ export default {
   },
   login: {
     title: '登录 ',
-    // info: '品质业务管理系统',
-    info: '项目仅用于个人毕业设计',
+    info: '品质业务管理系统',
+    // info: '项目仅用于个人毕业设计',
     tenantId: '请输入租户ID',
     username: '请输入账号',
     password: '请输入密码',

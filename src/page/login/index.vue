@@ -26,10 +26,16 @@
           <div class="login-menu">
             <a href="#" @click.stop="activeName='user'">{{ $t('login.userLogin') }}</a>
             <!--<a href="#" @click.stop="activeName='code'">{{ $t('login.phoneLogin') }}</a>-->
-            <a href="#" @click.stop="activeName='third'">{{ $t('login.thirdLogin') }}</a>
+<!--            <a href="#" @click.stop="activeName='third'">{{ $t('login.thirdLogin') }}</a>-->
           </div>
         </div>
-
+      </div>
+    </div>
+    <div style="position:fixed; bottom: 1px; width: 100%;">
+      <div style="display: flex; justify-content: center; width: 100%; padding: 20px;">
+        <div style="font-size: 14px; color: #6c6c6c">
+            项目仅用于个人毕业设计 <span style="margin-left: 20px; cursor: pointer;" @click="openUrl">粤ICP备2022024300号</span>
+        </div>
       </div>
     </div>
   </div>
@@ -82,6 +88,9 @@
     },
     props: [],
     methods: {
+      openUrl() {
+        window.open("https://beian.miit.gov.cn/");
+      },
       getTime() {
         setInterval(() => {
           this.time = dateFormat(new Date());

@@ -34,7 +34,7 @@
           <div style="display: flex; justify-content: center;">
             <el-button size="small">返回</el-button>
             <el-button type="danger" size="small">驳回</el-button>
-            <el-button type="warning" size="small" v-if="bpmFlag === 'qprSave'">接受并发起QPR</el-button>
+            <el-button type="warning" size="small" v-if="bpmFlag === 'qprSave'">接收并发起QPR</el-button>
             <el-button type="warning" size="small" v-if="bpmFlag === 'qprApprove'">审批通过</el-button>
             <el-button type="warning" size="small" v-if="bpmFlag === 'checkSave'">填写调查结果</el-button>
             <el-button type="warning" size="small" v-if="bpmFlag === 'checkConfirm'">填写不良言论</el-button>

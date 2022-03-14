@@ -61,7 +61,6 @@
     },
     methods: {
       handlerReject(form) {
-        console.log(this.resourceType);
         let rejectMethod;
         if (this.resourceType === 0) {
           rejectMethod = approveOutBuyQprReject;

@@ -28,7 +28,22 @@
                        :key="item"
               >
                 <div slot="title">
-                  {{item.bpmRemark}}
+                  <el-popover
+                    placement="top"
+                    trigger="hover"
+                  >
+                    <div style="font-size: 14px;">
+                      <div style="white-space: nowrap;">
+                        <span style="font-weight: 700;">审批部门:</span> {{item.accessDeptName}}
+                      </div>
+                      <div style="white-space: nowrap;">
+                        <span style="font-weight: 700;">审批角色:</span> {{item.accessRoleName}}
+                      </div>
+                    </div>
+                    <div slot="reference">
+                      {{item.bpmRemark}}
+                    </div>
+                  </el-popover>
                 </div>
                 <div slot="description">
                   <div style="padding: 5px;">
@@ -39,7 +54,7 @@
                       <tooltop-text :text="'退回原因:' + item.backCause" :limit="10"/>
                     </div>
                     <div v-if="!validatenull(item.operatorUserName)">
-                      操作人: {{item.operatorUserName}}
+                      <div style="white-space: nowrap;">操作人: {{item.operatorUserName}}</div>
                     </div>
                   </div>
                 </div>

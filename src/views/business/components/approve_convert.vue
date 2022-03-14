@@ -72,6 +72,9 @@
       ApproveNodeCheckConfirm,
       ApproveNodeProviderCheckSave, ApproveNodeQprApprove, ApproveNodeQprSave, ApproveContainer},
     props: {
+      bpmId: {
+        type: String,
+      },
       busId: {
         type: String,
       },
@@ -99,7 +102,7 @@
         if (this.resourceType === 1) {
           method = processLowApprovePass;
         }
-        method(this.busId).then(() => {
+        method(this.busId, this.bpmId).then(() => {
           this.$message({type: "success", message: "审批通过"});
           this.$emit("refresh");
           this.$emit("close");

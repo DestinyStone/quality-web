@@ -125,10 +125,16 @@
                </el-table>
              </div>
             </extensible-container>
+            <div style="margin-top: 20px;">
+              <fix-color-title>审批过程</fix-color-title>
+              <approve-detail style="margin-top: 10px;" :bus-id="busId"/>
+            </div>
           </div>
         </basic-container>
       </el-col>
     </el-row>
+    <div>
+    </div>
     <div style="position: fixed; bottom: 0; padding: 10px 0; width: 100%; background: #FFFFFF">
       <div style="display: flex; width: 80%; justify-content: center;">
         <div>
@@ -149,9 +155,12 @@
   import {checkSavePass} from "../../../../api/business/out_buy_low/qpr";
   import FileMultUpload from "../../../../components/file/file-mult-upload";
   import OutBuyLowBasicMessage from "../../out_buy_low/component/out_buy_low_basic_message";
+  import ApproveDetail from "../approve_detail";
   export default {
     name: "approve-node-provider-check-save",
-    components: {OutBuyLowBasicMessage, FileMultUpload, ExtensibleContainer, FixColorTitle, TagSelectColumn},
+    components: {
+      ApproveDetail,
+      OutBuyLowBasicMessage, FileMultUpload, ExtensibleContainer, FixColorTitle, TagSelectColumn},
     data() {
       return {
         isClickEdit: false,

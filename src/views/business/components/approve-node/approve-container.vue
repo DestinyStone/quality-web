@@ -34,6 +34,7 @@
     <el-dialog title="驳回"
                :visible.sync="showRejectDialog"
                width="50%"
+               @close="showRejectDialog = false"
                append-to-body>
       <div style="width: 80%;">
         <approve-reject  ref="approveReject" :bus-id="busId" v-if="showRejectDialog" :reject="handlerReject"/>

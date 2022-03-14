@@ -22,28 +22,39 @@
             tag-class="el-icon-time"
           >
             <el-table
+              id="settleLog"
               :header-cell-style="{ 'textAlign': 'center'}"
               :cell-style="{'textAlign': 'center'}"
               border
-              :data="data"
+              :data="settleLogData"
               :height="itemHeight - 60"
               style="width: 100%">
               <el-table-column
-                prop="date"
+                prop="title"
+                min-width="120"
                 label="标题">
+                <template slot-scope="scope">
+                  <div style="color: #2d8cf0; cursor: pointer;" @click="openSettleLog(scope.row)">{{scope.row.title}}</div>
+                </template>
               </el-table-column>
               <el-table-column
-                prop="name"
+                prop="serviceType"
                 label="业务类型">
+                <template slot-scope="scope">
+                  {{serviceTypeMap[scope.row.serviceType]}}
+                </template>
               </el-table-column>
               <el-table-column
-                prop="name"
+                prop="createTime"
                 label="办结时间">
               </el-table-column>
               <el-table-column
-                prop="name"
+                prop="status"
                 width="120"
                 label="状态">
+                <template slot-scope="scope">
+                  {{settleLogStatusMap[scope.row.status]}}
+                </template>
               </el-table-column>
             </el-table>
           </title-container>
@@ -121,16 +132,16 @@
   import FixTagTitle from "../../../components/min/fix_tag_title";
   import AwaitCard from "./component/await-card";
   import TitleContainer from "./component/title-container";
-  import {messagePage} from "../../../api/business/work/message";
+  import {eventCount, messagePage, settleLogPage} from "../../../api/business/work/message";
   export default {
     name: "index",
     components: {TitleContainer, AwaitCard, FixTagTitle},
     data() {
       return {
         awaitData: [
-          {title: "不良待办", quality: 10, urgeQuality: 5, router: "/business/out_buy_low_approve/out_buy_low_approve"},
-          {title: "检查法待办", quality: 10, urgeQuality: 5, router: "/business/check/check_approve"},
-          {title: "DI数据待办", quality: 10, urgeQuality: 5, router: "/business/di/account_approve"},
+          {title: "不良待办", quality: 0, urgeQuality: 0, router: "/business/out_buy_low_approve/out_buy_low_approve"},
+          {title: "检查法待办", quality: 0, urgeQuality: 0, router: "/business/check/check_approve"},
+          {title: "DI数据待办", quality: 0, urgeQuality: 0, router: "/business/di/account_approve"},
         ],
         windowHeight: 0,
         fastMenu: [
@@ -140,7 +151,12 @@
           {title: "QPR列表", router: "/business/out_buy_low/out_buy_low_list"},
           {title: "不良待办", router: "/business/out_buy_low_approve/out_buy_low_approve"},
         ],
-        data: [],
+        settleLogData: [],
+        settleLogPage: {
+          pageSize: 5,
+          currentPage: 1,
+          total: 0
+        },
         messageData: [],
         messagePage: {
           pageSize: 5,
@@ -149,6 +165,22 @@
         },
         messageLoading: false,
         isAccessLoadMessage: true,
+        settleLogLoading: false,
+        isAccessLoadSettleLog: true,
+        serviceTypeMap: {0: "工序内不良", 1: "外购件不良", 2: "检查法", 3: "DI数据"},
+        settleLogStatusMap: {0: "已发布", 1: "已完成", 2: "已结案"},
+        settleLogApproveRouterMap: {
+          0: "/business/out_buy_low_approve/out_buy_low_approve",
+          1: "/business/out_buy_low_approve/out_buy_low_approve",
+          2: "/business/check/check_approve",
+          3: "/business/di/account_approve",
+        },
+        settleLogRouterMap: {
+          0: "/business/process_low/process_low_list",
+          1: "/business/out_buy_low/out_buy_low_save",
+          2: "/business/check/check_list",
+          3: "/business/di/report_account_list",
+        }
       }
     },
     mounted() {
@@ -156,18 +188,54 @@
       this.eventScrollMessage();
     },
     created() {
+      this.loadEvent();
       this.loadMessageData();
+      this.loadSettleLog();
     },
     methods: {
+      openSettleLog(row) {
+
+      },
       handlerAwait(item) {
         this.$router.push({path: item.router});
+      },
+      loadEvent() {
+        eventCount().then(res => {
+          let data = res.data.data;
+          this.$set(this.awaitData[0], 'quality', data['low'].quality);
+          this.$set(this.awaitData[0], 'urgeQuality', data['low'].urgeQuality);
+          this.$set(this.awaitData[1], 'quality', data['check'].quality);
+          this.$set(this.awaitData[1], 'urgeQuality', data['check'].urgeQuality);
+          this.$set(this.awaitData[2], 'quality', data['di'].quality);
+          this.$set(this.awaitData[2], 'urgeQuality', data['di'].urgeQuality);
+        })
+      },
+      loadSettleLog() {
+        if (!this.isAccessLoadSettleLog) {
+          return;
+        }
+        this.settleLogLoading = true;
+        settleLogPage(this.messagePage.currentPage, this.messagePage.pageSize, {}).then(res => {
+          let data = res.data.data;
+          this.settleLogLoading = false;
+          if (data.records.length === 0) {
+            this.isAccessLoadSettleLog = false;
+            return;
+          }
+          this.settleLogData = this.settleLogData.concat(data.records);
+          this.messagePage.currentPage++;
+        }).then(() => {
+          if (!this.contentIsOverflow(document.getElementById("settleLog"))) {
+            this.loadMessageData();
+          }
+        })
       },
       loadMessageData() {
         if (!this.isAccessLoadMessage) {
           return;
         }
         this.messageLoading = true;
-        messagePage(this.messagePage.currentPage, this.messagePage.pageSize, {}).then(res => {
+        messagePage(this.settleLogPage.currentPage, this.settleLogPage.pageSize, {}).then(res => {
           let data = res.data.data;
           this.messageLoading = false;
           if (data.records.length === 0) {
@@ -175,7 +243,7 @@
             return;
           }
           this.messageData = this.messageData.concat(data.records);
-          this.messagePage.currentPage++;
+          this.settleLogPage.currentPage++;
         }).then(() => {
           if (!this.contentIsOverflow(document.getElementById("message"))) {
             this.loadMessageData();

@@ -30,6 +30,9 @@
   export default {
     name: "approveNodeQprApprove",
     props: {
+      bpmId: {
+        type: String
+      },
       busId: {
         type: String,
       },

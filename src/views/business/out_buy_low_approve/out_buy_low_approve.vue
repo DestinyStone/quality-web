@@ -189,6 +189,7 @@
       </el-dialog>
     </basic-container>
     <approve-convert :bus-id="currentSelect.id"
+                     :bpm-id="currentSelect.bpmId"
                      v-if="showDetail"
                      :resource-type="currentSelect.resourceType"
                      :flag="currentSelect.bpmFlag"

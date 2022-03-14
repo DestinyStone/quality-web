@@ -56,12 +56,12 @@ export const checkSavePass = (id, data) => {
 }
 
 
-export const qprPass = (id) => {
+export const qprPass = (id, bpmId) => {
   return request({
     url: '/api/business/out/buy/qpr/approve/pass',
     method: 'get',
     params: {
-      id,
+      id,bpmId
     }
   })
 }

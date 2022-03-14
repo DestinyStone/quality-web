@@ -126,6 +126,7 @@
           </el-table-column>
           <el-table-column
             prop="createUserName"
+            min-width="200"
             label="提交人">
           </el-table-column>
           <el-table-column

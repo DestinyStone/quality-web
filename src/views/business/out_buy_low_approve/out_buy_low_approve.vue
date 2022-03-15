@@ -330,6 +330,11 @@
       }
     },
     created() {
+      if (!this.validatenull(this.$route.query)) {
+        this.$set(this.query, 'searchKey', this.$route.query.title);
+        this.$set(this, 'activeTag', this.$route.query.tag);
+        this.query.tagFlag = this.$route.query.tag;
+      }
       this.onLoad();
     }
   }

@@ -21,8 +21,9 @@
       </el-table-column>
       <el-table-column
         label="所属部门"
+        show-overflow-tooltip
         prop="operatorDeptPath"
-        min-width="120">
+        min-width="200">
       </el-table-column>
       <el-table-column
         show-overflow-tooltip

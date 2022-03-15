@@ -56,6 +56,12 @@
             </template>
           </el-table-column>
           <el-table-column
+            show-overflow-tooltip
+            prop="title"
+            label="标题"
+            width="200">
+          </el-table-column>
+          <el-table-column
             prop="code"
             label="不良编号"
             width="180">
@@ -285,6 +291,9 @@
       }
     },
     created() {
+      if (!this.validatenull(this.$route.query)) {
+        this.$set(this.query, 'searchKey', this.$route.query.title);
+      }
       this.onLoad();
     }
   }

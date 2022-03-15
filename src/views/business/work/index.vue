@@ -23,9 +23,10 @@
           >
             <el-table
               id="settleLog"
-              :header-cell-style="{ 'textAlign': 'center'}"
+              v-loading="settleLogLoading"
+              class="no-el-table"
+              :header-cell-style="{ 'textAlign': 'center', 'border-top': '1px solid red;'}"
               :cell-style="{'textAlign': 'center'}"
-              border
               :data="settleLogData"
               :height="itemHeight - 60"
               style="width: 100%">
@@ -34,7 +35,9 @@
                 min-width="120"
                 label="标题">
                 <template slot-scope="scope">
-                  <div style="color: #2d8cf0; cursor: pointer;" @click="openSettleLog(scope.row)">{{scope.row.title}}</div>
+                  <div style="color: #2d8cf0; cursor: pointer;">
+                    <span @click="openSettleLog(scope.row)">{{scope.row.title}}</span>
+                  </div>
                 </template>
               </el-table-column>
               <el-table-column
@@ -168,7 +171,7 @@
         settleLogLoading: false,
         isAccessLoadSettleLog: true,
         serviceTypeMap: {0: "工序内不良", 1: "外购件不良", 2: "检查法", 3: "DI数据"},
-        settleLogStatusMap: {0: "已发布", 1: "已完成", 2: "已结案"},
+        settleLogStatusMap: {0: "已发布", 1: "已完成", 2: "已结案", 3: "已拒绝"},
         settleLogApproveRouterMap: {
           0: "/business/out_buy_low_approve/out_buy_low_approve",
           1: "/business/out_buy_low_approve/out_buy_low_approve",
@@ -177,7 +180,7 @@
         },
         settleLogRouterMap: {
           0: "/business/process_low/process_low_list",
-          1: "/business/out_buy_low/out_buy_low_save",
+          1: "/business/out_buy_low/out_buy_low_list",
           2: "/business/check/check_list",
           3: "/business/di/report_account_list",
         }
@@ -194,7 +197,12 @@
     },
     methods: {
       openSettleLog(row) {
-
+        if (row.status === 0 || row.status === 2) {
+          this.$router.push({path: this.settleLogRouterMap[row.serviceType], query: {title: row.title}});
+        }
+        if (row.status === 1 || row.status === 3) {
+          this.$router.push({path: this.settleLogApproveRouterMap[row.serviceType], query: {title: row.title, tag: 1}});
+        }
       },
       handlerAwait(item) {
         this.$router.push({path: item.router});

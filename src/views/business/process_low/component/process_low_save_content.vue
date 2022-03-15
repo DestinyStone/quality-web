@@ -406,20 +406,7 @@
             formCopy.separateFileDependName = this.form.separateFileDependId.name;
           }
 
-
-          if (this.validatenull(formCopy.busincessIdFiles)) {
-            formCopy.busincessIdFiles = [];
-          }
-
-          if (formCopy.busincessIdFiles.length === 0) {
-            formCopy.busincessIdFiles = null;
-          }
-
-          if (formCopy.isBusinessFile === 1 && formCopy.busincessIdFiles === null) {
-            this.$message({type: "warning", message: "请至少提交一个相关附件"});
-            return;
-          }
-          if (formCopy.isBusinessFile === 1) {
+          if (!this.validatenull(this.form.busincessIdFiles)) {
             formCopy.busincessIdFiles = this.form.busincessIdFiles.map(item => item.id).join(",");
           }
 

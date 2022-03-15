@@ -17,6 +17,10 @@
             <extensible-container title="基本信息" ref="basicMessage" style="margin-top: 20px;" :status="!isClickEdit">
               <div style="height: 1100px;">
                 <out-buy-low-basic-message :id="busId" :data="data"/>
+                <div style="margin-top: 20px;">
+                  <fix-color-title>审批过程</fix-color-title>
+                  <approve-detail style="margin-top: 10px;" :bus-id="busId"/>
+                </div>
               </div>
             </extensible-container>
             <extensible-container v-if="isClickEdit" title="不良原因&对策" :default-status="true">
@@ -125,10 +129,6 @@
                </el-table>
              </div>
             </extensible-container>
-            <div style="margin-top: 20px;">
-              <fix-color-title>审批过程</fix-color-title>
-              <approve-detail style="margin-top: 10px;" :bus-id="busId"/>
-            </div>
           </div>
         </basic-container>
       </el-col>

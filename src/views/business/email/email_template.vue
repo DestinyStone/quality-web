@@ -79,7 +79,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="showTest = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="handleTrigger" :disabled="!showTest">测 试</el-button>
+        <el-button size="small" type="primary" @click="handleTrigger" :disabled="testLoading">测 试</el-button>
       </span>
     </el-dialog>
   </basic-container>
@@ -193,6 +193,9 @@ export default {
       testEmail(this.selectionList[0].id, form).then(() => {
         this.testLoading = false;
         this.$message({type: "success", message: "发送成功"});
+      }).catch(() => {
+        this.testLoading = false;
+        this.$message({type: "error", message: "邮件发送失败"});
       })
     },
     handleTrigger() {

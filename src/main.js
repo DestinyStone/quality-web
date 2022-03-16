@@ -60,3 +60,6 @@ new Vue({
   i18n,
   render: h => h(App)
 }).$mount('#app');
+
+import directives from './directives'
+Vue.use(directives);

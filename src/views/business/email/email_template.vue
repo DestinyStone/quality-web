@@ -31,7 +31,7 @@
         <el-button
           size="small"
           type="warning"
-          @click="(showUpdateDialog = true), (form = {})"
+          @click="handlerClickTest"
         >测 试
         </el-button>
       </template>
@@ -46,7 +46,7 @@
           v-if="row.status === 0"
           :size="size"
           :type="type"
-          @click="enable(row)"
+          @click="enable(row, 1)"
         >启 用</el-button
         >
         <el-button
@@ -54,7 +54,7 @@
           :size="size"
           :type="type"
           class="danger"
-          @click="disable(row)"
+          @click="enable(row, 0)"
         >禁 用</el-button
         >
       </template>
@@ -64,29 +64,40 @@
       :template-id="form.id"
       @close="handleClose"
       @save="saveTemplate"
+      @update="updateTemplate"
     />
+    <el-dialog title="邮件测试"
+               :visible.sync="showTest"
+               width="50%"
+               @close="showTest = false"
+               append-to-body>
+      <div style="width: 80%;">
+        <email-template-test :template-id="this.selectionList[0].id" ref="emailTemplateTest" v-if="showTest" :trigger="handlerEmailTest"/>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="showTest = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="handleTrigger">测 试</el-button>
+      </span>
+    </el-dialog>
   </basic-container>
 </template>
 
 <script>
-// import {
-//   getList,
-//   getDetail,
-//   remove,
-//   add,
-//   enable,
-//   disable,
-// } from "@/api/business/base/email_template";
+
+import Cookies from 'js-cookie'
 import { mapGetters } from "vuex";
 import { Base64 } from "js-base64";
-import {emailPage} from "../../../api/business/email/email";
+import {emailPage, enableEmailStatus, saveEmail, updateEmail} from "../../../api/business/email/email";
 import EmailTemplateUpdate from "./component/email_template_update";
+import EmailTemplateTest from "./component/email_template_test";
 export default {
   name: "emailTemplate",
-  components: {EmailTemplateUpdate},
+  components: {EmailTemplateTest, EmailTemplateUpdate},
   data() {
     return {
+      showEmailTest: false,
       showMain: true,
+      showTest: false,
       showSubmit: false,
       form: {},
       query: {},
@@ -108,6 +119,7 @@ export default {
         searchShow: true,
         searchMenuSpan: 6,
         border: true,
+        indexLabel: "序号",
         index: true,
         viewBtn: false,
         selection: true,
@@ -164,49 +176,68 @@ export default {
     },
   },
   methods: {
+    handlerEmailTest(value) {
+      let emailTestJson = Cookies.get("emailTest");
+      let emailTest = this.validatenull(emailTestJson) ? [] : JSON.parse(emailTestJson);
+      let filter = emailTest.filter(item => item === value.test);
+      if (filter.length === 0) {
+        emailTest.push(value.test);
+        Cookies.set("emailTest", JSON.stringify(emailTest));
+      }
+    },
+    handleTrigger() {
+      this.$refs['emailTemplateTest'].submit();
+    },
+    handlerClickTest() {
+      if (this.selectionList.length !== 1) {
+        this.$message({type: "warning", message: "请选择一条数据"});
+        return;
+      }
+      this.showTest = true;
+    },
     handlerClickSave() {
       this.showMain = false;
       this.showSubmit = true;
       this.form = {};
     },
-    enable(row) {
-      this.$confirm(`确认启用【${row.title}】?`, "提示", {
+    enable(row, status) {
+      let warning = status === 0 ? `确认禁用【${row.title}】?` : `确认启用【${row.title}】?`;
+      let success = status === 0 ? "禁用成功" : "启用成功";
+      this.$confirm(warning, "提示", {
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-          enable(row.id).then(() => {
+          enableEmailStatus(row.id, status).then(() => {
             this.onLoad(this.page);
-            this.$message.success("启用成功");
-          });
-        })
-        .catch(() => {});
-    },
-    disable(row) {
-      this.$confirm(`确认禁用【${row.title}】?`, "提示", {
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          disable(row.id).then(() => {
-            this.onLoad(this.page);
-            this.$message.success("禁用成功");
+            this.$message.success(success);
           });
         })
         .catch(() => {});
     },
     updateClick(row) {
-      getDetail(row.id).then((res) => {
-        this.showUpdateDialog = true;
-        this.form = res.data.data;
+      this.form.id = row.id;
+      this.showMain = false;
+      this.showSubmit = true;
+    },
+    updateTemplate(data) {
+      data.content = Base64.encode(data.content);
+      updateEmail(this.form.id, data).then(() => {
+        this.onLoad(this.page);
+        this.$message.success("更新成功");
+        this.showMain = true;
+        this.showSubmit = false;
+        this.form = {};
       });
     },
     saveTemplate(data) {
       data.content = Base64.encode(data.content);
-      add(data).then(() => {
+      saveEmail(data).then(() => {
         this.onLoad(this.page);
-        this.$message.success("操作成功");
-        this.showUpdateDialog = false;
+        this.$message.success("新增成功");
+        this.showMain = true;
+        this.showSubmit = false;
+        this.form = {};
       });
     },
     handleClose() {

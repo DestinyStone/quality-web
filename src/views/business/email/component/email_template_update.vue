@@ -1,7 +1,8 @@
 <template>
   <div>
-    <div style="height: 600px; overflow: auto;">
-      <avue-form ref="templateRef" v-model="form" :option="option">
+    <div style="overflow: auto;" :style="{height: height + 'px'}">
+      <fix-color-title>{{title}}</fix-color-title>
+      <avue-form style="width: 80%; margin: 20px auto 0 auto;" ref="templateRef" v-model="form" :option="option">
         <template slot="content">
           <rich-text-editor
             :content="form.content"
@@ -27,10 +28,13 @@
 <script>
 import RichTextEditor from "@/components/rich-text-editor";
 import EmailTemplateParam from "./email_template_param";
+import {detailEmail} from "../../../../api/business/email/email";
+import FixColorTitle from "../../../../components/min/fix_color_title";
 // import { getDetail } from "@/api/business/base/email_template";
 export default {
   name: "emailTemplateUpdate",
   components: {
+    FixColorTitle,
     RichTextEditor,
     EmailTemplateParam,
   },
@@ -47,6 +51,7 @@ export default {
   },
   data() {
     return {
+      windowHeight: 0,
       form: {},
       title: "新增邮件模板",
       option: {
@@ -116,11 +121,17 @@ export default {
   },
   mounted() {
     this.initData();
+    this.windowHeight = document.body.clientHeight;
   },
   watch: {
     // templateId: function () {
       // this.initData();
     // },
+  },
+  computed: {
+    height() {
+      return this.windowHeight - 240;
+    }
   },
   methods: {
     handleClose() {
@@ -132,18 +143,22 @@ export default {
         return;
       }
       this.$refs.templateRef.validate((success, done) => {
-        if (success) {
+        if (!success) {
+          return;
+        }
+        if (!this.templateId) {
           this.$emit("save", { ...this.form });
           done();
+        }else {
+          this.$emit("update", { ...this.form });
         }
       });
     },
     initData() {
       if (this.templateId) {
         this.title = "更新邮件模板";
-        getDetail(this.templateId).then((res) => {
+        detailEmail(this.templateId).then((res) => {
           this.form = res.data.data;
-          console.info("this.form", this.form);
         });
       } else {
         this.title = "新增邮件模板";
@@ -151,6 +166,9 @@ export default {
       }
     },
   },
+  created() {
+    this.initData();
+  }
 };
 </script>
 

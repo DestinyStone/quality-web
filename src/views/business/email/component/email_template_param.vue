@@ -69,13 +69,6 @@ export default {
             label: "默认值",
             prop: "defaultValue",
             cell: true,
-            rules: [
-              {
-                required: true,
-                message: "请输入默认值",
-                trigger: "blur",
-              },
-            ],
           },
           {
             label: "备注",

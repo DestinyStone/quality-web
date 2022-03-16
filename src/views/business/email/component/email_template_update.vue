@@ -1,13 +1,5 @@
 <template>
-  <el-dialog
-    class="email-template-dialog"
-    :title="title"
-    :visible.sync="show"
-    top="3%"
-    width="60%"
-    append-to-body
-    :before-close="handleClose"
-  >
+  <div>
     <div style="height: 600px; overflow: auto;">
       <avue-form ref="templateRef" v-model="form" :option="option">
         <template slot="content">
@@ -25,11 +17,11 @@
         </template>
       </avue-form>
     </div>
-    <span slot="footer" class="dialog-footer">
-       <el-button  size="small" @click="show = false">关 闭</el-button>
+    <div style="display: flex; justify-content: center; padding: 20px;">
+      <el-button  size="small" @click="$emit('close')">关 闭</el-button>
       <el-button type="primary" size="small" @click="save()">确 定</el-button>
-    </span>
-  </el-dialog>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -126,9 +118,9 @@ export default {
     this.initData();
   },
   watch: {
-    templateId: function () {
-      this.initData();
-    },
+    // templateId: function () {
+      // this.initData();
+    // },
   },
   methods: {
     handleClose() {

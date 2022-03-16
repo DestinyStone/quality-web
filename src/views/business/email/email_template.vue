@@ -1,6 +1,7 @@
 <template>
   <basic-container class="email-template">
     <avue-crud
+      v-if="showMain"
       :option="option"
       :table-loading="loading"
       :data="data"
@@ -24,7 +25,7 @@
         <el-button
           size="small"
           type="primary"
-          @click="(showUpdateDialog = true), (form = {})"
+          @click="handlerClickSave"
           >新 增
         </el-button>
         <el-button
@@ -59,7 +60,7 @@
       </template>
     </avue-crud>
     <email-template-update
-      :show="showUpdateDialog"
+      v-if="showSubmit"
       :template-id="form.id"
       @close="handleClose"
       @save="saveTemplate"
@@ -85,6 +86,8 @@ export default {
   components: {EmailTemplateUpdate},
   data() {
     return {
+      showMain: true,
+      showSubmit: false,
       form: {},
       query: {},
       loading: true,
@@ -161,6 +164,11 @@ export default {
     },
   },
   methods: {
+    handlerClickSave() {
+      this.showMain = false;
+      this.showSubmit = true;
+      this.form = {};
+    },
     enable(row) {
       this.$confirm(`确认启用【${row.title}】?`, "提示", {
         cancelButtonText: "取消",
@@ -203,7 +211,8 @@ export default {
     },
     handleClose() {
       this.form = {};
-      this.showUpdateDialog = false;
+      this.showMain = true;
+      this.showSubmit = false;
     },
     rowSave(row, done, loading) {
       add(row).then(

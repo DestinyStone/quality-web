@@ -8,7 +8,7 @@
       <el-form-item label="当前模板：">
         <div style="position:relative;">
           <div style="height: 200px; overflow-x: auto;: auto; border: 1px solid #E4E7ED; padding-left: 10px; ">
-            <div :key="loadIndex" v-html="content"></div>
+            <div :key="loadIndex" v-html="detail.content"></div>
           </div>
           <div style="position:absolute; right: -40px; top: 0; cursor: pointer; color: #25a5f7;" @click="showPrefix = true">预览</div>
         </div>

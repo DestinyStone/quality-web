@@ -25,7 +25,7 @@
       <el-button  size="small" @click="$emit('close')">关 闭</el-button>
       <el-button type="primary" size="small" @click="save()">确 定</el-button>
     </div>
-    <email-template-prefix :show.sync="showPrefix" :content="form.content"/>
+    <email-template-prefix :show.sync="showPrefix" :content="content"/>
   </div>
 </template>
 
@@ -55,8 +55,10 @@ export default {
       default: null,
     },
   },
+
   data() {
     return {
+      content: false,
       showPrefix: false,
       windowHeight: 0,
       form: {},
@@ -131,9 +133,12 @@ export default {
     this.windowHeight = document.body.clientHeight;
   },
   watch: {
-    // templateId: function () {
-      // this.initData();
-    // },
+    form: {
+      handler() {
+        this.content = this.getContent();
+      },
+      deep: true,
+    }
   },
   computed: {
     height() {
@@ -141,6 +146,28 @@ export default {
     }
   },
   methods: {
+    getContent() {
+      if (this.validatenull(this.form)) {
+        return "";
+      }
+      if (this.validatenull(this.form.params)) {
+        return this.form.content;
+      }
+      let content = this.form.content;
+      for(let key in this.form.params) {
+        let item = this.form.params[key];
+        // 默认值 或者 新值都为空则跳过
+        if (this.validatenull(item.defaultValue)) {
+          continue;
+        }
+
+        // 新值 优先级更高
+        let replace = `\\$\\{${item.name}\\}`;
+        // 替换占位符
+        content = content.replace(new RegExp(replace, 'g'), item.defaultValue);
+      }
+      return content;
+    },
     handleClose() {
       this.$emit("close");
     },

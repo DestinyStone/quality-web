@@ -24,7 +24,7 @@
             <col width="33%" />
             <tr v-for="(item, index) in detail.params" :key="index" >
               <td><span style="font-weight: 700; margin-right: 10px;">名称:</span> {{item.name}}</td>
-              <td><span style="font-weight: 700; margin-right: 10px;">默认值: </span>{{item.defaultValue || "无默认值"}}</td>
+              <td style="display: flex;"><span style="font-weight: 700; margin-right: 10px; white-space: nowrap;">默认值: </span><tooltop-text :limit="30" :text="item.defaultValue || '无默认值'"></tooltop-text></td>
               <td><span style="font-weight: 700">填充: </span><el-input v-model="item.newValue" style="width: 200px; margin-left: 10px;"/></td>
             </tr>
           </table>
@@ -48,9 +48,10 @@
   import Cookies from 'js-cookie'
   import {detailEmail} from "../../../../api/business/email/email";
   import EmailTemplatePrefix from "./email_template_prefix";
+  import TooltopText from "../../../../components/min/tooltop-text";
   export default {
     name: "emailTemplateTest",
-    components: {EmailTemplatePrefix, SearchInput},
+    components: {TooltopText, EmailTemplatePrefix, SearchInput},
     props: {
       templateId: {
         type: String,

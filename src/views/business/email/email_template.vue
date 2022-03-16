@@ -23,13 +23,13 @@
     >
       <template slot="menuLeft">
         <el-button
-          size="small"
+          size="mini"
           type="primary"
           @click="handlerClickSave"
           >新 增
         </el-button>
         <el-button
-          size="small"
+          size="mini"
           type="warning"
           @click="handlerClickTest"
         >测 试

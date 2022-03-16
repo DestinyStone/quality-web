@@ -6,8 +6,11 @@
              :rules="rules"
              label-width="120px">
       <el-form-item label="当前模板：">
-        <div style="height: 200px; overflow: auto; border: 1px solid #E4E7ED; padding-left: 10px;">
-          <div :key="loadIndex" v-html="content"></div>
+        <div style="position:relative;">
+          <div style="height: 200px; overflow-x: auto;: auto; border: 1px solid #E4E7ED; padding-left: 10px; ">
+            <div :key="loadIndex" v-html="content"></div>
+          </div>
+          <div style="position:absolute; right: -40px; top: 0; cursor: pointer; color: #25a5f7;" @click="showPrefix = true">预览</div>
         </div>
       </el-form-item>
       <el-form-item label="参数：">
@@ -36,6 +39,7 @@
         </div>
       </el-form-item>
     </el-form>
+    <email-template-prefix :content="content" :show.sync="showPrefix"/>
   </div>
 </template>
 
@@ -43,9 +47,10 @@
   import SearchInput from "../../../../components/search-input/search-input";
   import Cookies from 'js-cookie'
   import {detailEmail} from "../../../../api/business/email/email";
+  import EmailTemplatePrefix from "./email_template_prefix";
   export default {
     name: "emailTemplateTest",
-    components: {SearchInput},
+    components: {EmailTemplatePrefix, SearchInput},
     props: {
       templateId: {
         type: String,
@@ -56,6 +61,7 @@
     },
     data() {
       return {
+        showPrefix: false,
         form: {},
         rules: {
           to: [{required: true, message: '请输入QQ邮箱', trigger: 'blur'},],

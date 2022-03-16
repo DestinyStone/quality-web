@@ -1,27 +1,31 @@
 <template>
   <div>
-    <div style="overflow: auto;" :style="{height: height + 'px'}">
+    <div style="overflow-y: auto;" :style="{height: height + 'px'}">
       <fix-color-title>{{title}}</fix-color-title>
-      <avue-form style="width: 80%; margin: 20px auto 0 auto;" ref="templateRef" v-model="form" :option="option">
-        <template slot="content">
-          <rich-text-editor
-            :content="form.content"
-            @onchange="form.content = $event"
-          />
-        </template>
-        <template slot="params">
-          <email-template-param
-            ref="paramRef"
-            :params="form.params"
-            @change="form.params = $event"
-          />
-        </template>
-      </avue-form>
+      <div style="width: 80%;  margin: 20px auto 0 auto;">
+        <avue-form ref="templateRef" v-model="form" :option="option">
+          <template slot="content">
+            <div style=" cursor: pointer; color: #25a5f7;" @click="showPrefix = true">预览</div>
+            <rich-text-editor
+              :content="form.content"
+              @onchange="form.content = $event"
+            />
+          </template>
+          <template slot="params">
+            <email-template-param
+              ref="paramRef"
+              :params="form.params"
+              @change="form.params = $event"
+            />
+          </template>
+        </avue-form>
+      </div>
     </div>
     <div style="display: flex; justify-content: center;">
       <el-button  size="small" @click="$emit('close')">关 闭</el-button>
       <el-button type="primary" size="small" @click="save()">确 定</el-button>
     </div>
+    <email-template-prefix :show.sync="showPrefix" :content="form.content"/>
   </div>
 </template>
 
@@ -30,10 +34,12 @@ import RichTextEditor from "@/components/rich-text-editor";
 import EmailTemplateParam from "./email_template_param";
 import {detailEmail} from "../../../../api/business/email/email";
 import FixColorTitle from "../../../../components/min/fix_color_title";
+import EmailTemplatePrefix from "./email_template_prefix";
 // import { getDetail } from "@/api/business/base/email_template";
 export default {
   name: "emailTemplateUpdate",
   components: {
+    EmailTemplatePrefix,
     FixColorTitle,
     RichTextEditor,
     EmailTemplateParam,
@@ -51,6 +57,7 @@ export default {
   },
   data() {
     return {
+      showPrefix: false,
       windowHeight: 0,
       form: {},
       title: "新增邮件模板",

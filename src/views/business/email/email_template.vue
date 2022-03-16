@@ -79,7 +79,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="showTest = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="handleTrigger">测 试</el-button>
+        <el-button size="small" type="primary" @click="handleTrigger" :disabled="!showTest">测 试</el-button>
       </span>
     </el-dialog>
   </basic-container>

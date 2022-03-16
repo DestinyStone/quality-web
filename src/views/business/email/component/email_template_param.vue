@@ -3,7 +3,7 @@
     ref="crud"
     :option="option"
     :data="data"
-    @row-update="addUpdate"
+    @row-update="rowSave"
     @row-add="rowAdd"
     @row-save="rowSave"
     @row-del="rowDel"
@@ -82,7 +82,9 @@ export default {
   },
   methods: {
     initData() {
-      this.data = this.params ? JSON.parse(JSON.stringify(this.params)) : [];
+      let data = this.params ? JSON.parse(JSON.stringify(this.params)) : [];
+      data.forEach(item => item.id = null);
+      this.data = data;
     },
     addRow() {
       if (!this.validate()) {
@@ -113,7 +115,7 @@ export default {
         .catch(() => {});
     },
     validate() {
-      let valid = this.data.filter((row) => row.$cellEdit).length == 0;
+      let valid = this.data.filter((row) => row.$cellEdit).length === 0;
       if (!valid) {
         this.$refs.crud.$refs.cellForm.validate();
       }

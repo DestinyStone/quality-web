@@ -18,7 +18,7 @@
         </template>
       </avue-form>
     </div>
-    <div style="display: flex; justify-content: center; padding: 20px;">
+    <div style="display: flex; justify-content: center;">
       <el-button  size="small" @click="$emit('close')">关 闭</el-button>
       <el-button type="primary" size="small" @click="save()">确 定</el-button>
     </div>
@@ -130,7 +130,7 @@ export default {
   },
   computed: {
     height() {
-      return this.windowHeight - 240;
+      return this.windowHeight - 200;
     }
   },
   methods: {

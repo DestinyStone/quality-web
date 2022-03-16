@@ -15,14 +15,19 @@
           无需填写
         </div>
         <div v-else style="height: 200px; overflow: auto;">
-          <div v-for="(item, index) in detail.params" :key="index" style="display: flex; margin-bottom: 10px; justify-content: space-between;">
-            <div><span style="font-weight: 700; margin-right: 10px;">名称:</span> {{item.name}}</div>
-            <div><span style="font-weight: 700; margin-right: 10px;">默认值: </span>{{item.defaultValue}}</div>
-            <div><span style="font-weight: 700">填充: </span><el-input v-model="item.newValue" style="width: 200px; margin-left: 10px;"/></div>
-          </div>
+          <table style="width: 100%;">
+            <col width="33%" />
+            <col width="33%" />
+            <col width="33%" />
+            <tr v-for="(item, index) in detail.params" :key="index" >
+              <td><span style="font-weight: 700; margin-right: 10px;">名称:</span> {{item.name}}</td>
+              <td><span style="font-weight: 700; margin-right: 10px;">默认值: </span>{{item.defaultValue || "无默认值"}}</td>
+              <td><span style="font-weight: 700">填充: </span><el-input v-model="item.newValue" style="width: 200px; margin-left: 10px;"/></td>
+            </tr>
+          </table>
         </div>
       </el-form-item>
-      <el-form-item label="QQ邮箱：" prop="test">
+      <el-form-item label="QQ邮箱：" prop="to">
         <div style="display: flex;">
           <search-input style="width: 300px" :loadOption="loadOption" @change="handlerChange"/>
           <div style="margin-left: 10px; font-size: 16px;">
@@ -53,7 +58,7 @@
       return {
         form: {},
         rules: {
-          test: [{required: true, message: '请输入QQ邮箱', trigger: 'blur'},],
+          to: [{required: true, message: '请输入QQ邮箱', trigger: 'blur'},],
         },
         detail: {},
         loadIndex: 0,
@@ -93,7 +98,7 @@
         return content;
       },
       handlerChange(value) {
-        this.$set(this.form, 'test', value);
+        this.$set(this.form, 'to', value);
       },
       loadOption(value, page) {
         return new Promise((resolve) => {
@@ -120,7 +125,7 @@
           if (!valid) {
             return;
           }
-          this.form.busId = this.busId;
+          this.form.content = Base64.encode(this.content);
           this.trigger(this.form);
         })
       },

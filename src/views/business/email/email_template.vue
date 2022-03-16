@@ -68,11 +68,14 @@
     />
     <el-dialog title="邮件测试"
                :visible.sync="showTest"
-               width="50%"
+               width="80%"
+               top="20px"
                @close="showTest = false"
                append-to-body>
-      <div style="width: 80%;">
-        <email-template-test :template-id="this.selectionList[0].id" ref="emailTemplateTest" v-if="showTest" :trigger="handlerEmailTest"/>
+      <div v-loading="testLoading"  element-loading-text="发送邮件中..., 请耐心等待">
+        <div style="width: 80%;">
+          <email-template-test :template-id="this.selectionList[0].id" ref="emailTemplateTest" v-if="showTest" :trigger="handlerEmailTest"/>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="showTest = false">取 消</el-button>
@@ -87,7 +90,7 @@
 import Cookies from 'js-cookie'
 import { mapGetters } from "vuex";
 import { Base64 } from "js-base64";
-import {emailPage, enableEmailStatus, saveEmail, updateEmail} from "../../../api/business/email/email";
+import {emailPage, enableEmailStatus, saveEmail, testEmail, updateEmail} from "../../../api/business/email/email";
 import EmailTemplateUpdate from "./component/email_template_update";
 import EmailTemplateTest from "./component/email_template_test";
 export default {
@@ -155,6 +158,7 @@ export default {
         ],
       },
       data: [],
+      testLoading: false,
     };
   },
   computed: {
@@ -176,14 +180,20 @@ export default {
     },
   },
   methods: {
-    handlerEmailTest(value) {
+    handlerEmailTest(form) {
       let emailTestJson = Cookies.get("emailTest");
       let emailTest = this.validatenull(emailTestJson) ? [] : JSON.parse(emailTestJson);
-      let filter = emailTest.filter(item => item === value.test);
+      let filter = emailTest.filter(item => item === form.to);
       if (filter.length === 0) {
-        emailTest.push(value.test);
+        emailTest.push(form.to);
         Cookies.set("emailTest", JSON.stringify(emailTest));
       }
+
+      this.testLoading = true;
+      testEmail(this.selectionList[0].id, form).then(() => {
+        this.testLoading = false;
+        this.$message({type: "success", message: "发送成功"});
+      })
     },
     handleTrigger() {
       this.$refs['emailTemplateTest'].submit();

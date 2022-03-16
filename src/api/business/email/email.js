@@ -1,5 +1,16 @@
 import request from '@/router/axios';
 
+export const testEmail = (id, data) => {
+  return request({
+    url: `/api/business/email-template/test`,
+    method: 'post',
+    params: {
+      id
+    },
+    data: data,
+  })
+}
+
 export const enableEmailStatus = (ids, status) => {
   return request({
     url: `/api/business/email-template/enable/${status}`,

@@ -60,11 +60,21 @@
       }
     },
     data() {
+      let validateTo = (rule, value, callback) => {
+        if (this.validatenull(value)) {
+          return callback(new Error('请输入QQ邮箱'));
+        }
+        console.log(value.length);
+        if (value.length < 7 || value.length > 10) {
+          return callback(new Error('请输入正确的QQ邮箱'));
+        }
+        return callback();
+      };
       return {
         showPrefix: false,
         form: {},
         rules: {
-          to: [{required: true, message: '请输入QQ邮箱', trigger: 'blur'},],
+          to: [{validator: validateTo, required: true, trigger: 'blur'},],
         },
         detail: {},
         loadIndex: 0,

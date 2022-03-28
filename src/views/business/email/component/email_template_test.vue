@@ -19,13 +19,13 @@
         </div>
         <div v-else style="height: 200px; overflow: auto;">
           <table style="width: 100%;">
-            <col width="33%" />
+            <col width="20%" />
             <col width="33%" />
             <col width="33%" />
             <tr v-for="(item, index) in detail.params" :key="index" >
               <td><span style="font-weight: 700; margin-right: 10px;">名称:</span> {{item.name}}</td>
               <td style="display: flex;"><span style="font-weight: 700; margin-right: 10px; white-space: nowrap;">默认值: </span><tooltop-text :limit="30" :text="item.defaultValue || '无默认值'"></tooltop-text></td>
-              <td><span style="font-weight: 700">填充: </span><el-input v-model="item.newValue" style="width: 200px; margin-left: 10px;"/></td>
+              <td><span style="font-weight: 700">填充: </span><el-input v-model="item.newValue" style="max-width: 200px;margin-left: 10px;"/></td>
             </tr>
           </table>
         </div>

@@ -114,7 +114,8 @@
                 <el-col :span="18" style="text-align: right; background: #EFF5FF; font-weight: 700; color: #0075DB; font-size: 14px; line-height: 40px; height: 40px; padding-right: 15px;">
                   {{item.title}}
                 </el-col>
-                <el-col @click.native="handlerClickFastMenu(item)" :span="6" style="background-color: #78A9EE;line-height: 40px; height: 40px; border: 1px solid #EFF5FF; border-top-right-radius: 5px; border-bottom-right-radius: 5px">
+                {{$t('navbar.color')}}
+                <el-col @click.native="handlerClickFastMenu(item)" :span="6" :style="{'background-color': $t('navbar.color')}" style="background-color: #78A9EE;line-height: 40px; height: 40px; border: 1px solid #EFF5FF; border-top-right-radius: 5px; border-bottom-right-radius: 5px">
                   <div style="text-align: center; color: #FFFFFF; cursor: pointer;">
                     <i class="el-icon-arrow-right" style="border-radius: 50%; border: 1px solid #FFFFFF"/>
                   </div>

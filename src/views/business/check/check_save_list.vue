@@ -46,10 +46,12 @@
             </el-table-column>
             <el-table-column
               prop="dutyDept"
+              min-width="240"
               label="供应商名称">
             </el-table-column>
             <el-table-column
               prop="createTime"
+              min-width="180"
               label="创建时间">
             </el-table-column>
             <el-table-column

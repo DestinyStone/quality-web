@@ -33,6 +33,11 @@
               </template>
             </el-table-column>
             <el-table-column
+              label="管理编号"
+              prop="code"
+              width="180">
+            </el-table-column>
+            <el-table-column
               label="品番号"
               prop="designation">
             </el-table-column>

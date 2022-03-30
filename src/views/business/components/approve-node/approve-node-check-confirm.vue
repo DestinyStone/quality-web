@@ -159,9 +159,9 @@
         fillJudgeResultDict: [
           {label: "供应商责任", value: 0},
           {label: "责任不明结案", value: 1},
-          {label: "生管责任", value: 2},
-          {label: "其他直接结案", value: 3},
-          {label: "是否其他结案", value: 4},
+          {label: "内制件责任", value: 2},
+          {label: "生管责任", value: 3},
+          {label: "其他直接结案", value: 4},
         ],
         bpmNodeMapForm: {0: "不良联络书", 1: "不良联络书", 2: "调查结果表", 3: "调查结果表", 4: "调查结果表"},
         showApproveRejectDialog: false,

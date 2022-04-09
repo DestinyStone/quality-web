@@ -49,6 +49,7 @@
       return {
         fileCount: 0,
         fileList: [],
+        reload: 0,
       }
     },
     watch: {

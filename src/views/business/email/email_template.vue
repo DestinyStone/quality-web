@@ -23,34 +23,37 @@
     >
       <template slot="menuLeft">
         <el-button
+          v-if="permissionList.addBtn"
           size="small"
           type="primary"
           @click="handlerClickSave"
           >新 增
         </el-button>
         <el-button
+          v-if="permissionList.testBtn"
           size="small"
           type="warning"
           @click="handlerClickTest"
-        >测 试
+        >发送邮件
         </el-button>
       </template>
       <template slot-scope="{ type, size, row }" slot="menu">
         <el-button
+          v-if="permissionList.editBtn"
           :size="size"
           :type="type"
           @click="updateClick(row)"
           >编 辑</el-button
         >
         <el-button
-          v-if="row.status === 0"
+          v-if="row.status === 0 && permissionList.activeBtn"
           :size="size"
           :type="type"
           @click="enable(row, 1)"
         >启 用</el-button
         >
         <el-button
-          v-if="row.status === 1"
+          v-if="row.status === 1 && permissionList.unActiveBtn"
           :size="size"
           :type="type"
           class="danger"
@@ -113,6 +116,9 @@ export default {
       },
       selectionList: [],
       option: {
+        addBtn: false,
+        editBtn: false,
+        delBtn: false,
         cellBtn: false,
         columnBtn: false,
         refreshBtn: false,
@@ -165,10 +171,11 @@ export default {
     ...mapGetters(["permission"]),
     permissionList() {
       return {
-        addBtn: false,
-        viewBtn: false,
-        delBtn: false,
-        editBtn: false,
+        addBtn: this.vaildData(this.permission.email_save, false),
+        editBtn: this.vaildData(this.permission.email_edit, false),
+        activeBtn: this.vaildData(this.permission.email_enable, false),
+        unActiveBtn: this.vaildData(this.permission.email_unable, false),
+        testBtn: this.vaildData(this.permission.email_test, false),
       };
     },
     ids() {
@@ -195,7 +202,7 @@ export default {
         this.$message({type: "success", message: "发送成功"});
       }).catch(() => {
         this.testLoading = false;
-        this.$message({type: "error", message: "邮件发送失败"});
+        // this.$message({type: "error", message: "邮件发送失败"});
       })
     },
     handleTrigger() {
@@ -375,6 +382,11 @@ export default {
       });
     },
   },
+  created() {
+    if (!this.permissionList.activeBtn && !this.permissionList.unActiveBtn && !this.permissionList.editBtn) {
+      this.option.menu = false;
+    }
+  }
 };
 </script>
 

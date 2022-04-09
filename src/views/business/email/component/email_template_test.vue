@@ -32,14 +32,16 @@
       </el-form-item>
       <el-form-item label="QQ邮箱：" prop="to">
         <div style="display: flex;">
-          <search-input style="width: 300px" :loadOption="loadOption" @change="handlerChange"/>
-          <div style="margin-left: 10px; font-size: 16px;">
-            @qq.com
+          <search-input ref="searchInput" style="width: 300px" :loadOption="loadOption" @change="handlerChange"/>
+          <div style="margin-left: 10px; font-size: 16px; display: flex;">
+            <div>@qq.com</div>
+            <div style="margin-left: 20px; cursor: pointer; color: #25a5f7;" @click="showUserDialog = true">选择用户</div>
           </div>
         </div>
       </el-form-item>
     </el-form>
     <email-template-prefix :content="content" :show.sync="showPrefix"/>
+    <user-select-dialog :show.sync="showUserDialog" @select="handlerSelectUser"/>
   </div>
 </template>
 
@@ -49,9 +51,10 @@
   import {detailEmail} from "../../../../api/business/email/email";
   import EmailTemplatePrefix from "./email_template_prefix";
   import TooltopText from "../../../../components/min/tooltop-text";
+  import UserSelectDialog from "../../components/user-select-dialog";
   export default {
     name: "emailTemplateTest",
-    components: {TooltopText, EmailTemplatePrefix, SearchInput},
+    components: {UserSelectDialog, TooltopText, EmailTemplatePrefix, SearchInput},
     props: {
       templateId: {
         type: String,
@@ -65,7 +68,7 @@
         if (this.validatenull(value)) {
           return callback(new Error('请输入QQ邮箱'));
         }
-        console.log(value.length);
+;
         if (value.length < 7 || value.length > 10) {
           return callback(new Error('请输入正确的QQ邮箱'));
         }
@@ -75,11 +78,13 @@
         showPrefix: false,
         form: {},
         rules: {
-          to: [{validator: validateTo, required: true, trigger: 'blur'},],
+          // to: [{validator: validateTo, required: true, trigger: 'blur'},],
         },
         detail: {},
         loadIndex: 0,
         content: "",
+        showUserDialog: false,
+        reloadSearchInput: 0,
       }
     },
     watch: {
@@ -91,6 +96,15 @@
       }
     },
     methods: {
+      handlerSelectUser(data) {
+        let email = "";
+        if (!this.validatenull(data.email)) {
+          email = data.email.slice(0, data.email.length - 7);
+        }
+        this.showUserDialog = false;
+        this.$set(this.form, 'to', email);
+        this.$refs['searchInput'].setValue(email);
+      },
       getContent() {
         if (this.validatenull(this.detail)) {
           return "";

@@ -31,12 +31,14 @@
       </el-form-item>
       <el-form-item label="手机号：" prop="to">
         <div style="display: flex;">
-          <search-input style="width: 300px" :loadOption="loadOption" @change="handlerChange"/>
+          <search-input ref="searchInput" style="width: 300px" :loadOption="loadOption" @change="handlerChange"/>
           <div style="margin-left: 10px; font-size: 16px;">
+            <div style="margin-left: 20px; cursor: pointer; color: #25a5f7;" @click="showUserDialog = true">选择用户</div>
           </div>
         </div>
       </el-form-item>
     </el-form>
+    <user-select-dialog :show.sync="showUserDialog" @select="handlerSelectUser"/>
   </div>
 </template>
 
@@ -46,9 +48,10 @@
   import {detailEmail} from "../../../../api/business/email/email";
   import TooltopText from "../../../../components/min/tooltop-text";
   import {detailPhone} from "../../../../api/business/phone/phone";
+  import UserSelectDialog from "../../components/user-select-dialog";
   export default {
     name: "phoneTemplateTest",
-    components: {TooltopText, SearchInput},
+    components: {UserSelectDialog, TooltopText, SearchInput},
     props: {
       templateId: {
         type: String,
@@ -77,6 +80,7 @@
         detail: {},
         loadIndex: 0,
         content: "",
+        showUserDialog: false,
       }
     },
     watch: {
@@ -88,6 +92,12 @@
       }
     },
     methods: {
+      handlerSelectUser(data) {
+        let phone = this.validatenull(data.phone) ? "" : data.phone;
+        this.showUserDialog = false;
+        this.$set(this.form, 'to', phone);
+        this.$refs['searchInput'].setValue(phone);
+      },
       getContent() {
         // if (this.validatenull(this.detail)) {
         //   return "";

@@ -60,6 +60,9 @@
       this.width = searchInput.clientWidth;
     },
     methods: {
+      setValue(value) {
+        this.value = value;
+      },
       handlerClick(item) {
         this.value = item;
         this.popover = false;

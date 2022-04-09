@@ -29,20 +29,23 @@
       </template>
       <template slot="menuLeft">
         <el-button
+          v-if="permissionList.saveBtn"
           size="small"
           type="primary"
           @click="handlerClickSave"
           >新 增
         </el-button>
         <el-button
+          v-if="permissionList.testBtn"
           size="small"
           type="warning"
           @click="handlerClickTest"
-        >测 试
+        >发送短信
         </el-button>
       </template>
       <template slot-scope="{ type, size, row }" slot="menu">
         <el-button
+          v-if="permissionList.editBtn"
           :size="size"
           :type="type"
           @click="updateClick(row)"
@@ -63,13 +66,13 @@
           @click="enable(row, 0)"
         >禁 用</el-button
         >
-        <el-button
-          v-if="row.status === 0 && permissionList.adviceBtn"
-          :size="size"
-          :type="type"
-          @click="advice(row)"
-        >激活通知</el-button
-        >
+<!--        <el-button-->
+<!--          v-if="row.status === 0 && permissionList.adviceBtn"-->
+<!--          :size="size"-->
+<!--          :type="type"-->
+<!--          @click="advice(row)"-->
+<!--        >激活通知</el-button-->
+<!--        >-->
       </template>
 
     </avue-crud>
@@ -170,6 +173,16 @@ export default {
             prop: "status",
             slot: true,
             search: true,
+            dicData: [
+              {
+                label: "已激活",
+                value: 1,
+              },
+              {
+                label: "未激活",
+                value: 0,
+              },
+            ]
           },
         ],
       },
@@ -181,9 +194,11 @@ export default {
     ...mapGetters(["permission"]),
     permissionList() {
       return {
-        adviceBtn: this.vaildData(this.permission.phone_advice, false),
+        addBtn: this.vaildData(this.permission.phone_save, false),
+        editBtn: this.vaildData(this.permission.phone_edit, false),
         activeBtn: this.vaildData(this.permission.phone_active, false),
-        unActiveBtn: this.vaildData(this.permission.un_active, false),
+        unActiveBtn: this.vaildData(this.permission.phone_unable, false),
+        testBtn: this.vaildData(this.permission.phone_test, false),
       };
     },
     ids() {
@@ -401,6 +416,11 @@ export default {
       });
     },
   },
+  created() {
+    if (!this.permissionList.activeBtn && !this.permissionList.unActiveBtn && !this.permissionList.editBtn) {
+      this.option.menu = false;
+    }
+  }
 };
 </script>
 

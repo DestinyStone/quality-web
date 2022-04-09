@@ -52,6 +52,9 @@
         option: option,
         form: {},
         fileList: [],
+        userColumn: [],
+        passwordColumn: [],
+        isInitColumn: false,
       };
     },
     created() {
@@ -118,7 +121,16 @@
         }
       },
       handleWitch() {
+
+        if (!this.isInitColumn) {
+          this.userColumn = JSON.parse(JSON.stringify(option.group[0].column));
+          this.passwordColumn = JSON.parse(JSON.stringify(option.group[1].column));
+          this.isInitColumn = true;
+        }
+
         if (this.index === 0) {
+          this.$set(option.group[0], 'column', this.userColumn);
+          this.$set(option.group[1], 'column', []);
           getUserInfo().then(res => {
             const user = res.data.data;
             this.form = {
@@ -130,6 +142,10 @@
               email: user.email,
             }
           });
+        }
+        if (this.index === 1) {
+          this.$set(option.group[0], 'column', []);
+          this.$set(option.group[1], 'column', this.passwordColumn);
         }
       },
       handleTabClick(tabs) {

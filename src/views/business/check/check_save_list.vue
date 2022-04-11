@@ -5,7 +5,7 @@
         <div style="display: flex; justify-content: space-between">
           <div>
             <el-button size="small" type="primary" @click="handlerClickSaveCheck">新增检查法</el-button>
-            <el-button size="small" type="primary">检查制作提醒</el-button>
+            <el-button size="small" type="primary" @click="warningCheck">检查制作提醒</el-button>
           </div>
           <div>
             <el-input size="small"  v-model="query.searchKey" style="width: 300px" placeholder="品番号/品番名/供应商名称"/>
@@ -88,7 +88,7 @@
 
 <script>
   import CheckSubmit from "./component/check_submit";
-  import {getAccessSavePage, saveCheck} from "../../../api/check/check";
+  import {getAccessSavePage, saveCheck, warningCheck} from "../../../api/check/check";
   export default {
     name: "checkSaveList",
     components: {CheckSubmit},
@@ -149,6 +149,16 @@
         this.selectList.push(row);
         this.showMain = false;
         this.showSubmit = true;
+      },
+      warningCheck() {
+        if (this.selectList.length === 0) {
+          this.$message({type: "warning", message: "请至少选择一条数据"});
+          return;
+        }
+        let data = this.selectList.map(item => ({resourceId: item.resourceId, resourceType: item.resourceType}));
+        warningCheck(data).then(() => {
+          this.$message({type: "success", message: "提醒成功"});
+        })
       },
       handlerClickSaveCheck() {
         if (this.selectList.length === 0) {

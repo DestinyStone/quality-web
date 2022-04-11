@@ -1,5 +1,13 @@
 import request from '@/router/axios';
 
+export const warningCheck = (data) => {
+  return request({
+    url: `/api/business/check/approve/warning`,
+    method: 'post',
+    data: data,
+  })
+}
+
 export const accountVersionCheckPage = (current, size, id) => {
   return request({
     url: `/api/business/check/account/version/page/${id}`,

@@ -191,6 +191,8 @@ export default {
     initData() {
       if (this.templateId) {
         this.title = "更新邮件模板";
+        let code = this.findObject(this.option.column, 'code');
+        code.disabled=true;
         detailEmail(this.templateId).then((res) => {
           this.form = res.data.data;
         });

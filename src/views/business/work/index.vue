@@ -111,11 +111,13 @@
               tag-class="el-icon-time"
             >
               <el-row v-for="item in fastMenu" :key="item">
-                <el-col :span="18" style="text-align: right; background: #EFF5FF; font-weight: 700; color: #0075DB; font-size: 14px; line-height: 40px; height: 40px; padding-right: 15px;">
+                <el-col
+                  :span="18" style="text-align: right; background: #EFF5FF; font-weight: 700; color: #0075DB; font-size: 14px; line-height: 40px; height: 40px; padding-right: 15px;">
                   {{item.title}}
                 </el-col>
-                {{$t('navbar.color')}}
-                <el-col @click.native="handlerClickFastMenu(item)" :span="6" :style="{'background-color': $t('navbar.color')}" style="background-color: #78A9EE;line-height: 40px; height: 40px; border: 1px solid #EFF5FF; border-top-right-radius: 5px; border-bottom-right-radius: 5px">
+                <el-col @click.native="handlerClickFastMenu(item)" :span="6"
+                        :style="{'background-color': color}"
+                        style="background-color: #78A9EE;line-height: 40px; height: 40px; border-top-right-radius: 5px; border-bottom-right-radius: 5px">
                   <div style="text-align: center; color: #FFFFFF; cursor: pointer;">
                     <i class="el-icon-arrow-right" style="border-radius: 50%; border: 1px solid #FFFFFF"/>
                   </div>
@@ -133,6 +135,7 @@
 </template>
 
 <script>
+  import { mapState } from 'vuex'
   import FixTagTitle from "../../../components/min/fix_tag_title";
   import AwaitCard from "./component/await-card";
   import TitleContainer from "./component/title-container";
@@ -295,6 +298,9 @@
       height() {
         return this.windowHeight - 410 + "px";
       },
+      ...mapState({
+        color:state => state.common.colorName   //使用ES6的箭头函数来给count赋值
+      })
     }
   }
 </script>

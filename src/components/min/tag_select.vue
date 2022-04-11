@@ -45,7 +45,7 @@
 .tag-select > div{
   height: 30px;
   line-height: 30px;
-  padding: 0 20px;
+  padding: 0 15px;
   color: #2d8cf0;
   cursor: pointer;
 }

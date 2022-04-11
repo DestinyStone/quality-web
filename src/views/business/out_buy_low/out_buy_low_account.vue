@@ -6,7 +6,7 @@
           <tag-select :data="tagData" :active="activeTag" @click="handlerSwitchTag"/>
           <div style="display: flex; flex-flow: column; justify-content: center; margin-left: 20px;">
             <div style="display: flex; justify-content: flex-end;">
-              <el-input size="small" style="max-width: 250px" v-model="query.searchKey" placeholder="请输入标题"/>
+              <el-input size="small" style="max-width: 180px" v-model="query.searchKey" placeholder="请输入标题"/>
               <el-select size="small" style="width: 130px; margin-left: 15px;" v-model="query.type" placeholder="不良分类">
                 <el-option
                   v-for="item in typeDict"

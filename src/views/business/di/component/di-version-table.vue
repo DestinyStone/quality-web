@@ -18,6 +18,7 @@
       </el-table-column>
       <el-table-column
         label="供应商DI数据Excel文件"
+        show-overflow-tooltip
         prop="dataExcelFileName"
         width="150">
       </el-table-column>

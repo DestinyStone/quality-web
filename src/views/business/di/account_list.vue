@@ -61,7 +61,7 @@
           </el-table-column>
           <el-table-column
             prop="lastFileName"
-            min-width="180"
+            min-width="200"
             label="最新版本">
             <template slot-scope="scope">
               <div style="cursor: pointer; color: #25a5f7;" @click="handlerDownload(scope.row.lastFileId)">
@@ -106,9 +106,9 @@
     </div>
     <el-dialog title="上报周期配置"
                :visible.sync="showReportConfig"
-               width="60%"
+               width="65%"
                append-to-body>
-      <div style="width: 80%; margin: 0 auto">
+      <div style="width: 90%; margin: 0 auto">
         <report-cycle-form v-if="showReportConfig"
                            ref="reportCycle"
                            :handlerSubmit="submitReportConfig"

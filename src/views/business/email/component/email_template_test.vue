@@ -7,7 +7,7 @@
              label-width="120px">
       <el-form-item label="当前模板：">
         <div style="position:relative;">
-          <div style="height: 200px; overflow-x: auto;: auto; border: 1px solid #E4E7ED; padding-left: 10px; ">
+          <div style="height: 180px; overflow-x: auto;: auto; border: 1px solid #E4E7ED; padding-left: 10px; ">
             <div :key="loadIndex" v-html="detail.content"></div>
           </div>
           <div style="position:absolute; right: -40px; top: 0; cursor: pointer; color: #25a5f7;" @click="showPrefix = true">预览</div>
@@ -17,7 +17,7 @@
         <div v-if="validatenull(detail.params)">
           无需填写
         </div>
-        <div v-else style="height: 200px; overflow: auto;">
+        <div v-else style="height: 100px; overflow: auto;">
           <table style="width: 100%;">
             <col width="20%" />
             <col width="33%" />

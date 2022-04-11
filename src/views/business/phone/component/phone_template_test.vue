@@ -16,7 +16,7 @@
         <div v-if="validatenull(detail.params)">
           无需填写
         </div>
-        <div v-else style="height: 200px; overflow: auto;">
+        <div v-else style="height: 100px; overflow: auto;">
           <table style="width: 100%;">
             <col width="20%" />
             <col width="33%" />

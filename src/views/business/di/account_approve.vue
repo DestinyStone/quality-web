@@ -10,8 +10,8 @@
         </tag-select>
         <div style="margin-top: 15px;">
           <div>
-            <el-button size="small" type="danger">批量退回供应商</el-button>
-            <el-button size="small" type="success">审批通过</el-button>
+<!--            <el-button size="small" type="danger">批量退回供应商</el-button>-->
+<!--            <el-button size="small" type="success">审批通过</el-button>-->
           </div>
           <div  style="margin-top: 10px;">
             <el-table

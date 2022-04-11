@@ -17,21 +17,32 @@ export default {
           text: ' ',
           ratio: 0.1
         },
-        action: '/api/blade-resource/oss/endpoint/put-file',
+        //action: '/api/blade-resource/oss/endpoint/put-file',
+        formsolt: true,
         tip: '只能上传jpg/png用户头像，且不超过500kb',
-        span: 12,
+        span: 24,
         row: true,
         prop: 'avatar'
       }, {
         label: '姓名',
         span: 12,
         row: true,
-        prop: 'name'
+        prop: 'name',
+        rules: [{
+          required: true,
+          message: "请输入姓名",
+          trigger: "blur"
+        }]
       }, {
         label: '用户名',
         span: 12,
         row: true,
-        prop: 'realName'
+        prop: 'realName',
+        rules: [{
+          required: true,
+          message: "请输入用户名",
+          trigger: "blur"
+        }]
       }, {
         label: '手机号',
         span: 12,
@@ -52,19 +63,34 @@ export default {
         span: 12,
         row: true,
         type: 'password',
-        prop: 'oldPassword'
+        prop: 'oldPassword',
+        rules: [{
+          required: true,
+          message: "请输入原密码",
+          trigger: "blur"
+        }]
       }, {
         label: '新密码',
         span: 12,
         row: true,
         type: 'password',
-        prop: 'newPassword'
+        prop: 'newPassword',
+        rules: [{
+          required: true,
+          message: "请输入新密码",
+          trigger: "blur"
+        }]
       }, {
         label: '确认密码',
         span: 12,
         row: true,
         type: 'password',
-        prop: 'newPassword1'
+        prop: 'newPassword1',
+        rules: [{
+          required: true,
+          message: "请输入确认密码",
+          trigger: "blur"
+        }]
       }]
     }
   ],

@@ -21,9 +21,15 @@
       @refresh-change="refreshChange"
       @on-load="onLoad"
     >
+      <template slot="status" slot-scope="scope">
+        <div>
+          <div v-if="scope.row.status === 1">已激活</div>
+          <div v-if="scope.row.status === 0">未激活</div>
+        </div>
+      </template>
       <template slot="menuLeft">
         <el-button
-          v-if="permissionList.addBtn"
+          v-if="permissionList.saveBtn"
           size="small"
           type="primary"
           @click="handlerClickSave"
@@ -34,7 +40,7 @@
           size="small"
           type="warning"
           @click="handlerClickTest"
-        >发送邮件
+        >发送短信
         </el-button>
       </template>
       <template slot-scope="{ type, size, row }" slot="menu">
@@ -46,11 +52,11 @@
           >编 辑</el-button
         >
         <el-button
-          v-if="row.status === 0 && permissionList.activeBtn"
+          v-if="row.status === 0  && permissionList.activeBtn"
           :size="size"
           :type="type"
           @click="enable(row, 1)"
-        >启 用</el-button
+        >激 活</el-button
         >
         <el-button
           v-if="row.status === 1 && permissionList.unActiveBtn"
@@ -60,24 +66,32 @@
           @click="enable(row, 0)"
         >禁 用</el-button
         >
+<!--        <el-button-->
+<!--          v-if="row.status === 0 && permissionList.adviceBtn"-->
+<!--          :size="size"-->
+<!--          :type="type"-->
+<!--          @click="advice(row)"-->
+<!--        >激活通知</el-button-->
+<!--        >-->
       </template>
+
     </avue-crud>
-    <email-template-update
+    <phone-template-update
       v-if="showSubmit"
       :template-id="form.id"
       @close="handleClose"
       @save="saveTemplate"
       @update="updateTemplate"
     />
-    <el-dialog title="邮件测试"
+    <el-dialog title="短信测试"
                :visible.sync="showTest"
                width="80%"
                top="20px"
                @close="showTest = false"
                append-to-body>
-      <div v-loading="testLoading"  element-loading-text="发送邮件中..., 请耐心等待">
+      <div v-loading="testLoading"  element-loading-text="发送短信中..., 请耐心等待">
         <div style="width: 80%;">
-          <email-template-test :template-id="this.selectionList[0].id" ref="emailTemplateTest" v-if="showTest" :trigger="handlerEmailTest"/>
+          <phone-template-test :template-id="this.selectionList[0].id" ref="emailTemplateTest" v-if="showTest" :trigger="handlerEmailTest"/>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -94,11 +108,20 @@ import Cookies from 'js-cookie'
 import { mapGetters } from "vuex";
 import { Base64 } from "js-base64";
 import {emailPage, enableEmailStatus, saveEmail, testEmail, updateEmail} from "../../../api/business/email/email";
-import EmailTemplateUpdate from "./component/email_template_update";
-import EmailTemplateTest from "./component/email_template_test";
+import PhoneTemplateUpdate from "./component/phone_template_update";
+import {
+  advicePhone,
+  enablePhoneStatus,
+  phonePage,
+  savePhone,
+  testPhone,
+  updatePhone
+} from "../../../api/business/phone/phone";
+import PhoneTemplateTest from "./component/phone_template_test";
+// import EmailTemplateTest from "./component/email_template_test";
 export default {
-  name: "emailTemplate",
-  components: {EmailTemplateTest, EmailTemplateUpdate},
+  name: "phoneTemplate",
+  components: {PhoneTemplateTest, PhoneTemplateUpdate},
   data() {
     return {
       showEmailTest: false,
@@ -134,13 +157,13 @@ export default {
         selection: true,
         column: [
           {
-            label: "邮件标题",
+            label: "短信标题",
             prop: "title",
             labelWidth: "20%",
             search: true,
           },
           {
-            label: "邮件编码",
+            label: "短信编码",
             prop: "code",
             labelWidth: "20%",
           },
@@ -148,18 +171,18 @@ export default {
             label: "状态",
             type: "select",
             prop: "status",
+            slot: true,
+            search: true,
             dicData: [
               {
-                label: "已启用",
+                label: "已激活",
                 value: 1,
               },
               {
-                label: "已禁用",
+                label: "未激活",
                 value: 0,
               },
-            ],
-            slot: true,
-            search: true,
+            ]
           },
         ],
       },
@@ -171,11 +194,11 @@ export default {
     ...mapGetters(["permission"]),
     permissionList() {
       return {
-        addBtn: this.vaildData(this.permission.email_save, false),
-        editBtn: this.vaildData(this.permission.email_edit, false),
-        activeBtn: this.vaildData(this.permission.email_enable, false),
-        unActiveBtn: this.vaildData(this.permission.email_unable, false),
-        testBtn: this.vaildData(this.permission.email_test, false),
+        addBtn: this.vaildData(this.permission.phone_save, false),
+        editBtn: this.vaildData(this.permission.phone_edit, false),
+        activeBtn: this.vaildData(this.permission.phone_active, false),
+        unActiveBtn: this.vaildData(this.permission.phone_unable, false),
+        testBtn: this.vaildData(this.permission.phone_test, false),
       };
     },
     ids() {
@@ -187,22 +210,27 @@ export default {
     },
   },
   methods: {
+    advice(row) {
+      advicePhone(row.id).then(() => {
+        this.$message({type: "success", message: "已通知管理员, 请耐心等待"});
+      })
+    },
     handlerEmailTest(form) {
-      let emailTestJson = Cookies.get("emailTest");
+      let emailTestJson = Cookies.get("phoneTest");
       let emailTest = this.validatenull(emailTestJson) ? [] : JSON.parse(emailTestJson);
       let filter = emailTest.filter(item => item === form.to);
       if (filter.length === 0) {
         emailTest.push(form.to);
-        Cookies.set("emailTest", JSON.stringify(emailTest));
+        Cookies.set("phoneTest", JSON.stringify(emailTest));
       }
 
       this.testLoading = true;
-      testEmail(this.selectionList[0].id, form).then(() => {
+      testPhone(this.selectionList[0].id, form).then(() => {
         this.testLoading = false;
         this.$message({type: "success", message: "发送成功"});
       }).catch(() => {
         this.testLoading = false;
-        // this.$message({type: "error", message: "邮件发送失败"});
+        // this.$message({type: "error", message: "短信发送失败"});
       })
     },
     handleTrigger() {
@@ -213,6 +241,12 @@ export default {
         this.$message({type: "warning", message: "请选择一条数据"});
         return;
       }
+
+      let data = this.selectionList[0];
+      if (data.status !== 1) {
+        this.$message({type: "error", message: "手机短信模板未激活"});
+        return;
+      }
       this.showTest = true;
     },
     handlerClickSave() {
@@ -221,14 +255,14 @@ export default {
       this.form = {};
     },
     enable(row, status) {
-      let warning = status === 0 ? `确认禁用【${row.title}】?` : `确认启用【${row.title}】?`;
-      let success = status === 0 ? "禁用成功" : "启用成功";
+      let warning = status === 0 ? `确认禁用【${row.title}】?` : `确认激活【${row.title}】?`;
+      let success = status === 0 ? "禁用成功" : "激活成功";
       this.$confirm(warning, "提示", {
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-          enableEmailStatus(row.id, status).then(() => {
+          enablePhoneStatus(row.id, status).then(() => {
             this.onLoad(this.page);
             this.$message.success(success);
           });
@@ -242,7 +276,7 @@ export default {
     },
     updateTemplate(data) {
       data.content = Base64.encode(data.content);
-      updateEmail(this.form.id, data).then(() => {
+      updatePhone(this.form.id, data).then(() => {
         this.onLoad(this.page);
         this.$message.success("更新成功");
         this.showMain = true;
@@ -252,7 +286,7 @@ export default {
     },
     saveTemplate(data) {
       data.content = Base64.encode(data.content);
-      saveEmail(data).then(() => {
+      savePhone(data).then(() => {
         this.onLoad(this.page);
         this.$message.success("新增成功");
         this.showMain = true;
@@ -373,7 +407,7 @@ export default {
     },
     onLoad(page, params = {}) {
       this.loading = true;
-      emailPage(page.currentPage, page.pageSize, Object.assign(params, this.query)).then((res) => {
+      phonePage(page.currentPage, page.pageSize, Object.assign(params, this.query)).then((res) => {
         const data = res.data.data;
         this.page.total = data.total;
         this.data = data.records;

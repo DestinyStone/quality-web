@@ -88,7 +88,7 @@ export const resetPassword = (userIds) => {
   })
 }
 
-export const updatePassword = (oldPassword, newPassword, newPassword1) => {
+export const updatePassword = (oldPassword, newPassword, newPassword1, newPasswordFuzzy) => {
   return request({
     url: '/api/blade-user/update-password',
     method: 'post',
@@ -96,6 +96,7 @@ export const updatePassword = (oldPassword, newPassword, newPassword1) => {
       oldPassword,
       newPassword,
       newPassword1,
+      newPasswordFuzzy
     }
   })
 }

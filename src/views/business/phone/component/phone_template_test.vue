@@ -10,7 +10,6 @@
           <div style="height: 200px; overflow-x: auto;: auto; border: 1px solid #E4E7ED; padding-left: 10px; ">
             <div :key="loadIndex" v-html="detail.content"></div>
           </div>
-          <div style="position:absolute; right: -40px; top: 0; cursor: pointer; color: #25a5f7;" @click="showPrefix = true">预览</div>
         </div>
       </el-form-item>
       <el-form-item label="参数：">
@@ -30,17 +29,15 @@
           </table>
         </div>
       </el-form-item>
-      <el-form-item label="QQ邮箱：" prop="to">
+      <el-form-item label="手机号：" prop="to">
         <div style="display: flex;">
           <search-input ref="searchInput" style="width: 300px" :loadOption="loadOption" @change="handlerChange"/>
-          <div style="margin-left: 10px; font-size: 16px; display: flex;">
-            <div>@qq.com</div>
+          <div style="margin-left: 10px; font-size: 16px;">
             <div style="margin-left: 20px; cursor: pointer; color: #25a5f7;" @click="showUserDialog = true">选择用户</div>
           </div>
         </div>
       </el-form-item>
     </el-form>
-    <email-template-prefix :content="content" :show.sync="showPrefix"/>
     <user-select-dialog :show.sync="showUserDialog" @select="handlerSelectUser"/>
   </div>
 </template>
@@ -49,12 +46,12 @@
   import SearchInput from "../../../../components/search-input/search-input";
   import Cookies from 'js-cookie'
   import {detailEmail} from "../../../../api/business/email/email";
-  import EmailTemplatePrefix from "./email_template_prefix";
   import TooltopText from "../../../../components/min/tooltop-text";
+  import {detailPhone} from "../../../../api/business/phone/phone";
   import UserSelectDialog from "../../components/user-select-dialog";
   export default {
-    name: "emailTemplateTest",
-    components: {UserSelectDialog, TooltopText, EmailTemplatePrefix, SearchInput},
+    name: "phoneTemplateTest",
+    components: {UserSelectDialog, TooltopText, SearchInput},
     props: {
       templateId: {
         type: String,
@@ -66,11 +63,11 @@
     data() {
       let validateTo = (rule, value, callback) => {
         if (this.validatenull(value)) {
-          return callback(new Error('请输入QQ邮箱'));
+          return callback(new Error('请输入手机号'));
         }
-;
-        if (value.length < 7 || value.length > 10) {
-          return callback(new Error('请输入正确的QQ邮箱'));
+        console.log(value.length);
+        if (!/^1(3|4|5|7|8)\d{9}$/.test(value)) {
+          return callback(new Error('请输入正确的手机号'));
         }
         return callback();
       };
@@ -78,13 +75,12 @@
         showPrefix: false,
         form: {},
         rules: {
-          // to: [{validator: validateTo, required: true, trigger: 'blur'},],
+          to: [{validator: validateTo, required: true, trigger: 'blur'},],
         },
         detail: {},
         loadIndex: 0,
         content: "",
         showUserDialog: false,
-        reloadSearchInput: 0,
       }
     },
     watch: {
@@ -97,35 +93,32 @@
     },
     methods: {
       handlerSelectUser(data) {
-        let email = "";
-        if (!this.validatenull(data.email)) {
-          email = data.email.slice(0, data.email.length - 7);
-        }
+        let phone = this.validatenull(data.phone) ? "" : data.phone;
         this.showUserDialog = false;
-        this.$set(this.form, 'to', email);
-        this.$refs['searchInput'].setValue(email);
+        this.$set(this.form, 'to', phone);
+        this.$refs['searchInput'].setValue(phone);
       },
       getContent() {
-        if (this.validatenull(this.detail)) {
-          return "";
-        }
-        if (this.validatenull(this.detail.params)) {
-          return this.detail.content;
-        }
-        let content = this.detail.content;
-        for(let key in this.detail.params) {
-          let item = this.detail.params[key];
-          // 默认值 或者 新值都为空则跳过
-          if (this.validatenull(item.defaultValue) && this.validatenull(item.newValue)) {
-            continue;
-          }
-
-          // 新值 优先级更高
-          let value = this.validatenull(item.newValue) ? item.defaultValue : item.newValue;
-          let replace = `\\$\\{${item.name}\\}`;
-          // 替换占位符
-          content = content.replace(new RegExp(replace, 'g'), value);
-        }
+        // if (this.validatenull(this.detail)) {
+        //   return "";
+        // }
+        // if (this.validatenull(this.detail.params)) {
+        //   return this.detail.content;
+        // }
+        // let content = this.detail.content;
+        // for(let key in this.detail.params) {
+        //   let item = this.detail.params[key];
+        //   // 默认值 或者 新值都为空则跳过
+        //   if (this.validatenull(item.defaultValue) && this.validatenull(item.newValue)) {
+        //     continue;
+        //   }
+        //
+        //   // 新值 优先级更高
+        //   let value = this.validatenull(item.newValue) ? item.defaultValue : item.newValue;
+        //   let replace = `\\$\\{${item.name}\\}`;
+        //   // 替换占位符
+        //   content = content.replace(new RegExp(replace, 'g'), value);
+        // }
         return content;
       },
       handlerChange(value) {
@@ -133,7 +126,7 @@
       },
       loadOption(value, page) {
         return new Promise((resolve) => {
-          let emailTestJson = Cookies.get("emailTest");
+          let emailTestJson = Cookies.get("phoneTest");
           let emailTest = this.validatenull(emailTestJson) ? [] : JSON.parse(emailTestJson);
 
           let newData = [];
@@ -156,12 +149,13 @@
           if (!valid) {
             return;
           }
-          this.form.content = Base64.encode(this.content);
+          this.form.content = this.detail.content;
+          this.form.params = this.detail.params;
           this.trigger(this.form);
         })
       },
       init() {
-        detailEmail(this.templateId).then(res => {
+        detailPhone(this.templateId).then(res => {
           this.detail = res.data.data;
         });
       }

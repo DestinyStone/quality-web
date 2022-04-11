@@ -3,8 +3,8 @@
     <el-row>
       <el-col :span="11">
         <div style="display: flex;">
-          <el-input placeholder="请输入用户名称" style="width: 200px"/>
-          <el-button style="margin-left: 10px;" type="primary">查询</el-button>
+          <el-input placeholder="请输入用户名称" v-model="searchKey" style="width: 200px"/>
+          <el-button style="margin-left: 10px;" type="primary" @click="onload">查询</el-button>
         </div>
         <div style="min-height: 400px;">
           <el-table
@@ -22,15 +22,15 @@
             <el-table-column
               prop="name"
               show-overflow-tooltip
+              label="用户名">
+            </el-table-column>
+            <el-table-column
+              prop="deptName"
+              show-overflow-tooltip
               label="部门名称">
             </el-table-column>
             <el-table-column
-              prop="name"
-              show-overflow-tooltip
-              label="姓名">
-            </el-table-column>
-            <el-table-column
-              prop="name"
+              prop="roleName"
               show-overflow-tooltip
               label="角色">
             </el-table-column>
@@ -48,7 +48,7 @@
       </el-col>
       <el-col :span="12">
         <div style="display: flex;">
-          <el-input placeholder="请输入用户名称" style="width: 200px"/>
+          <el-input placeholder="请输入用户名称" v-model="searchSelectKey" style="width: 200px"/>
           <el-button style="margin-left: 10px;" type="primary">查询</el-button>
         </div>
         <div style="min-height: 400px;">
@@ -62,15 +62,15 @@
             <el-table-column
               prop="name"
               show-overflow-tooltip
+              label="用户名">
+            </el-table-column>
+            <el-table-column
+              prop="deptName"
+              show-overflow-tooltip
               label="部门名称">
             </el-table-column>
             <el-table-column
-              prop="name"
-              show-overflow-tooltip
-              label="姓名">
-            </el-table-column>
-            <el-table-column
-              prop="name"
+              prop="roleName"
               show-overflow-tooltip
               label="角色">
             </el-table-column>
@@ -91,7 +91,6 @@
 </template>
 
 <script>
-  import {getList} from "@/api/system/user"
   export default {
     name: "changeSaveUserForm",
     props: {
@@ -100,10 +99,16 @@
         default() {
           return []
         }
+      },
+      getList: {
+        type: Function,
+        default: () => {}
       }
     },
     data() {
       return {
+        searchKey: "",
+        searchSelectKey: "",
         data: [],
         page: {
           current: 1,
@@ -113,6 +118,7 @@
         selectList: [],
         selectData: [],
         loading: false,
+        isInit: false,
       }
     },
     methods: {
@@ -143,8 +149,15 @@
         this.selectList = selectList;
       },
       onload() {
-        this.loading = true;
-        getList(this.page.current, this.page.size).then(res => {
+        if (this.isInit) {
+          this.loading = true;
+        }
+        this.isInit = true;
+        let query = {searchKey: this.searchKey};
+        if (!this.validatenull(this.selectData)) {
+          query.exclude = this.selectData.map(item => item.id).join(",");
+        }
+        this.getList(this.page.current, this.page.size, query).then(res => {
           this.loading = false;
           let data = res.data.data;
           this.data = data.records;
@@ -152,7 +165,6 @@
         })
       },
       init() {
-        console.log(this.defaultValue);
         this.$set(this, 'selectData', this.defaultValue);
         this.onload();
       }

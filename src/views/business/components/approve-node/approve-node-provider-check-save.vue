@@ -135,11 +135,11 @@
     </el-row>
     <div>
     </div>
-    <div style="position: fixed; bottom: 0; padding: 10px 0; width: 100%; background: #FFFFFF">
+    <div style="position: fixed; bottom: 0; padding: 10px 0; width: 100%; background: #FFFFFF; z-index: 999;">
       <div style="display: flex; width: 80%; justify-content: center;">
         <div>
           <el-button size="small" @click="handlerClickClose">返回</el-button>
-          <el-button type="primary" size="small" v-if="!isClickEdit" plain>下载QPR</el-button>
+          <el-button type="primary" size="small" v-if="!isClickEdit" plain @click="handlerQprDownload">下载QPR</el-button>
           <el-button type="primary" v-if="!isClickEdit" size="small" @click="clickEditCheck">填写调查结果</el-button>
           <el-button type="primary" v-if="isClickEdit" size="small" @click="handlerClickPass">提交</el-button>
         </div>
@@ -152,10 +152,11 @@
   import TagSelectColumn from "../../../../components/min/tag_select_column";
   import FixColorTitle from "../../../../components/min/fix_color_title";
   import ExtensibleContainer from "../../../../components/min/extensible_container";
-  import {checkSavePass} from "../../../../api/business/out_buy_low/qpr";
+  import {checkSavePass, qprDownload} from "../../../../api/business/out_buy_low/qpr";
   import FileMultUpload from "../../../../components/file/file-mult-upload";
   import OutBuyLowBasicMessage from "../../out_buy_low/component/out_buy_low_basic_message";
   import ApproveDetail from "../approve_detail";
+  import {downloadResFile} from "../../../../util/util";
   export default {
     name: "approve-node-provider-check-save",
     components: {
@@ -200,6 +201,11 @@
       }
     },
     methods: {
+      handlerQprDownload() {
+        qprDownload(this.busId).then(res => {
+          downloadResFile(res);
+        })
+      },
       removeBusincessIdFiles(row) {
         this.$confirm("是否删除改文件?", "提示", {confirmButtonText: "确定", cancelButtonText: "取消", type: "warning"}).then(() => {
           for(let key in this.form.busincessIdFiles) {

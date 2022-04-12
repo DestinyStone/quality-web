@@ -1,5 +1,16 @@
 import request from '@/router/axios';
 
+export const qprDownload = (id) => {
+  return request({
+    url: `/api/business/out/buy/qpr/approve/download/qpr/${id}`,
+    method: 'get',
+    params: {
+      id
+    },
+    responseType: "blob",
+  })
+}
+
 export const qprAccountExport = (current, size, params) => {
   return request({
     url: '/api/business/out/buy/qpr/account/export',

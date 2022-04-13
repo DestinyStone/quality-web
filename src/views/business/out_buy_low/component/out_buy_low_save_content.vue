@@ -146,11 +146,14 @@
           {value: 4, label: "TNGA#5"},
           {value: 5, label: "TNGA#6"},
         ],
+        isInit: false,
       }
     },
     watch: {
       'form.dispostType'() {
-        this.$set(this.form, "dispost", "");
+        if (this.isInit) {
+          this.$set(this.form, "dispost", "");
+        }
       }
     },
     props: {
@@ -184,9 +187,12 @@
           qprDetail(this.id).then(res => {
             this.form = res.data.data;
             this.$set(this.form, 'imgReportIds', this.form.imgReportFiles);
+          }).then(() => {
+            this.isInit = true;
           })
         }else {
           this.$set(this.form, 'apparatusTypes', []);
+          this.isInit = true;
         }
       },
       handlerSubmit() {

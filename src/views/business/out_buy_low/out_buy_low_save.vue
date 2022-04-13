@@ -1,6 +1,6 @@
 <template>
   <basic-container>
-    <out-buy-low-save-content :is-use-out="isUseOut" :save="save" :close="close"/>
+    <out-buy-low-save-content :id="id" :is-use-out="isUseOut" :save="save" :close="close"/>
   </basic-container>
 </template>
 
@@ -14,6 +14,7 @@
     components: {OutBuyLowSaveContent, FileImageUpload, FixColorTitle},
     data() {
       return {
+        id: null,
       }
     },
     props: {
@@ -28,6 +29,14 @@
         type: Function,
       }
     },
+    created() {
+      if (this.$route.query.auto === null) {
+        this.id = "1514123290813833217";
+      }
+      if (this.$route.query.auto) {
+        this.id = this.$route.query.auto;
+      }
+    }
   }
 </script>
 

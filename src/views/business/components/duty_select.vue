@@ -31,6 +31,11 @@
         reload: 0,
       }
     },
+    watch: {
+      defaultValue() {
+        this.value = this.defaultValue;
+      }
+    },
     created() {
       getAllProvider().then(res => {
         let data = res.data;

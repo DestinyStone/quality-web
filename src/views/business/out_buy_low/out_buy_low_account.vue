@@ -210,7 +210,7 @@
     processLowQuality,
     processLowSelfBack, processLowUploadAdvice, processLowUploadStandard
   } from "../../../api/business/process_low/process_low";
-  import {qprAccountExport, qprAccountPage, qprPage} from "../../../api/business/out_buy_low/qpr";
+  import {qprAccountExport, qprAccountPage, qprPage, qprQuality} from "../../../api/business/out_buy_low/qpr";
   import TagSelect from "../../../components/min/tag_select";
   import {downloadResFile} from "../../../util/util";
   export default {
@@ -310,7 +310,7 @@
         this.showDetail = true;
       },
       onLoadQuality() {
-        processLowQuality().then(res => {
+        qprQuality().then(res => {
           let data = res.data.data;
           this.$set(this.tagData[1], 'count', data.selfBack);
           this.$set(this.tagData[2], 'count', data.back);
